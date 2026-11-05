@@ -1,0 +1,908 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Concept by Lily</title>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #F8E7EC;
+}
+
+header {
+    text-align: center;
+    background: #E6C4CC;
+    padding: 40px;
+}
+
+header h1 {
+    margin: 0;
+    color: #444;
+}
+
+header p {
+    color: #444;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 40px 20px;
+}
+
+.card {
+    background: white;
+    width: 320px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,.1);
+}
+
+.card img {
+    width: 100%;
+    height: 280px;
+    object-fit: contain;
+    background: white;
+}
+
+.card-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.card h3 {
+    margin: 0;
+    color: #444;
+}
+
+.price {
+    font-size: 30px;
+    margin: 15px 0;
+}
+
+.btn {
+    border: none;
+    background: #D6A5A4;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn:hover {
+    opacity: .9;
+}
+
+.cart {
+    background: white;
+    max-width: 800px;
+    margin: 20px auto 50px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.1);
+}
+
+.cart h2 {
+    margin-top: 0;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    gap: 15px;
+}
+
+.remove {
+    background: #e57373;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.total {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.whatsapp-btn {
+    margin-top: 20px;
+    display: inline-block;
+    background: #25D366;
+    color: white;
+    text-decoration: none;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.empty {
+    color: #888;
+}
+
+/* MODAL DE FACTURA */
+
+#invoiceModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#invoiceContainer {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 95%;
+    max-height: 90vh;
+    overflow: auto;
+}
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 30px 15px;
+    }
+
+    .products {
+        padding: 25px 15px;
+        gap: 20px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .cart {
+        margin: 20px 15px 40px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<!-- ENCABEZADO -->
+
+<header>
+
+    <h1>Concept by Lily 💖</h1>
+
+    <p>Skincare, maquillaje y accesorios</p>
+
+</header>
+
+
+<!-- CATÁLOGO DE PRODUCTOS -->
+
+<section class="products" id="products">
+
+    <!-- JavaScript genera automáticamente las tarjetas aquí -->
+
+</section>
+
+
+<!-- CARRITO -->
+
+<section class="cart">
+
+    <h2>🛒 Carrito</h2>
+
+    <div id="cartItems">
+
+        <p class="empty">No hay productos en el carrito.</p>
+
+    </div>
+
+    <div id="total" class="total">
+
+        Total: C$ 0
+
+    </div>
+
+    <button
+        id="whatsappBtn"
+        class="whatsapp-btn"
+        onclick="generateInvoice()"
+    >
+
+        Finalizar pedido
+
+    </button>
+
+</section>
+
+
+<!-- MODAL DE FACTURA -->
+
+<div id="invoiceModal">
+
+    <div id="invoiceContainer">
+
+        <div id="invoiceArea"></div>
+
+        <br>
+
+        <button class="btn" onclick="shareInvoice()">
+
+            💖 Enviar Pedido
+
+        </button>
+
+        <button class="remove" onclick="closeInvoice()">
+
+            Cerrar
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   1. CATÁLOGO DE PRODUCTOS
+   =====================================================
+
+   Para agregar productos, solamente debes agregar
+   un nuevo objeto dentro de esta lista.
+
+   available: true  = Producto disponible
+   available: false = Producto agotado
+
+*/
+
+
+const products = [
+
+    // LIPSTICKS
+
+    {
+        name: "E.L.F. Left on Red",
+        price: 430,
+        image: "left-on-red.jpg",
+        available: true
+    },
+
+    {
+        name: "E.L.F. Plum up",
+        price: 430,
+        image: "plum-up.jpg",
+        available: true
+    },
+
+    {
+        name: "E.L.F. Pink Positive",
+        price: 430,
+        image: "pink-positive.jpg",
+        available: true
+    },
+
+    {
+        name: "E.L.F. Burgundid",
+        price: 430,
+        image: "burgundid.jpg",
+        available: true
+    },
+
+
+    // LIP OILS
+
+    {
+        name: "Glow Reviver Plumping Lip Oil - Talk that taupe",
+        price: 500,
+        image: "talk-that-taupe.jpg",
+        available: true
+    },
+
+    {
+        name: "Glow Reviver Plumping Lip Oil - Ultraviolet",
+        price: 500,
+        image: "ultraviolet.jpg",
+        available: true
+    },
+
+    {
+        name: "Glow Reviver Plumping Lip Oil - Burst Bubble",
+        price: 500,
+        image: "burst-bubble.jpg",
+        available: true
+    },
+
+    {
+        name: "Glow Reviver Plumping Lip Oil - Heavy Petal",
+        price: 500,
+        image: "heavy-petal.jpg",
+        available: true
+    },
+
+
+    // POWDERS
+
+    {
+        name: "Powder Blush Pallet Elf - 4 Tonos",
+        price: 570,
+        image: "powder-blush-palette.jpg",
+        available: true
+    },
+
+
+    // BROW
+
+    {
+        name: "E.L.F Brow Laminating Gel",
+        price: 570,
+        image: "brow-laminating-gel.jpg",
+        available: true
+    },
+
+
+    // MAYBELLINE
+
+    {
+        name: "Mascara Maybelline Sky High",
+        price: 600,
+        image: "maybelline-sky-high.jpg",
+        available: true
+    },
+
+    {
+        name: "Teddy Tint - Maybelline Cool Grunge",
+        price: 440,
+        image: "maybelline-cool-grunge.jpg",
+        available: true
+    },
+
+    {
+        name: "Teddy Tint - Maybelline Kneehigh",
+        price: 440,
+        image: "maybelline-kneehigh.jpg",
+        available: true
+    },
+
+    {
+        name: "Teddy Tint - Maybelline Pinky Promise",
+        price: 440,
+        image: "maybelline-pinky-promise.jpg",
+        available: true
+    },
+
+
+    // BODY LOTIONS
+
+    {
+        name: "Body Lotion EOS Beach Waves - 16 Onz",
+        price: 760,
+        image: "body-lotion-beach-waves-16onz.jpg",
+        available: true
+    },
+
+    {
+        name: "Body Lotion EOS Vainilla Cashmere - 16 Onz",
+        price: 760,
+        image: "body-lotion-vainilla-cashmere-16onz.jpg",
+        available: true
+    },
+
+    {
+        name: "Body Lotion EOS Fresh & Cozy - 16 Onz",
+        price: 760,
+        image: "body-lotion-fresh-n-cozy-16onz.jpg",
+        available: true
+    }
+
+];
+
+
+
+/* =====================================================
+   2. GENERAR TARJETAS AUTOMÁTICAMENTE
+   ===================================================== */
+
+
+function renderProducts() {
+
+    const container = document.getElementById("products");
+
+    container.innerHTML = "";
+
+    products.forEach((product, index) => {
+
+        // No mostrar productos agotados
+
+        if (!product.available) return;
+
+
+        container.innerHTML += `
+
+            <div class="card">
+
+                <img
+                    src="${product.image}"
+                    alt="${product.name}"
+                >
+
+                <div class="card-content">
+
+                    <h3>${product.name}</h3>
+
+                    <div class="price">
+
+                        C$ ${product.price}
+
+                    </div>
+
+                    <button
+                        class="btn"
+                        onclick="addProductToCart(${index})"
+                    >
+
+                        Añadir al carrito
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+
+/* =====================================================
+   3. VARIABLES DEL CARRITO
+   ===================================================== */
+
+
+let cart = {};
+
+let lastInvoiceImage = null;
+
+
+
+/* =====================================================
+   4. AGREGAR PRODUCTOS AL CARRITO
+   ===================================================== */
+
+
+function addProductToCart(index) {
+
+    const product = products[index];
+
+    // Verificar disponibilidad
+
+    if (!product || !product.available) {
+
+        alert("Este producto no está disponible.");
+
+        return;
+
+    }
+
+    addToCart(product.name, product.price);
+
+}
+
+
+function addToCart(name, price) {
+
+    if (cart[name]) {
+
+        cart[name].quantity++;
+
+    } else {
+
+        cart[name] = {
+
+            price: price,
+            quantity: 1
+
+        };
+
+    }
+
+    renderCart();
+
+}
+
+
+
+/* =====================================================
+   5. ELIMINAR PRODUCTOS DEL CARRITO
+   ===================================================== */
+
+
+function removeFromCart(name) {
+
+    if (!cart[name]) return;
+
+    if (cart[name].quantity > 1) {
+
+        cart[name].quantity--;
+
+    } else {
+
+        delete cart[name];
+
+    }
+
+    renderCart();
+
+}
+
+
+
+/* =====================================================
+   6. ACTUALIZAR VISUALMENTE EL CARRITO
+   ===================================================== */
+
+
+function renderCart() {
+
+    let container = document.getElementById("cartItems");
+
+    let total = 0;
+
+    container.innerHTML = "";
+
+    const keys = Object.keys(cart);
+
+
+    if (keys.length === 0) {
+
+        container.innerHTML =
+        '<p class="empty">No hay productos en el carrito.</p>';
+
+        document.getElementById("total").innerText =
+        "Total: C$ 0";
+
+        return;
+
+    }
+
+
+    keys.forEach(product => {
+
+        let item = cart[product];
+
+        let subtotal = item.quantity * item.price;
+
+        total += subtotal;
+
+
+        container.innerHTML += `
+
+            <div class="cart-item">
+
+                <div>
+
+                    <strong>${product}</strong>
+
+                    <br>
+
+                    Cantidad: ${item.quantity}
+
+                    <br>
+
+                    Subtotal: C$ ${subtotal}
+
+                </div>
+
+
+                <button
+                    class="remove"
+                    onclick="removeFromCart('${product}')"
+                >
+
+                    Eliminar
+
+                </button>
+
+            </div>
+
+        `;
+
+    });
+
+
+    document.getElementById("total").innerText =
+    `Total: C$ ${total}`;
+
+}
+
+
+
+/* =====================================================
+   7. GENERAR FACTURA
+   ===================================================== */
+
+
+function generateInvoice() {
+
+    const keys = Object.keys(cart);
+
+
+    if (keys.length === 0) {
+
+        alert("Agrega productos al carrito primero.");
+
+        return;
+
+    }
+
+
+    let total = 0;
+
+
+    let html = `
+
+        <div style="
+            background:white;
+            padding:20px;
+            color:#444;
+            font-family:Arial;
+        ">
+
+
+            <h2 style="text-align:center;">
+
+                Concept by Lily 💖
+
+            </h2>
+
+
+            <p style="
+                text-align:center;
+                font-size:18px;
+                margin:5px 0;
+            ">
+
+                📱 WhatsApp: +505 8798 4118
+
+            </p>
+
+
+            <p style="text-align:center;">
+
+                Proforma de Pedido
+
+            </p>
+
+
+            <hr>
+
+    `;
+
+
+    keys.forEach(product => {
+
+        const item = cart[product];
+
+        const subtotal = item.price * item.quantity;
+
+        total += subtotal;
+
+
+        html += `
+
+            <p>
+
+                ✅ ${product}
+
+                <br>
+
+                Cantidad: ${item.quantity}
+
+                <br>
+
+                Subtotal: C$ ${subtotal}
+
+            </p>
+
+        `;
+
+    });
+
+
+    html += `
+
+            <hr>
+
+
+            <h2>
+
+                Total: C$ ${total}
+
+            </h2>
+
+
+            <p>
+
+                Gracias por elegir
+
+                Concept by Lily 💖
+
+            </p>
+
+
+        </div>
+
+    `;
+
+
+    document.getElementById("invoiceArea").innerHTML = html;
+
+
+    document.getElementById("invoiceModal").style.display = "flex";
+
+}
+
+
+
+/* =====================================================
+   8. CERRAR FACTURA
+   ===================================================== */
+
+
+function closeInvoice() {
+
+    document.getElementById("invoiceModal").style.display = "none";
+
+}
+
+
+
+/* =====================================================
+   9. COMPARTIR FACTURA
+   ===================================================== */
+
+
+async function shareInvoice() {
+
+    try {
+
+        const canvas = await html2canvas(
+
+            document.getElementById("invoiceArea")
+
+        );
+
+
+        const blob = await new Promise(resolve => {
+
+            canvas.toBlob(resolve, "image/png");
+
+        });
+
+
+        if (!blob) {
+
+            throw new Error("No fue posible generar la imagen.");
+
+        }
+
+
+        const file = new File(
+
+            [blob],
+
+            "Pedido-Concept-by-Lily.png",
+
+            {
+                type: "image/png"
+            }
+
+        );
+
+
+        if (
+
+            navigator.canShare &&
+
+            navigator.canShare({
+                files: [file]
+            })
+
+        ) {
+
+            await navigator.share({
+
+                files: [file],
+
+                title: "Pedido Concept by Lily",
+
+                text: "Hola 💖, me gustaría realizar este pedido."
+
+            });
+
+        } else {
+
+            alert(
+
+                "Tu dispositivo no admite compartir imágenes."
+
+            );
+
+        }
+
+
+    } catch (error) {
+
+        // No mostrar error si el usuario cancela el envío
+
+        if (error.name === "AbortError") {
+
+            return;
+
+        }
+
+
+        console.error(error);
+
+
+        alert(
+
+            "No fue posible compartir el pedido."
+
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   10. INICIAR CATÁLOGO
+   ===================================================== */
+
+
+renderProducts();
+
+console.log("Concept by Lily cargado correctamente 💖");
+
+
+</script>
+
+</body>
+</html>
