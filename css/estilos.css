@@ -310,4 +310,14 @@ main {
   transform: translateY(-2px);
 }
 
-.social-links svg { width: 17px; height: 17px; fill: currentColor; flex: 0 0 auto; }
+.social-links svg {
+  display: block;
+  width: 17px !important;
+  height: 17px !important;
+  min-width: 17px;
+  max-width: 17px;
+  min-height: 17px;
+  max-height: 17px;
+  flex: 0 0 17px;
+  fill: currentColor;
+}
