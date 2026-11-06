@@ -117,7 +117,8 @@ main {
 .collection-card {
   position: relative;
   display: flex;
-  min-height: 310px;
+  aspect-ratio: 16 / 6;
+  min-height: 0;
   overflow: hidden;
   align-items: flex-end;
   padding: 27px;
@@ -137,34 +138,28 @@ main {
   z-index: -1;
   inset: 0;
   content: "";
-  background: linear-gradient(180deg, rgba(20, 18, 22, .03) 5%, rgba(20, 18, 22, .68) 100%);
-  transition: opacity .25s ease;
-}
-
-.collection-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 34px rgba(64, 52, 58, .18);
-}
-
-.collection-card:focus-visible {
-  outline: 3px solid var(--rose);
-  outline-offset: 4px;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 18, 22, .02) 25%,
+    rgba(20, 18, 22, .62) 100%
+  );
 }
 
 .collection-woman {
   background-image: url('../imagenes/accesorios-mujer.png');
-  background-color: #a78b91;
+  background-position: center;
 }
 
 .collection-beauty {
   background-image: url('../imagenes/cosmeticos.png');
-  background-color: #bd8799;
+  background-position: center;
 }
 
 .collection-man {
   grid-column: 1 / -1;
-  min-height: 270px;
+  aspect-ratio: 7 / 1;
   background-image: url('../imagenes/accesorios-hombre.png');
+  background-position: center;
   background-color: #344457;
 }
 
@@ -259,14 +254,19 @@ main {
   .collections { padding-bottom: 35px; }
   .section-heading { margin-bottom: 17px; }
   .collection-grid { grid-template-columns: 1fr; gap: 14px; }
-  .collection-card,
-  .collection-man {
+  .collection-card {
     grid-column: auto;
-    min-height: 225px;
+    aspect-ratio: 16 / 7;
+    min-height: 0;
     padding: 21px;
     border-radius: 14px;
   }
-  .collection-man { min-height: 225px; }
+
+  .collection-man {
+    aspect-ratio: 16 / 6;
+    min-height: 0;
+    background-position: center;
+  }
   .card-number { top: 16px; left: 18px; }
   .card-title { font-size: 29px; }
   .closing { padding: 15px 10px 38px; }
