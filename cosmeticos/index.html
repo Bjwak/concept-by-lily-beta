@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Concept by Lily</title>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+<style>
+/* =====================================
+   PALETA DE COLORES
+===================================== */
+:root {
+    --rosa-principal: #C98796;
+    --rosa-oscuro: #A96576;
+    --rosa-suave: #F3DDE2;
+    --rosa-claro: #FFF5F7;
+    --rosa-borde: #E8C4CC;
+    --texto: #59464A;
+    --texto-suave: #92777D;
+    --blanco: #FFFFFF;
+    --verde-whatsapp: #25D366;
+    --rojo-stock: #D97983;
+}
+
+/* =====================================
+   CONFIGURACIÓN GENERAL
+===================================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--rosa-claro);
+    color: var(--texto);
+}
+
+/* =====================================
+   ENCABEZADO / BANNER
+===================================== */
+header {
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+    background: var(--rosa-suave);
+}
+
+header img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* =====================================
+   HERRAMIENTAS DEL CATÁLOGO
+===================================== */
+.catalog-tools {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    padding: 0 20px;
+}
+
+.search-wrap {
+    max-width: 520px;
+    margin: 0 auto 20px;
+}
+
+#productSearch {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--rosa-borde);
+    border-radius: 14px;
+    background: var(--blanco);
+    color: var(--texto);
+    font-size: 16px;
+    outline: none;
+    transition: .2s;
+}
+
+#productSearch::placeholder {
+    color: #B69BA1;
+}
+
+#productSearch:focus {
+    border-color: var(--rosa-principal);
+    box-shadow: 0 0 0 3px rgba(201, 135, 150, .18);
+}
+
+/* =====================================
+   BOTONES DE CATEGORÍA
+===================================== */
+.category-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-btn {
+    border: 1px solid var(--rosa-borde);
+    background: var(--blanco);
+    color: var(--rosa-oscuro);
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.category-btn:hover,
+.category-btn.active {
+    background: var(--rosa-principal);
+    border-color: var(--rosa-principal);
+    color: var(--blanco);
+}
+
+.product-count {
+    text-align: center;
+    color: var(--texto-suave);
+    font-size: 14px;
+    margin: 16px 0 0;
+}
+
+/* =====================================
+   CONTENEDOR DE PRODUCTOS
+===================================== */
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 40px 20px;
+}
+
+/* =====================================
+   TARJETAS DE PRODUCTOS
+===================================== */
+.card {
+    position: relative;
+    background: var(--blanco);
+    width: 320px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(232, 196, 204, .55);
+    box-shadow: 0 5px 18px rgba(169, 101, 118, .10);
+    transition: transform .25s, box-shadow .25s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 9px 24px rgba(169, 101, 118, .16);
+}
+
+.card img {
+    width: 100%;
+    height: 280px;
+    object-fit: contain;
+    background: #FFFAFB;
+}
+
+.card-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.card h3 {
+    margin: 0;
+    color: var(--texto);
+    font-size: 18px;
+}
+
+.price {
+    font-size: 30px;
+    font-weight: bold;
+    color: var(--rosa-oscuro);
+    margin: 15px 0;
+}
+
+/* =====================================
+   SELECTORES DE TALLA Y COLOR
+===================================== */
+.variant-group {
+    text-align: left;
+    margin: 14px 0;
+}
+
+.variant-group label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 7px;
+    color: var(--rosa-oscuro);
+}
+
+.variant-group select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--rosa-borde);
+    border-radius: 10px;
+    background: var(--blanco);
+    color: var(--texto);
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.variant-group select:focus {
+    border-color: var(--rosa-principal);
+    box-shadow: 0 0 0 3px rgba(201, 135, 150, .15);
+}
+
+/* =====================================
+   BOTONES GENERALES
+===================================== */
+.btn {
+    border: none;
+    background: var(--rosa-principal);
+    color: var(--blanco);
+    padding: 12px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: .2s;
+}
+
+.btn:hover {
+    background: var(--rosa-oscuro);
+    transform: translateY(-1px);
+}
+
+.card .btn:disabled {
+    background: #CFC4C7;
+    cursor: not-allowed;
+    opacity: 1;
+    transform: none;
+}
+
+/* =====================================
+   PRODUCTOS AGOTADOS
+===================================== */
+.stock-badge {
+    display: inline-block;
+    background: var(--rojo-stock);
+    color: var(--blanco);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .5px;
+    padding: 7px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.card.is-unavailable img {
+    opacity: .55;
+}
+
+/* =====================================
+   MENSAJE SIN RESULTADOS
+===================================== */
+.no-results {
+    width: 100%;
+    text-align: center;
+    color: var(--texto-suave);
+    padding: 35px 15px;
+    font-size: 17px;
+}
+
+/* =====================================
+   CARRITO DE COMPRAS
+===================================== */
+.cart {
+    background: var(--blanco);
+    max-width: 800px;
+    margin: 20px auto 50px;
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(232, 196, 204, .55);
+    box-shadow: 0 5px 18px rgba(169, 101, 118, .10);
+}
+
+.cart h2 {
+    margin-top: 0;
+    color: var(--rosa-oscuro);
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #F2E5E8;
+    padding: 12px 0;
+    color: var(--texto);
+}
+
+.remove {
+    background: #D97983;
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    padding: 7px 11px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.remove:hover {
+    background: #BD5967;
+}
+
+.total {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--rosa-oscuro);
+}
+
+.empty {
+    color: var(--texto-suave);
+}
+
+/* =====================================
+   BOTÓN DE WHATSAPP
+===================================== */
+.whatsapp-btn {
+    margin-top: 20px;
+    display: inline-block;
+    background: var(--verde-whatsapp);
+    color: var(--blanco);
+    text-decoration: none;
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.whatsapp-btn:hover {
+    background: #1EAD55;
+    transform: translateY(-2px);
+}
+
+/* =====================================
+   DISEÑO RESPONSIVE
+===================================== */
+@media (max-width: 600px) {
+
+    .catalog-tools {
+        padding: 0 14px;
+    }
+
+    .products {
+        gap: 18px;
+        padding: 25px 12px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .category-nav {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 3px 2px 10px;
+        scrollbar-width: thin;
+    }
+
+    .category-btn {
+        flex: 0 0 auto;
+    }
+
+    .cart {
+        margin: 20px 12px 35px;
+        padding: 20px 15px;
+    }
+
+    .cart-item {
+        align-items: flex-start;
+    }
+
+    .total {
+        font-size: 22px;
+    }
+}
+</style>
+    
+</head>
+
+
+    
+<body>
+
+<header>
+    <img src="banner-cosmeticos.png"
+         alt="Concept by Lily - Cosméticos y Maquillaje">
+</header>
+
+
+<!-- Los productos se administran desde el arreglo products del script. -->
+<section class="catalog-tools">
+    <div class="search-wrap">
+        <input
+            type="search"
+            id="productSearch"
+            placeholder="Buscar productos..."
+            aria-label="Buscar productos"
+        >
+    </div>
+
+    <nav class="category-nav" aria-label="Filtrar productos por categoría">
+        <button class="category-btn active" type="button" data-filter="all">Todos</button>
+        <button class="category-btn" type="button" data-filter="lipsticks">Lipsticks</button>
+        <button class="category-btn" type="button" data-filter="lip-oils">Lip Oils</button>
+        <button class="category-btn" type="button" data-filter="powders">Powders</button>
+        <button class="category-btn" type="button" data-filter="brow">Brow</button>
+        <button class="category-btn" type="button" data-filter="maybelline">Maybelline</button>
+        <button class="category-btn" type="button" data-filter="body-lotions">Body Lotions</button>
+    </nav>
+    <p id="productCount" class="product-count" aria-live="polite"></p>
+</section>
+
+<!-- Las tarjetas se generan automáticamente desde el arreglo products. -->
+<section class="products" id="productsContainer" aria-live="polite"></section>
+
+<section class="cart">
+
+    <h2>🛒 Carrito</h2>
+
+    <div id="cartItems">
+        <p class="empty">No hay productos en el carrito.</p>
+    </div>
+
+    <div id="total" class="total">
+        Total: C$ 0
+    </div>
+
+<button
+    id="whatsappBtn"
+    class="whatsapp-btn"
+    onclick="generateInvoice()"
+>
+    Finalizar pedido
+</button>
+
+
+</section>
+<div id="invoiceModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.7);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div style="
+background:white;
+padding:20px;
+border-radius:20px;
+max-width:500px;
+width:95%;
+max-height:90vh;
+overflow:auto;
+">
+
+<div id="invoiceArea"></div>
+
+<br>
+
+<button class="btn" onclick="shareInvoice()">
+💖 Enviar Pedido
+</button>
+
+
+<button class="remove" onclick="closeInvoice()">
+Cerrar
+</button>
+
+</div>
+</div>
+<script>
+/*
+    CATÁLOGO DE PRODUCTOS
+    Para agregar un producto, copia un objeto y modifica sus datos.
+    Para marcarlo agotado, cambia available: true por available: false.
+*/
+const products = [
+    {
+        name: "E.L.F. Left on Red",
+        price: 430,
+        image: "left-on-red.jpg",
+        category: "lipsticks",
+        available: true
+    },
+    {
+        name: "E.L.F. Plum up",
+        price: 430,
+        image: "plum-up.jpg",
+        category: "lipsticks",
+        available: true
+    },
+    {
+        name: "E.L.F. Pink Positive",
+        price: 430,
+        image: "pink-positive.jpg",
+        category: "lipsticks",
+        available: true
+    },
+    {
+        name: "E.L.F. Burgundid",
+        price: 430,
+        image: "burgundid.jpg",
+        category: "lipsticks",
+        available: true
+    },
+    {
+        name: "Glow Reviver Plumping Lip Oil - Talk that taupe",
+        price: 500,
+        image: "talk-that-taupe.jpg",
+        category: "lip-oils",
+        available: true
+    },
+    {
+        name: "Glow Reviver Plumping Lip Oil - Ultraviolet",
+        price: 500,
+        image: "ultraviolet.jpg",
+        category: "lip-oils",
+        available: true
+    },
+    {
+        name: "Glow Reviver Plumping Lip Oil - Burst Bubble",
+        price: 500,
+        image: "burst-bubble.jpg",
+        category: "lip-oils",
+        available: true
+    },
+    {
+        name: "Glow Reviver Plumping Lip Oil - Heavy Petal",
+        price: 500,
+        image: "heavy-petal.jpg",
+        category: "lip-oils",
+        available: true
+    },
+    {
+        name: "Powder Blush Pallet Elf - 4 Tonos",
+        price: 570,
+        image: "powder-blush-palette.jpg",
+        category: "powders",
+        available: true
+    },
+    {
+        name: "E.L.F Brow Laminating Gel",
+        price: 570,
+        image: "brow-laminating-gel.jpg",
+        category: "brow",
+        available: true
+    },
+    {
+        name: "Mascara Maybelline Sky High",
+        price: 600,
+        image: "maybelline-sky-high.jpg",
+        category: "maybelline",
+        available: true
+    },
+    {
+        name: "Teddy Tint - Maybelline Cool Grunge",
+        price: 440,
+        image: "maybelline-cool-grunge.jpg",
+        category: "maybelline",
+        available: true
+    },
+    {
+        name: "Teddy Tint - Maybelline Kneehigh",
+        price: 440,
+        image: "maybelline-kneehigh.jpg",
+        category: "maybelline",
+        available: true
+    },
+    {
+        name: "Teddy Tint - Maybelline Pinky Promise",
+        price: 440,
+        image: "maybelline-pinky-promise.jpg",
+        category: "maybelline",
+        available: true
+    },
+    {
+        name: "Body Lotion EOS Beach Waves - 16 Onz",
+        price: 760,
+        image: "body-lotion-beach-waves-16onz.jpg",
+        category: "body-lotions",
+        available: true
+    },
+    {
+        name: "Body Lotion EOS Vainilla Cashmere - 16 Onz",
+        price: 760,
+        image: "body-lotion-vainilla-cashmere-16onz.jpg",
+        category: "body-lotions",
+        available: true
+    },
+    {
+        name: "Body Lotion EOS Fresh & Cozy - 16 Onz",
+        price: 760,
+        image: "body-lotion-fresh-n-cozy-16onz.jpg",
+        category: "body-lotions",
+        available: true
+    }
+];
+
+let activeCategory = "all";
+let cart = {};
+let lastInvoiceImage = null;
+
+const productsContainer = document.getElementById("productsContainer");
+const searchInput = document.getElementById("productSearch");
+const productCount = document.getElementById("productCount");
+
+/* Normaliza el texto para que la búsqueda no dependa de mayúsculas o tildes. */
+function normalizeText(value) {
+    return String(value)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("es")
+        .trim();
+}
+
+/* Dibuja las tarjetas a partir del arreglo products. */
+function renderProducts() {
+    const search = normalizeText(searchInput.value);
+
+    const filteredProducts = products
+        .map((product, index) => ({ ...product, index }))
+        .filter(product => {
+            const categoryMatches =
+                activeCategory === "all" ||
+                product.category === activeCategory;
+
+            const searchMatches =
+                normalizeText(product.name).includes(search);
+
+            return categoryMatches && searchMatches;
+        });
+
+    productCount.textContent =
+        `${filteredProducts.length} ${
+            filteredProducts.length === 1 ? "producto" : "productos"
+        }`;
+
+    if (filteredProducts.length === 0) {
+        productsContainer.innerHTML =
+            '<p class="no-results">No se encontraron productos.</p>';
+        return;
+    }
+
+    productsContainer.innerHTML = filteredProducts.map(product => {
+        const unavailable = !product.available;
+
+        return `
+            <article class="card ${unavailable ? "is-unavailable" : ""}">
+                <img
+                    src="${escapeHTML(product.image)}"
+                    alt="${escapeHTML(product.name)}"
+                    loading="lazy"
+                >
+
+                <div class="card-content">
+                    ${unavailable
+                        ? '<span class="stock-badge">AGOTADO</span>'
+                        : ''
+                    }
+
+                    <h3>${escapeHTML(product.name)}</h3>
+                    <div class="price">C$ ${formatNumber(product.price)}</div>
+
+                    <button
+                        class="btn"
+                        type="button"
+                        data-product-index="${product.index}"
+                        ${unavailable ? "disabled" : ""}
+                    >
+                        ${unavailable ? "Agotado" : "Añadir al carrito"}
+                    </button>
+                </div>
+            </article>
+        `;
+    }).join("");
+
+    productsContainer.querySelectorAll("[data-product-index]").forEach(button => {
+        button.addEventListener("click", () => {
+            const index = Number(button.dataset.productIndex);
+            addProductToCart(index);
+        });
+    });
+}
+
+/* Evita que nombres o imágenes introduzcan HTML accidentalmente. */
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function formatNumber(value) {
+    return Number(value).toLocaleString("es-NI");
+}
+
+/* Filtros por categoría. */
+document.querySelectorAll(".category-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        activeCategory = button.dataset.filter;
+
+        document.querySelectorAll(".category-btn").forEach(item => {
+            item.classList.toggle("active", item === button);
+        });
+
+        renderProducts();
+    });
+});
+
+/* Búsqueda instantánea. */
+searchInput.addEventListener("input", renderProducts);
+
+/* Añade al carrito usando el índice del producto en el catálogo. */
+function addProductToCart(index) {
+    const product = products[index];
+
+    if (!product || !product.available) {
+        alert("Este producto está agotado.");
+        return;
+    }
+
+    addToCart(product.name, product.price);
+}
+
+function addToCart(name, price) {
+    if (cart[name]) {
+        cart[name].quantity++;
+    } else {
+        cart[name] = {
+            price: price,
+            quantity: 1
+        };
+    }
+
+    renderCart();
+}
+
+function removeFromCart(name) {
+    if (!cart[name]) return;
+
+    if (cart[name].quantity > 1) {
+        cart[name].quantity--;
+    } else {
+        delete cart[name];
+    }
+
+    renderCart();
+}
+
+function renderCart() {
+    const container = document.getElementById("cartItems");
+    const totalElement = document.getElementById("total");
+    const keys = Object.keys(cart);
+
+    if (keys.length === 0) {
+        container.innerHTML =
+            '<p class="empty">No hay productos en el carrito.</p>';
+        totalElement.innerText = "Total: C$ 0";
+        return;
+    }
+
+    let total = 0;
+
+    container.innerHTML = keys.map(productName => {
+        const item = cart[productName];
+        const subtotal = item.quantity * item.price;
+        total += subtotal;
+
+        return `
+            <div class="cart-item">
+                <div>
+                    <strong>${escapeHTML(productName)}</strong>
+                    <br>
+                    Cantidad: ${item.quantity}
+                    <br>
+                    Subtotal: C$ ${formatNumber(subtotal)}
+                </div>
+
+                <button
+                    class="remove"
+                    type="button"
+                    data-remove-product="${escapeHTML(productName)}"
+                >
+                    Eliminar
+                </button>
+            </div>
+        `;
+    }).join("");
+
+    container.querySelectorAll("[data-remove-product]").forEach(button => {
+        button.addEventListener("click", () => {
+            removeFromCart(button.dataset.removeProduct);
+        });
+    });
+
+    totalElement.innerText = `Total: C$ ${formatNumber(total)}`;
+}
+
+function generateInvoice() {
+    const keys = Object.keys(cart);
+
+    if (keys.length === 0) {
+        alert("Agrega productos al carrito primero.");
+        return;
+    }
+
+    let total = 0;
+
+    let html = `
+        <div style="
+            background:white;
+            padding:20px;
+            color:#444;
+            font-family:Arial;
+        ">
+            <h2 style="text-align:center;">
+                Concept by Lily 💖
+            </h2>
+
+            <p style="
+                text-align:center;
+                font-size:18px;
+                margin:5px 0;
+            ">
+                📱 WhatsApp: +505 8798 4118
+            </p>
+
+            <p style="text-align:center;">
+                Proforma de Pedido
+            </p>
+
+            <hr>
+    `;
+
+    keys.forEach(productName => {
+        const item = cart[productName];
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        html += `
+            <p>
+                ✅ ${escapeHTML(productName)}
+                <br>
+                Cantidad: ${item.quantity}
+                <br>
+                Subtotal: C$ ${formatNumber(subtotal)}
+            </p>
+        `;
+    });
+
+    html += `
+            <hr>
+
+            <h2>
+                Total: C$ ${formatNumber(total)}
+            </h2>
+
+            <p>
+                Gracias por elegir
+                Concept by Lily 💖
+            </p>
+        </div>
+    `;
+
+    document.getElementById("invoiceArea").innerHTML = html;
+    document.getElementById("invoiceModal").style.display = "flex";
+}
+
+function closeInvoice() {
+    document.getElementById("invoiceModal").style.display = "none";
+}
+
+async function shareInvoice() {
+    try {
+        const invoiceArea = document.getElementById("invoiceArea");
+
+        const canvas = await html2canvas(invoiceArea);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+        if (!blob) {
+            throw new Error("No se pudo generar la imagen del pedido.");
+        }
+
+        const file = new File(
+            [blob],
+            "Pedido-Concept-by-Lily.png",
+            { type: "image/png" }
+        );
+
+        if (
+            navigator.canShare &&
+            navigator.canShare({ files: [file] }) &&
+            navigator.share
+        ) {
+            await navigator.share({
+                files: [file],
+                title: "Pedido Concept by Lily",
+                text: "Hola 💖, me gustaría realizar este pedido."
+            });
+        } else {
+            /* Alternativa para navegadores que no permiten compartir archivos. */
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Pedido-Concept-by-Lily.png";
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+            alert("La imagen del pedido se descargó. Puedes adjuntarla en WhatsApp.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("No fue posible compartir el pedido.");
+    }
+}
+
+/* Render inicial del catálogo y carrito. */
+renderProducts();
+renderCart();
+
+console.log("Concept by Lily: catálogo dinámico cargado.");
+</script>
+
+</body>
+</html>
