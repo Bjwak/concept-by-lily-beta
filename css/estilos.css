@@ -280,3 +280,34 @@ main {
     animation-duration: .01ms !important;
   }
 }
+
+
+/* Redes sociales del negocio */
+.social-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 15px;
+  border: 1px solid rgba(169, 101, 118, .25);
+  border-radius: 999px;
+  color: #805665;
+  background: rgba(255,255,255,.65);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: .2s ease;
+}
+.social-links a:hover {
+  background: #a96576;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.social-links svg { width: 17px; height: 17px; fill: currentColor; flex: 0 0 auto; }

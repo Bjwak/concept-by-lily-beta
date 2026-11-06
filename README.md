@@ -21,3 +21,12 @@ Proyecto unificado para GitHub Pages.
 - Los catálogos femenino y cosméticos se han copiado desde los ZIP proporcionados, sin reescribir su lógica interna.
 - La sección masculina es provisional porque el ZIP recibido contiene únicamente el banner y un bosquejo, no productos masculinos.
 - Antes de reemplazar el repositorio de producción, prueba las tres secciones, los pedidos y la visualización en móvil en el repositorio beta.
+
+
+## Navegación y contacto
+- La página principal muestra enlaces a Facebook, Instagram y WhatsApp.
+- Las tarjetas de las colecciones llevan a `acceso/` con el parámetro `tienda`.
+- La página `acceso/` es compartida por las tres colecciones.
+- Para una primera compra, abre WhatsApp con un mensaje que incluye el nombre y enlace del catálogo seleccionado. El cliente debe pulsar Enviar y luego volver a la página para entrar al catálogo.
+- Para clientes que ya tienen conversación con el negocio, el botón abre directamente el catálogo.
+- Número de WhatsApp configurado: +505 8798 4118.
