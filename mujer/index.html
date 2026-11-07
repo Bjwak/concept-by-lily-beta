@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link rel="icon" type="image/png" href="../favicon.png">
 <title>Concept by Lily</title>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
@@ -387,6 +387,26 @@ header img {
         font-size: 22px;
     }
 }
+
+.back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 16px;
+    padding: 10px 16px;
+    color: #a96576;
+    background: #f5e8ec;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.back-home:hover {
+    background: #ead5dc;
+}
+
 </style>
     
 </head>
@@ -396,6 +416,11 @@ header img {
 <body>
 
 <header>
+    <a href="../" class="back-home">
+        <span aria-hidden="true">←</span>
+        Volver al inicio
+    </a>
+
     <img
         src="banner-accesorios.png"
         alt="Concept by Lily - Skincare, maquillaje y accesorios"
@@ -1048,42 +1073,119 @@ async function shareInvoice() {
     try {
         const invoiceArea = document.getElementById("invoiceArea");
 
+        // 1. Generar imagen del pedido.
         const canvas = await html2canvas(invoiceArea);
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+        const blob = await new Promise(resolve => {
+            canvas.toBlob(resolve, "image/png");
+        });
 
         if (!blob) {
             throw new Error("No se pudo generar la imagen del pedido.");
         }
 
-        const file = new File(
-            [blob],
-            "Pedido-Concept-by-Lily.png",
-            { type: "image/png" }
-        );
+        const fileName = "Pedido-Concept-by-Lily.png";
 
-        if (
-            navigator.canShare &&
-            navigator.canShare({ files: [file] }) &&
-            navigator.share
-        ) {
-            await navigator.share({
-                files: [file],
-                title: "Pedido Concept by Lily",
-                text: "Hola 💖, me gustaría realizar este pedido."
+        // 2. Detectar si estamos dentro de una aplicación nativa.
+        const capacitor = window.Capacitor;
+        const isNative = capacitor?.isNativePlatform?.() === true;
+
+        if (isNative) {
+
+            // 3. Obtener los plugins nativos.
+            const plugins = capacitor.Plugins || {};
+            const Filesystem = plugins.Filesystem;
+            const Share = plugins.Share;
+
+            if (!Filesystem || !Share) {
+                throw new Error(
+                    "No se encontraron los plugins nativos de compartir."
+                );
+            }
+
+            // 4. Convertir la imagen a Base64.
+            const base64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onloadend = () => {
+                    const result = reader.result;
+                    resolve(result.split(",")[1]);
+                };
+
+                reader.onerror = reject;
+
+                reader.readAsDataURL(blob);
             });
-        } else {
-            /* Alternativa para navegadores que no permiten compartir archivos. */
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "Pedido-Concept-by-Lily.png";
-            link.click();
-            URL.revokeObjectURL(link.href);
 
-            alert("La imagen del pedido se descargó. Puedes adjuntarla en WhatsApp.");
+            // 5. Guardar temporalmente la imagen en Android.
+            const savedFile = await Filesystem.writeFile({
+                path: `pedidos/Pedido-${Date.now()}.png`,
+                data: base64,
+                directory: "CACHE",
+                recursive: true
+            });
+
+            // 6. Abrir el menú nativo para compartir.
+            await Share.share({
+                title: "Pedido Concept by Lily",
+                text: "Hola 💖, me gustaría realizar este pedido.",
+                files: [savedFile.uri],
+                dialogTitle: "Compartir pedido"
+            });
+
+        } else {
+
+            // 7. Compartir mediante el navegador web.
+            const file = new File(
+                [blob],
+                fileName,
+                { type: "image/png" }
+            );
+
+            if (
+                navigator.share &&
+                navigator.canShare &&
+                navigator.canShare({ files: [file] })
+            ) {
+                await navigator.share({
+                    files: [file],
+                    title: "Pedido Concept by Lily",
+                    text: "Hola 💖, me gustaría realizar este pedido."
+                });
+
+            } else {
+
+                // 8. Alternativa: descargar la imagen.
+                const imageUrl = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = imageUrl;
+                link.download = fileName;
+                link.click();
+
+                URL.revokeObjectURL(imageUrl);
+
+                alert(
+                    "La imagen del pedido se descargó. Puedes adjuntarla en WhatsApp."
+                );
+            }
         }
+
     } catch (error) {
-        console.error(error);
-        alert("No fue posible compartir el pedido.");
+
+        // No mostrar error si el usuario cancela el menú de compartir.
+        if (
+            error.message &&
+            error.message.toLowerCase().includes("cancel")
+        ) {
+            return;
+        }
+
+        console.error("Error al compartir pedido:", error);
+
+        alert(
+            "No fue posible compartir el pedido. Revisa la consola para más detalles."
+        );
     }
 }
 

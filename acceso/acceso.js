@@ -1,18 +1,18 @@
 (() => {
   const WHATSAPP_NUMBER = "50587984118";
   const stores = {
-    mujer: {
-      name: "Accesorios para mujer",
-      path: "../mujer/"
-    },
-    cosmeticos: {
-      name: "Cosméticos y maquillaje",
-      path: "../cosmeticos/"
-    },
-    hombre: {
-      name: "Accesorios para hombre",
-      path: "../hombre/"
-    }
+      mujer: {
+          name: "Accesorios para mujer",
+          path: "../mujer/index.html"
+      },
+      cosmeticos: {
+          name: "Cosméticos y maquillaje",
+          path: "../cosmeticos/index.html"
+      },
+      hombre: {
+          name: "Accesorios para hombre",
+          path: "../hombre/index.html"
+      }
   };
 
   const params = new URLSearchParams(window.location.search);
