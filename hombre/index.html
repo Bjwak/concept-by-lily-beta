@@ -1,150 +1,58 @@
 <!doctype html>
 <html lang="es">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#26384d">
-    <link rel="icon" type="image/png" href="../favicon.png">
-    <title>Accesorios para hombre | Concept by Lily</title>
-
-    <style>
-        :root {
-            --navy: #26384d;
-            --dark: #172536;
-            --silver: #e8edf2;
-            --ink: #303a46;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: #f1f3f5;
-            color: var(--ink);
-            font-family: Arial, sans-serif;
-        }
-
-        header img {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        .back-home {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin: 12px 16px;
-            padding: 10px 16px;
-            color: var(--navy);
-            background: var(--silver);
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: background 0.2s ease;
-        }
-
-        .back-home:hover {
-            background: #d5dce4;
-        }
-
-        main {
-            width: min(850px, calc(100% - 36px));
-            margin: 56px auto;
-            text-align: center;
-            background: white;
-            padding: 48px 28px;
-            border-radius: 18px;
-            box-shadow: 0 12px 35px #17253612;
-        }
-
-        h1 {
-            color: var(--navy);
-            font-size: clamp(28px, 5vw, 42px);
-            margin: 0 0 14px;
-        }
-
-        p {
-            line-height: 1.7;
-            color: #687584;
-        }
-
-        .tag {
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            font-size: 11px;
-            font-weight: bold;
-            color: #718093;
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 18px;
-            padding: 13px 22px;
-            border-radius: 7px;
-            background: var(--navy);
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        footer {
-            text-align: center;
-            padding: 25px;
-            color: #778391;
-            font-size: 13px;
-        }
-    </style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e3e9ef">
+  <meta name="description" content="Accesorios para hombre de Concept by Lily. Consulta productos, variantes y disponibilidad.">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../css/catalogo.css">
+  <title>Accesorios para hombre | Concept by Lily</title>
+  <style>
+    :root{--accent:#344b63;--accent-dark:#203448;--accent-soft:#e3e9ef;--page:#f5f7fa;}
+  </style>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>window.CATALOG_CONFIG={storeId:"8c109c37-c8ed-4726-b950-24a453ba999b"};</script>
+  <script type="module" src="../js/catalogo.js"></script>
 </head>
-
 <body>
+  <header class="site-header">
+    <a href="../" class="back-home"><span aria-hidden="true">←</span> Volver al inicio</a>
+    <img src="banner-masculino.png" alt="Concept by Lily | Accesorios para hombre">
+  </header>
 
-    <header>
+  <main>
+    <section class="catalog-tools">
+      <div class="search-wrap">
+        <input id="productSearch" type="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+      </div>
+      <nav id="categoryNav" class="category-nav" aria-label="Filtrar por categoría">
+        <button class="category-btn active" type="button">Todos</button>
+      </nav>
+      <p id="productCount" class="product-count" aria-live="polite"></p>
+      <p id="catalogMessage" class="catalog-message" role="status"></p>
+    </section>
 
-        <a href="../" class="back-home">
-            <span aria-hidden="true">←</span>
-            Volver al inicio
-        </a>
+    <section id="productsContainer" class="products" aria-live="polite">
+      <div class="empty-state"><h2>Cargando colección…</h2></div>
+    </section>
 
-        <img
-            src="banner-masculino.png"
-            alt="Concept by Lily, accesorios para hombre"
-        >
+    <section class="cart" aria-labelledby="cartTitle">
+      <h2 id="cartTitle">🛒 Tu carrito</h2>
+      <div id="cartItems"><p class="empty-cart">Tu carrito está vacío.</p></div>
+      <div id="total" class="total">Total: C$ 0.00</div>
+      <button id="whatsappBtn" class="whatsapp-btn" type="button">Preparar pedido</button>
+    </section>
+  </main>
 
-    </header>
+  <div id="invoiceModal" class="invoice-modal" role="dialog" aria-modal="true" aria-label="Proforma de pedido">
+    <div class="invoice-dialog">
+      <div id="invoiceArea"></div>
+      <button id="shareInvoice" class="share-button" type="button">💖 Compartir pedido</button>
+      <button id="closeInvoice" class="close-button" type="button">Cerrar</button>
+    </div>
+  </div>
 
-    <main>
-
-        <p class="tag">
-            Concept by Lily · Colección masculina
-        </p>
-
-        <h1>Estamos preparando esta colección</h1>
-
-        <p>
-            La tienda masculina todavía está en desarrollo.
-            Pronto encontrarás aquí los productos, sus detalles,
-            variantes y disponibilidad.
-        </p>
-
-        <a href="../">Volver a la página principal</a>
-
-    </main>
-
-    <footer>
-        © <span id="year"></span> Concept by Lily
-    </footer>
-
-    <script>
-        document.getElementById('year').textContent =
-            new Date().getFullYear();
-    </script>
-
+  <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
 </body>
-
 </html>
