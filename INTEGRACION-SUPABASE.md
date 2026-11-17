@@ -41,3 +41,11 @@ La base de datos quedó sin productos de prueba. Por eso los tres catálogos deb
 - El carrito genera una proforma local; no crea órdenes en la base de datos ni descuenta inventario.
 - Los cambios en el administrador aparecen al volver a cargar el catálogo. No se ha añadido sincronización en tiempo real.
 - No se modificó el proyecto del administrador ni el esquema de Supabase.
+
+
+## Vista rápida de productos (17-11-2026)
+- Las tarjetas del catálogo ya no muestran la descripción larga ni los selectores de variantes.
+- Al pulsar la tarjeta se abre una ventana modal animada con descripción completa, campos adicionales, variantes, disponibilidad y precio.
+- La misma implementación se comparte en los catálogos de Cosméticos, Mujer y Hombre.
+- En móvil la ventana pasa a una presentación vertical y permite desplazamiento.
+- Los campos adicionales se leen desde `products.details` (JSONB). Ejecutar primero la migración incluida en el ZIP del administrador.
