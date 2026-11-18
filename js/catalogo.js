@@ -30,20 +30,35 @@ function matches(v,s,skip=null,value=null){return Object.entries(s).every(([k,x]
 function variant(p){const s=chosen(p),ks=keys(p);return p.variants.find(v=>ks.every(k=>String(attrs(v)[k]??"")===String(s[k]??"")))||(ks.length===0?p.variants[0]:null)}
 function img(p,v){
  const selected=attrs(v)||{};
- const mapped=p.images.filter(image=>{
+ const color=Object.entries(selected).find(([k])=>isColorAttribute(k));
+ const legacyColor=color&&p.colors.find(x=>sameAttributeValue(x.name,color[1]));
+
+ // Primero limita la búsqueda a la variante y al color seleccionados.
+ // Las imágenes generales siguen disponibles como respaldo, pero no pueden
+ // desplazar una imagen asignada específicamente a la variante.
+ const scoped=p.images.filter(image=>{
+  if(image.variant_id&&image.variant_id!==v?.id)return false;
+  if(image.color_id&&image.color_id!==legacyColor?.id)return false;
+  return true;
+ });
+
+ const variantScoped=v?scoped.filter(image=>image.variant_id===v.id):[];
+ const candidates=variantScoped.length?variantScoped:scoped;
+
+ // Dentro del ámbito correcto, los atributos visuales ayudan a elegir
+ // la imagen, pero nunca deben mezclar imágenes de otra variante.
+ const mapped=candidates.filter(image=>{
   const rules=image.attributeValues||{};
   return Object.keys(rules).length>0&&rulesMatchSelection(rules,selected);
  }).sort((a,b)=>(Number(Boolean(b.is_primary))-Number(Boolean(a.is_primary)))||
   (Object.keys(b.attributeValues||{}).length-Object.keys(a.attributeValues||{}).length)||
   ((Number(a.sort_order)||0)-(Number(b.sort_order)||0)));
+
  if(mapped.length)return mapped[0];
- const color=Object.entries(selected).find(([k])=>isColorAttribute(k));
- const legacyColor=color&&p.colors.find(x=>sameAttributeValue(x.name,color[1]));
- const variantImages=v?p.images.filter(x=>x.variant_id===v.id):[];
- if(variantImages.length)return preferredImage(variantImages);
- const colorImages=legacyColor?p.images.filter(x=>x.color_id===legacyColor.id):[];
- if(colorImages.length)return preferredImage(colorImages);
- return preferredImage(p.images.filter(x=>x.variant_id==null&&x.color_id==null))||preferredImage(p.images)||null;
+
+ // Si no hay coincidencia por atributos, usa la galería específica
+ // de la variante; si no existe, la del color y finalmente la general.
+ return preferredImage(candidates);
 }
 function galleryImages(p,v){
  const selected=attrs(v)||{}, color=Object.entries(selected).find(([k])=>isColorAttribute(k));
