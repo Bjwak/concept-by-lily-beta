@@ -79,6 +79,14 @@ function currencyOf(p){return catalogSettings.currency_code||p.currency||"NIO"}
 function applyCatalogSettings(){
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.accent_color||""))document.documentElement.style.setProperty("--accent",catalogSettings.accent_color);
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.page_color||""))document.documentElement.style.setProperty("--page",catalogSettings.page_color);
+ // El banner personalizado se configura por tienda desde Admin. Si no existe,
+ // se conserva intacta la imagen estática definida en el HTML como respaldo.
+ const banner=document.querySelector(".site-header img");
+ const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
+ if(banner&&bannerPath){
+  const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
+  if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";}
+ }
  const footer=document.querySelector(".site-footer");if(footer){
   footer.textContent=`© ${new Date().getFullYear()} ${catalogSettings.brand_name||"Concept by Lily"}`;
   for(const [label,value] of [["Instagram",catalogSettings.instagram_url],["Facebook",catalogSettings.facebook_url]]){
