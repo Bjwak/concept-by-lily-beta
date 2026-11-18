@@ -550,10 +550,25 @@ body {
 
 .site-footer {
     text-align: center;
-    padding: 25px;
+    padding: 34px 20px 30px;
     color: var(--muted);
     font-size: 13px;
+    background: color-mix(in srgb, var(--page) 78%, white);
+    border-top: 1px solid var(--line);
 }
+
+.footer-inner { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.footer-brand { color:var(--accent-dark); font-family:Georgia,serif; font-size:19px; font-weight:700; text-decoration:none; }
+.footer-socials { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:10px; }
+.footer-socials a { display:inline-flex; align-items:center; gap:7px; padding:8px 13px; border:1px solid var(--line); border-radius:999px; color:var(--accent-dark); background:#fff; text-decoration:none; font-size:12px; font-weight:700; transition:background .2s, transform .2s; }
+.footer-socials a:hover { background:var(--accent); color:#fff; transform:translateY(-2px); }
+.footer-social-icon { display:inline-grid; place-items:center; width:19px; height:19px; border:1.5px solid currentColor; border-radius:6px; font-size:15px; line-height:1; font-weight:800; }
+.footer-social-icon.facebook { border:0; border-radius:50%; font-family:Arial,sans-serif; font-size:18px; }
+.footer-inner small { font-size:11px; }
+.catalog-whatsapp-contact { position:fixed; right:22px; bottom:22px; z-index:900; display:inline-flex; align-items:center; gap:9px; padding:13px 18px; border-radius:999px; color:#fff; background:#20b968; box-shadow:0 8px 24px rgba(20,120,70,.25); text-decoration:none; font-size:13px; font-weight:800; transition:transform .2s, box-shadow .2s; }
+.catalog-whatsapp-contact:hover { transform:translateY(-2px); box-shadow:0 11px 28px rgba(20,120,70,.32); }
+.catalog-whatsapp-mark { display:inline-grid; place-items:center; width:21px; height:21px; border:2px solid currentColor; border-radius:50%; font-size:15px; line-height:1; }
+@media(max-width:650px){ .catalog-whatsapp-contact{right:14px;bottom:14px;padding:12px 15px;} .site-footer{padding-bottom:86px;} }
 
 
 /* =========================================

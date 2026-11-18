@@ -79,35 +79,34 @@ function currencyOf(p){return catalogSettings.currency_code||p.currency||"NIO"}
 function applyCatalogSettings(){
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.accent_color||""))document.documentElement.style.setProperty("--accent",catalogSettings.accent_color);
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.page_color||""))document.documentElement.style.setProperty("--page",catalogSettings.page_color);
- // El HTML conserva el banner original de cada tienda como respaldo.
- // Guardamos esa ruta antes de aplicar cualquier personalización para que,
- // si Admin guarda banner_path = null, Beta restaure explícitamente el original.
+ // El banner personalizado se configura por tienda desde Admin. Si no existe,
+ // se conserva intacta la imagen estática definida en el HTML como respaldo.
  const banner=document.querySelector(".site-header img");
- if(banner){
-  if(!banner.dataset.defaultSrc){
-   banner.dataset.defaultSrc=banner.getAttribute("src")||"";
-  }
-  const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
-  if(bannerPath){
-   const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
-   if(bannerUrl){
-    banner.src=bannerUrl;
-    banner.dataset.customBanner="true";
-   }else{
-    banner.src=banner.dataset.defaultSrc;
-    delete banner.dataset.customBanner;
-   }
-  }else{
-   banner.src=banner.dataset.defaultSrc;
-   delete banner.dataset.customBanner;
-  }
+ const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
+ if(banner&&bannerPath){
+  const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
+  if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";}
  }
- const footer=document.querySelector(".site-footer");if(footer){
-  footer.textContent=`© ${new Date().getFullYear()} ${catalogSettings.brand_name||"Concept by Lily"}`;
-  for(const [label,value] of [["Instagram",catalogSettings.instagram_url],["Facebook",catalogSettings.facebook_url]]){
-   if(!value)continue;try{const u=new URL(value);if(!["https:","http:"].includes(u.protocol))continue;const a=document.createElement("a");a.href=u.href;a.target="_blank";a.rel="noopener noreferrer";a.textContent=label;a.style.marginLeft="14px";footer.append(a);}catch{}
-  }
+ renderContactElements();
+}
+function safeExternalUrl(value){
+ try{const parsed=new URL(String(value||"").trim());return parsed.protocol==="https:"?parsed.href:"";}catch{return "";}
+}
+function whatsappDigits(){return String(catalogSettings.whatsapp_number||"").replace(/\D/g,"");}
+function renderContactElements(){
+ const footer=document.querySelector(".site-footer");
+ if(footer){
+  const brand=String(catalogSettings.brand_name||"Concept by Lily").trim()||"Concept by Lily";
+  const socials=[["Instagram",safeExternalUrl(catalogSettings.instagram_url),"instagram"],["Facebook",safeExternalUrl(catalogSettings.facebook_url),"facebook"]].filter(([,href])=>href);
+  footer.innerHTML=`<div class="footer-inner"><a class="footer-brand" href="../">${esc(brand)}</a><div class="footer-socials" aria-label="Redes sociales">${socials.map(([label,href,kind])=>`<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" aria-label="Visitar ${label}"><span class="footer-social-icon ${kind}" aria-hidden="true">${kind==="instagram"?"◎":"f"}</span>${label}</a>`).join("")}</div><small>© ${new Date().getFullYear()} ${esc(brand)}. Todos los derechos reservados.</small></div>`;
  }
+ const digits=whatsappDigits();
+ let contact=document.getElementById("catalogWhatsappContact");
+ if(digits){
+  if(!contact){contact=document.createElement("a");contact.id="catalogWhatsappContact";contact.className="catalog-whatsapp-contact";contact.target="_blank";contact.rel="noopener noreferrer";contact.setAttribute("aria-label","Contactar por WhatsApp");contact.innerHTML='<span class="catalog-whatsapp-mark" aria-hidden="true">✆</span><span>WhatsApp</span>';document.body.append(contact);}
+  contact.href=`https://wa.me/${digits}`;
+ }else if(contact){contact.remove();}
+}
 }
 function renderCategories(){ $("categoryNav").innerHTML=[`<button class="category-btn ${activeCategory==="all"?"active":""}" data-category="all">Todos</button>`,...categories.map(c=>`<button class="category-btn ${activeCategory===c.id?"active":""}" data-category="${esc(c.id)}">${esc(c.name)}</button>`)].join("");$("categoryNav").querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{activeCategory=b.dataset.category;renderCategories();renderProducts()})}
 function options(p,k,s){const vals=[...new Set(p.variants.map(v=>attrs(v)[k]).filter(x=>x!=null).map(String))],color=isColorAttribute(k),colors=new Map(p.colors.map(c=>[norm(c.name),c]));return `<div class="variant-group"><span class="variant-label">${esc(k)}</span><div class="${color?"color-options":"value-options"}">${vals.map(val=>{const ok=p.variants.some(v=>Number(v.stock)>0&&matches(v,s,k,val)),sel=String(s[k]??"")===val,c=colors.get(norm(val));return `<button type="button" class="${color?"color-option":"value-option"} ${sel?"selected":""} ${ok?"":"sold-out"}" data-attr="${esc(k)}" data-val="${esc(val)}" ${ok?"":"disabled"} ${color?`style="--swatch:${esc(c?.hex_code||"#b9a5aa")}" title="${esc(val)}"`:""}>${color?'<span class="swatch"></span><span class="sr-only">'+esc(val)+'</span>':esc(val)}</button>`}).join("")}</div></div>`}
