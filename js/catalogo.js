@@ -79,13 +79,28 @@ function currencyOf(p){return catalogSettings.currency_code||p.currency||"NIO"}
 function applyCatalogSettings(){
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.accent_color||""))document.documentElement.style.setProperty("--accent",catalogSettings.accent_color);
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.page_color||""))document.documentElement.style.setProperty("--page",catalogSettings.page_color);
- // El banner personalizado se configura por tienda desde Admin. Si no existe,
- // se conserva intacta la imagen estática definida en el HTML como respaldo.
+ // El HTML conserva el banner original de cada tienda como respaldo.
+ // Guardamos esa ruta antes de aplicar cualquier personalización para que,
+ // si Admin guarda banner_path = null, Beta restaure explícitamente el original.
  const banner=document.querySelector(".site-header img");
- const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
- if(banner&&bannerPath){
-  const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
-  if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";}
+ if(banner){
+  if(!banner.dataset.defaultSrc){
+   banner.dataset.defaultSrc=banner.getAttribute("src")||"";
+  }
+  const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
+  if(bannerPath){
+   const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
+   if(bannerUrl){
+    banner.src=bannerUrl;
+    banner.dataset.customBanner="true";
+   }else{
+    banner.src=banner.dataset.defaultSrc;
+    delete banner.dataset.customBanner;
+   }
+  }else{
+   banner.src=banner.dataset.defaultSrc;
+   delete banner.dataset.customBanner;
+  }
  }
  const footer=document.querySelector(".site-footer");if(footer){
   footer.textContent=`© ${new Date().getFullYear()} ${catalogSettings.brand_name||"Concept by Lily"}`;
