@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const supabase=createClient("https://ftzfsxcnfcqdmwhpardt.supabase.co","sb_publishable_eRUu-PSs6VrdbtHMET1AvQ_pkZ_WHUv");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
-let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null;
+let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0;
 let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO"};
 const norm=s=>String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -28,6 +28,20 @@ function img(p,v){
    (legacyColor&&p.images.find(x=>x.color_id===legacyColor.id))||
    p.images.find(x=>x.is_primary)||p.images[0];
 }
+function galleryImages(p,v){
+ const selected=attrs(v)||{}, color=Object.entries(selected).find(([k])=>isColorAttribute(k));
+ const legacyColor=color&&p.colors.find(x=>norm(x.name)===norm(color[1]));
+ const relevant=p.images.filter(image=>{
+  const rules=image.attributeValues||{};
+  if(!Object.entries(rules).every(([key,value])=>String(selected[key]??"")===String(value)))return false;
+  if(image.variant_id&&image.variant_id!==v?.id)return false;
+  if(image.color_id&&image.color_id!==legacyColor?.id)return false;
+  return true;
+ }).sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
+ const chosenImage=img(p,v);
+ if(chosenImage){const index=relevant.findIndex(x=>x.id===chosenImage.id);if(index>0)relevant.unshift(...relevant.splice(index,1));else if(index<0)relevant.unshift(chosenImage);}
+ const seen=new Set();return relevant.filter(x=>{const key=x.id||x.image_path;if(seen.has(key))return false;seen.add(key);return true;});
+}
 function price(p,v){return v?.price_override??p.price}
 function currencyOf(p){return catalogSettings.currency_code||p.currency||"NIO"}
 function applyCatalogSettings(){
@@ -45,11 +59,16 @@ function options(p,k,s){const vals=[...new Set(p.variants.map(v=>attrs(v)[k]).fi
 function card(p){const v=variant(p),stock=Number(v?.stock||0),off=!v||stock<=0,im=img(p,v);return `<article class="product-card ${off?"is-unavailable":""}" data-pid="${esc(p.id)}"><button type="button" class="product-card-open" data-open="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}"><div class="product-image-wrap">${im?`<img class="product-image" src="${esc(url(im.image_path))}" alt="${esc(p.name)}" loading="lazy">`:'<div class="image-placeholder">Imagen próximamente</div>'}</div><div class="product-content"><p class="product-category">${esc(p.category?.name||"")}</p><h2>${esc(p.name)}</h2>${catalogSettings.show_prices?`<div class="product-price">${money(price(p,v),currencyOf(p))}</div>`:""}${catalogSettings.show_stock?`<div class="availability">${off?'<span class="stock-badge">AGOTADO</span>':`<span class="stock-note">${stock} disponible${stock===1?"":"s"}</span>`}</div>`:""}<span class="quick-view-hint">Ver detalles y opciones</span></div></button></article>`}
 function renderQuickView(id){
  const p=products.find(x=>x.id===id);if(!p)return;quickViewProductId=id;
- const s=chosen(p),v=variant(p),stock=Number(v?.stock||0),off=!v||stock<=0,im=img(p,v),details=p.details&&typeof p.details==="object"?Object.entries(p.details).filter(([k,val])=>String(k).trim()&&String(val??"").trim()):[];
+ const s=chosen(p),v=variant(p),stock=Number(v?.stock||0),off=!v||stock<=0,images=galleryImages(p,v),im=images[Math.min(quickViewImageIndex,images.length-1)]||images[0],details=p.details&&typeof p.details==="object"?Object.entries(p.details).filter(([k,val])=>String(k).trim()&&String(val??"").trim()):[];
+ if(!images.length)quickViewImageIndex=0;else if(quickViewImageIndex>=images.length)quickViewImageIndex=0;
+ const activeImage=images[quickViewImageIndex]||images[0];
  const modal=$("quickViewModal"),body=$("quickViewBody");
- body.innerHTML=`<div class="quick-view-layout"><div class="quick-view-media">${im?`<img src="${esc(url(im.image_path))}" alt="${esc(p.name)}">`:'<div class="image-placeholder">Imagen próximamente</div>'}</div><div class="quick-view-info"><p class="product-category">${esc(p.category?.name||"")}</p><h2>${esc(p.name)}</h2>${catalogSettings.show_prices?`<div class="product-price">${money(price(p,v),currencyOf(p))}</div>`:""}${catalogSettings.show_descriptions?`<section class="quick-view-description"><h3>Descripción</h3><p>${esc(p.description||"Este producto no tiene una descripción general.")}</p></section>${details.map(([k,val])=>`<section class="quick-view-detail"><h3>${esc(k)}</h3><p>${esc(val)}</p></section>`).join("")}`:""}<div class="quick-view-variants">${keys(p).map(k=>options(p,k,s)).join("")}</div>${catalogSettings.show_stock?`<div class="availability">${off?'<span class="stock-badge">AGOTADO</span>':`<span class="stock-note">${stock} disponible${stock===1?"":"s"}</span>`}</div>`:""}<button class="add-button" data-modal-add="${esc(p.id)}" ${off?"disabled":""}>${off?"No disponible":"Agregar al carrito"}</button></div></div>`;
+ body.innerHTML=`<div class="quick-view-layout"><div class="quick-view-gallery"><div class="quick-view-media">${activeImage?`<img class="quick-view-main-image" src="${esc(url(activeImage.image_path))}" alt="${esc(p.name)}">`:'<div class="image-placeholder">Imagen próximamente</div>'}${images.length>1?`<button type="button" class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Imagen anterior">‹</button><button type="button" class="gallery-arrow gallery-next" data-gallery-next aria-label="Imagen siguiente">›</button>`:""}</div>${images.length>1?`<div class="quick-view-thumbnails">${images.map((image,index)=>`<button type="button" class="quick-view-thumb ${index===quickViewImageIndex?"active":""}" data-gallery-index="${index}" aria-label="Ver imagen ${index+1}"><img src="${esc(url(image.image_path))}" alt=""></button>`).join("")}</div><p class="gallery-counter">${quickViewImageIndex+1} de ${images.length} imágenes</p>`:""}</div><div class="quick-view-info"><p class="product-category">${esc(p.category?.name||"")}</p><h2>${esc(p.name)}</h2>${catalogSettings.show_prices?`<div class="product-price">${money(price(p,v),currencyOf(p))}</div>`:""}${catalogSettings.show_descriptions?`<section class="quick-view-description"><h3>Descripción</h3><p>${esc(p.description||"Este producto no tiene una descripción general.")}</p></section>${details.map(([k,val])=>`<section class="quick-view-detail"><h3>${esc(k)}</h3><p>${esc(val)}</p></section>`).join("")}`:""}<div class="quick-view-variants">${keys(p).map(k=>options(p,k,s)).join("")}</div>${catalogSettings.show_stock?`<div class="availability">${off?'<span class="stock-badge">AGOTADO</span>':`<span class="stock-note">${stock} disponible${stock===1?"":"s"}</span>`}</div>`:""}<button class="add-button" data-modal-add="${esc(p.id)}" ${off?"disabled":""}>${off?"No disponible":"Agregar al carrito"}</button></div></div>`;
  modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");
- body.querySelectorAll("[data-attr]").forEach(b=>b.onclick=()=>{chosen(p)[b.dataset.attr]=b.dataset.val;renderQuickView(id)});
+ body.querySelectorAll("[data-attr]").forEach(b=>b.onclick=()=>{chosen(p)[b.dataset.attr]=b.dataset.val;quickViewImageIndex=0;renderQuickView(id)});
+ body.querySelectorAll("[data-gallery-index]").forEach(b=>b.onclick=()=>{quickViewImageIndex=Number(b.dataset.galleryIndex);renderQuickView(id)});
+ body.querySelector("[data-gallery-prev]")?.addEventListener("click",()=>{quickViewImageIndex=(quickViewImageIndex-1+images.length)%images.length;renderQuickView(id)});
+ body.querySelector("[data-gallery-next]")?.addEventListener("click",()=>{quickViewImageIndex=(quickViewImageIndex+1)%images.length;renderQuickView(id)});
  body.querySelector("[data-modal-add]")?.addEventListener("click",()=>add(id));
 }
 function closeQuickView(){const modal=$("quickViewModal");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open");quickViewProductId=null}
