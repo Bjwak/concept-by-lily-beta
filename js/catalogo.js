@@ -13,12 +13,23 @@ function keys(p){return [...new Set(p.variants.flatMap(v=>Object.keys(attrs(v)).
 function chosen(p){if(!selection.has(p.id)){const v=p.variants.find(x=>Number(x.stock)>0)||p.variants[0];selection.set(p.id,{...attrs(v)})}return selection.get(p.id)}
 function matches(v,s,skip=null,value=null){return Object.entries(s).every(([k,x])=>k===skip||String(attrs(v)[k]??"")===String(x??""))&&(skip===null||String(attrs(v)[skip]??"")===String(value??""))}
 function variant(p){const s=chosen(p),ks=keys(p);return p.variants.find(v=>ks.every(k=>String(attrs(v)[k]??"")===String(s[k]??"")))||(ks.length===0?p.variants[0]:null)}
+// Los atributos visuales pueden llamarse "Colores" en Admin mientras que
+// las variantes históricas usan "Color". Ambos nombres representan el mismo
+// atributo; los demás atributos personalizados siguen comparándose por nombre exacto.
+function selectedAttributeValue(selected,key){
+ if(Object.prototype.hasOwnProperty.call(selected,key))return selected[key];
+ if(isColorAttribute(key))return Object.entries(selected).find(([name])=>isColorAttribute(name))?.[1];
+ return undefined;
+}
+function imageRulesMatch(selected,rules){
+ return Object.entries(rules||{}).every(([key,value])=>String(selectedAttributeValue(selected,key)??"")===String(value??""));
+}
 function img(p,v){
  const selected=attrs(v)||{};
  const mapped=p.images.map(image=>{
    const rules=image.attributeValues||{};
    const entries=Object.entries(rules);
-   const matchesAll=entries.every(([key,value])=>String(selected[key]??"")===String(value));
+   const matchesAll=imageRulesMatch(selected,rules);
    return {image,score:entries.length,matches:matchesAll};
  }).filter(x=>x.matches&&x.score>0).sort((a,b)=>b.score-a.score);
  if(mapped.length)return mapped[0].image;
@@ -33,7 +44,7 @@ function galleryImages(p,v){
  const legacyColor=color&&p.colors.find(x=>norm(x.name)===norm(color[1]));
  const relevant=p.images.filter(image=>{
   const rules=image.attributeValues||{};
-  if(!Object.entries(rules).every(([key,value])=>String(selected[key]??"")===String(value)))return false;
+  if(!imageRulesMatch(selected,rules))return false;
   if(image.variant_id&&image.variant_id!==v?.id)return false;
   if(image.color_id&&image.color_id!==legacyColor?.id)return false;
   return true;
