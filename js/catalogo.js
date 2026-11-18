@@ -9,11 +9,20 @@ const money=(n,c="NIO")=>{try{return new Intl.NumberFormat("es-NI",{style:"curre
 const attrs=v=>v?.attributes&&typeof v.attributes==="object"?v.attributes:{};
 const url=p=>/^https?:/i.test(p||"")?p:supabase.storage.from("product-images").getPublicUrl(p||"").data?.publicUrl||"";
 const isColorAttribute=k=>["color","colores"].includes(norm(k));
-const canonicalAttribute=k=>isColorAttribute(k)?"color":norm(k);
-function normalizedAttributes(source){
- const result={};
- Object.entries(source||{}).forEach(([key,value])=>{result[canonicalAttribute(key)]=String(value??"").trim();});
- return result;
+// Unifica nombres equivalentes: Color, Colores y variantes con acentos/mayúsculas.
+const canonicalAttribute=k=>{
+ const key=norm(k);
+ return ["color","colores","colore"].includes(key)?"color":key;
+};
+const sameAttributeValue=(a,b)=>norm(a)===norm(b);
+function rulesMatchSelection(rules,selected){
+ return Object.entries(rules||{}).every(([ruleKey,ruleValue])=>{
+  const selectedEntry=Object.entries(selected||{}).find(([selectedKey])=>canonicalAttribute(selectedKey)===canonicalAttribute(ruleKey));
+  return Boolean(selectedEntry)&&sameAttributeValue(selectedEntry[1],ruleValue);
+ });
+}
+function preferredImage(images){
+ return [...images].sort((a,b)=>(Number(Boolean(b.is_primary))-Number(Boolean(a.is_primary)))||((Number(a.sort_order)||0)-(Number(b.sort_order)||0)))[0]||null;
 }
 function keys(p){return [...new Set(p.variants.flatMap(v=>Object.keys(attrs(v)).filter(k=>!k.startsWith("_"))))].sort((a,b)=>(isColorAttribute(a)?-1:0)-(isColorAttribute(b)?-1:0)||a.localeCompare(b,"es"))}
 function chosen(p){if(!selection.has(p.id)){const v=p.variants.find(x=>Number(x.stock)>0)||p.variants[0];selection.set(p.id,{...attrs(v)})}return selection.get(p.id)}
@@ -21,37 +30,31 @@ function matches(v,s,skip=null,value=null){return Object.entries(s).every(([k,x]
 function variant(p){const s=chosen(p),ks=keys(p);return p.variants.find(v=>ks.every(k=>String(attrs(v)[k]??"")===String(s[k]??"")))||(ks.length===0?p.variants[0]:null)}
 function img(p,v){
  const selected=attrs(v)||{};
- const selectedNormalized=normalizedAttributes(selected);
- const mapped=p.images.map(image=>{
-   const rules=normalizedAttributes(image.attributeValues||{});
-   const entries=Object.entries(rules);
-   const matchesAll=entries.every(([key,value])=>String(selectedNormalized[key]??"")===String(value));
-   return {image,score:entries.length,matches:matchesAll};
- }).filter(x=>x.matches&&x.score>0).sort((a,b)=>
-   (Number(Boolean(b.image.is_primary))-Number(Boolean(a.image.is_primary)))||
-   (b.score-a.score)||
-   ((Number(a.image.sort_order)||0)-(Number(b.image.sort_order)||0))
- );
- if(mapped.length)return mapped[0].image;
+ const mapped=p.images.filter(image=>{
+  const rules=image.attributeValues||{};
+  return Object.keys(rules).length>0&&rulesMatchSelection(rules,selected);
+ }).sort((a,b)=>(Number(Boolean(b.is_primary))-Number(Boolean(a.is_primary)))||
+  (Object.keys(b.attributeValues||{}).length-Object.keys(a.attributeValues||{}).length)||
+  ((Number(a.sort_order)||0)-(Number(b.sort_order)||0)));
+ if(mapped.length)return mapped[0];
  const color=Object.entries(selected).find(([k])=>isColorAttribute(k));
- const legacyColor=color&&p.colors.find(x=>norm(x.name)===norm(color[1]));
- return (v&&p.images.find(x=>x.variant_id===v.id))||
-   (legacyColor&&p.images.find(x=>x.color_id===legacyColor.id))||
-   p.images.find(x=>x.is_primary)||p.images[0];
+ const legacyColor=color&&p.colors.find(x=>sameAttributeValue(x.name,color[1]));
+ const variantImages=v?p.images.filter(x=>x.variant_id===v.id):[];
+ if(variantImages.length)return preferredImage(variantImages);
+ const colorImages=legacyColor?p.images.filter(x=>x.color_id===legacyColor.id):[];
+ if(colorImages.length)return preferredImage(colorImages);
+ return preferredImage(p.images.filter(x=>x.variant_id==null&&x.color_id==null))||preferredImage(p.images)||null;
 }
 function galleryImages(p,v){
  const selected=attrs(v)||{}, color=Object.entries(selected).find(([k])=>isColorAttribute(k));
- const legacyColor=color&&p.colors.find(x=>norm(x.name)===norm(color[1]));
- const selectedNormalized=normalizedAttributes(selected);
+ const legacyColor=color&&p.colors.find(x=>sameAttributeValue(x.name,color[1]));
  const relevant=p.images.filter(image=>{
-  const rules=normalizedAttributes(image.attributeValues||{});
-  if(!Object.entries(rules).every(([key,value])=>String(selectedNormalized[key]??"")===String(value)))return false;
+  const rules=image.attributeValues||{};
+  if(!rulesMatchSelection(rules,selected))return false;
   if(image.variant_id&&image.variant_id!==v?.id)return false;
-  // color_id is a legacy restriction. Apply it only when the selected color
-  // resolves to a known product color; attribute mappings remain authoritative.
-  if(image.color_id&&legacyColor&&image.color_id!==legacyColor.id)return false;
+  if(image.color_id&&image.color_id!==legacyColor?.id)return false;
   return true;
- }).sort((a,b)=>(Number(Boolean(b.is_primary))-Number(Boolean(a.is_primary)))||(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
+ }).sort((a,b)=>(Number(Boolean(b.is_primary))-Number(Boolean(a.is_primary)))||((Number(a.sort_order)||0)-(Number(b.sort_order)||0)));
  const chosenImage=img(p,v);
  if(chosenImage){const index=relevant.findIndex(x=>x.id===chosenImage.id);if(index>0)relevant.unshift(...relevant.splice(index,1));else if(index<0)relevant.unshift(chosenImage);}
  const seen=new Set();return relevant.filter(x=>{const key=x.id||x.image_path;if(seen.has(key))return false;seen.add(key);return true;});
