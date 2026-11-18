@@ -107,7 +107,6 @@ function renderContactElements(){
   contact.href=`https://wa.me/${digits}`;
  }else if(contact){contact.remove();}
 }
-}
 function renderCategories(){ $("categoryNav").innerHTML=[`<button class="category-btn ${activeCategory==="all"?"active":""}" data-category="all">Todos</button>`,...categories.map(c=>`<button class="category-btn ${activeCategory===c.id?"active":""}" data-category="${esc(c.id)}">${esc(c.name)}</button>`)].join("");$("categoryNav").querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{activeCategory=b.dataset.category;renderCategories();renderProducts()})}
 function options(p,k,s){const vals=[...new Set(p.variants.map(v=>attrs(v)[k]).filter(x=>x!=null).map(String))],color=isColorAttribute(k),colors=new Map(p.colors.map(c=>[norm(c.name),c]));return `<div class="variant-group"><span class="variant-label">${esc(k)}</span><div class="${color?"color-options":"value-options"}">${vals.map(val=>{const ok=p.variants.some(v=>Number(v.stock)>0&&matches(v,s,k,val)),sel=String(s[k]??"")===val,c=colors.get(norm(val));return `<button type="button" class="${color?"color-option":"value-option"} ${sel?"selected":""} ${ok?"":"sold-out"}" data-attr="${esc(k)}" data-val="${esc(val)}" ${ok?"":"disabled"} ${color?`style="--swatch:${esc(c?.hex_code||"#b9a5aa")}" title="${esc(val)}"`:""}>${color?'<span class="swatch"></span><span class="sr-only">'+esc(val)+'</span>':esc(val)}</button>`}).join("")}</div></div>`}
 function catalogCover(p){
