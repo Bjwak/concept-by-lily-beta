@@ -50,7 +50,7 @@ async function load(){
  $("catalogMessage").textContent="Cargando catálogo…";
  try{
   const [pr,cr]=await Promise.all([
-   supabase.from("products").select("id,store_id,category_id,name,description,details,price,currency,is_active").eq("store_id",cfg.storeId).eq("is_active",true).order("name"),
+   supabase.from("products").select("id,store_id,category_id,name,description,details,price,currency,is_active,is_archived").eq("store_id",cfg.storeId).eq("is_active",true).eq("is_archived",false).order("name"),
    supabase.from("categories").select("id,name,slug").eq("store_id",cfg.storeId).eq("is_active",true).order("name")
   ]);
   for(const r of [pr,cr])if(r.error)throw r.error;

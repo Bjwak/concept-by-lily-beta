@@ -35,8 +35,9 @@ async function loadNewArrivals() {
   try {
     const { data: products, error } = await supabase
       .from("products")
-      .select("id, store_id, category_id, name, price, currency, created_at")
+      .select("id, store_id, category_id, name, price, currency, created_at, is_archived")
       .eq("is_active", true)
+      .eq("is_archived", false)
       .order("created_at", { ascending: false })
       .limit(8);
 
