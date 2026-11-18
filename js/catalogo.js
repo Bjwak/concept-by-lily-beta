@@ -9,16 +9,23 @@ const money=(n,c="NIO")=>{try{return new Intl.NumberFormat("es-NI",{style:"curre
 const attrs=v=>v?.attributes&&typeof v.attributes==="object"?v.attributes:{};
 const url=p=>/^https?:/i.test(p||"")?p:supabase.storage.from("product-images").getPublicUrl(p||"").data?.publicUrl||"";
 const isColorAttribute=k=>["color","colores"].includes(norm(k));
+const canonicalAttribute=k=>isColorAttribute(k)?"color":norm(k);
+function normalizedAttributes(source){
+ const result={};
+ Object.entries(source||{}).forEach(([key,value])=>{result[canonicalAttribute(key)]=String(value??"").trim();});
+ return result;
+}
 function keys(p){return [...new Set(p.variants.flatMap(v=>Object.keys(attrs(v)).filter(k=>!k.startsWith("_"))))].sort((a,b)=>(isColorAttribute(a)?-1:0)-(isColorAttribute(b)?-1:0)||a.localeCompare(b,"es"))}
 function chosen(p){if(!selection.has(p.id)){const v=p.variants.find(x=>Number(x.stock)>0)||p.variants[0];selection.set(p.id,{...attrs(v)})}return selection.get(p.id)}
 function matches(v,s,skip=null,value=null){return Object.entries(s).every(([k,x])=>k===skip||String(attrs(v)[k]??"")===String(x??""))&&(skip===null||String(attrs(v)[skip]??"")===String(value??""))}
 function variant(p){const s=chosen(p),ks=keys(p);return p.variants.find(v=>ks.every(k=>String(attrs(v)[k]??"")===String(s[k]??"")))||(ks.length===0?p.variants[0]:null)}
 function img(p,v){
  const selected=attrs(v)||{};
+ const selectedNormalized=normalizedAttributes(selected);
  const mapped=p.images.map(image=>{
-   const rules=image.attributeValues||{};
+   const rules=normalizedAttributes(image.attributeValues||{});
    const entries=Object.entries(rules);
-   const matchesAll=entries.every(([key,value])=>String(selected[key]??"")===String(value));
+   const matchesAll=entries.every(([key,value])=>String(selectedNormalized[key]??"")===String(value));
    return {image,score:entries.length,matches:matchesAll};
  }).filter(x=>x.matches&&x.score>0).sort((a,b)=>
    (Number(Boolean(b.image.is_primary))-Number(Boolean(a.image.is_primary)))||
@@ -35,13 +42,16 @@ function img(p,v){
 function galleryImages(p,v){
  const selected=attrs(v)||{}, color=Object.entries(selected).find(([k])=>isColorAttribute(k));
  const legacyColor=color&&p.colors.find(x=>norm(x.name)===norm(color[1]));
+ const selectedNormalized=normalizedAttributes(selected);
  const relevant=p.images.filter(image=>{
-  const rules=image.attributeValues||{};
-  if(!Object.entries(rules).every(([key,value])=>String(selected[key]??"")===String(value)))return false;
+  const rules=normalizedAttributes(image.attributeValues||{});
+  if(!Object.entries(rules).every(([key,value])=>String(selectedNormalized[key]??"")===String(value)))return false;
   if(image.variant_id&&image.variant_id!==v?.id)return false;
-  if(image.color_id&&image.color_id!==legacyColor?.id)return false;
+  // color_id is a legacy restriction. Apply it only when the selected color
+  // resolves to a known product color; attribute mappings remain authoritative.
+  if(image.color_id&&legacyColor&&image.color_id!==legacyColor.id)return false;
   return true;
- }).sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
+ }).sort((a,b)=>(Number(Boolean(b.is_primary))-Number(Boolean(a.is_primary)))||(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
  const chosenImage=img(p,v);
  if(chosenImage){const index=relevant.findIndex(x=>x.id===chosenImage.id);if(index>0)relevant.unshift(...relevant.splice(index,1));else if(index<0)relevant.unshift(chosenImage);}
  const seen=new Set();return relevant.filter(x=>{const key=x.id||x.image_path;if(seen.has(key))return false;seen.add(key);return true;});
