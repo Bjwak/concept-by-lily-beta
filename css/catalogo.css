@@ -666,3 +666,9 @@ body.modal-open{overflow:hidden}
 @keyframes qvFade{from{opacity:0}to{opacity:1}}
 @keyframes qvExpand{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:700px){.quick-view-modal{padding:8px;align-items:flex-end}.quick-view-dialog{width:100%;max-height:94vh;border-radius:18px 18px 10px 10px}.quick-view-layout{grid-template-columns:1fr;gap:16px;padding:20px}.quick-view-gallery{position:relative;top:auto}.quick-view-media{position:relative;min-height:220px;max-height:300px}.quick-view-media img{max-height:290px}.quick-view-info h2{font-size:21px}}
+
+
+/* Presentación de descuentos */
+.price-before{display:inline-block;margin-right:7px;color:#888;text-decoration:line-through;font-size:.88em;font-weight:400}
+.price-current{font-weight:700}
+.discount-badge{display:inline-block;margin-left:7px;padding:3px 7px;border-radius:999px;background:#fff0ed;color:#b42318;font-size:.72em;font-weight:700;vertical-align:middle}
