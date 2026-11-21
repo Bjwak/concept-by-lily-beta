@@ -217,4 +217,17 @@ async function load(){
  }
 }
 $("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});
+// Rastro de destellos sobre las imágenes al mover el cursor.
+const sparkleLastPoint=new WeakMap();
+document.addEventListener("pointermove",e=>{
+ if(e.pointerType!=="mouse")return;
+ const host=e.target.closest(".product-image-wrap,.quick-view-media");
+ if(!host||!host.querySelector("img"))return;
+ const rect=host.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,prev=sparkleLastPoint.get(host);
+ if(prev&&Math.hypot(x-prev.x,y-prev.y)<9)return;
+ sparkleLastPoint.set(host,{x,y});host.classList.add("sparkle-host");
+ const p=document.createElement("span");p.className="sparkle-particle";p.textContent=Math.random()>.42?"✦":"✧";
+ p.style.left=x+"px";p.style.top=y+"px";p.style.setProperty("--sparkle-size",(7+Math.random()*12)+"px");p.style.setProperty("--sparkle-drift",(Math.random()*24-12)+"px");host.appendChild(p);
+ p.addEventListener("animationend",()=>p.remove(),{once:true});
+});
 $("whatsappBtn").onclick=invoice;$("trackOrderForm")?.addEventListener("submit",e=>{e.preventDefault();trackOrder()});$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
