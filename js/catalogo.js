@@ -137,9 +137,29 @@ function renderQuickView(id){
 }
 function closeQuickView(){const modal=$("quickViewModal");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open");quickViewProductId=null}
 function renderProducts(){const q=norm($("productSearch").value),list=products.filter(p=>(catalogSettings.show_out_of_stock||p.variants.some(v=>Number(v.stock)>0))&&(activeCategory==="all"||p.category_id===activeCategory)&&norm([p.name,p.description,p.category?.name].join(" ")).includes(q));$("productCount").textContent=`${list.length} ${list.length===1?"producto":"productos"}`;$("productsContainer").innerHTML=list.length?list.map(card).join(""):`<div class="empty-state"><h2>${products.length?"No encontramos productos":"Estamos preparando esta colección"}</h2><p>${products.length?"Prueba con otra búsqueda o categoría.":"Pronto encontrarás aquí los productos disponibles."}</p></div>`;$("productsContainer").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>renderQuickView(b.dataset.open))}
-function add(id){const p=products.find(x=>x.id===id),v=variant(p);if(!v||Number(v.stock)<=0)return;const key=p.id+":"+v.id,item=cart.get(key),qty=(item?.quantity||0)+1;if(qty>Number(v.stock)){alert("No hay más unidades disponibles de esta combinación.");return}const pricingInfo=pricing(p,v);cart.set(key,{key,name:p.name,price:Number(pricingInfo.final),originalPrice:Number(pricingInfo.original),discounted:pricingInfo.active,currency:currencyOf(p),attributes:attrs(v),quantity:qty,stock:Number(v.stock)});renderCart()}
+function add(id){const p=products.find(x=>x.id===id),v=variant(p);if(!v||Number(v.stock)<=0)return;const key=p.id+":"+v.id,item=cart.get(key),qty=(item?.quantity||0)+1;if(qty>Number(v.stock)){alert("No hay más unidades disponibles de esta combinación.");return}const pricingInfo=pricing(p,v);cart.set(key,{key,variant_id:v.id,name:p.name,price:Number(pricingInfo.final),originalPrice:Number(pricingInfo.original),discounted:pricingInfo.active,currency:currencyOf(p),attributes:attrs(v),quantity:qty,stock:Number(v.stock)});renderCart()}
 function renderCart(){const items=[...cart.values()];if(!items.length){$("cartItems").innerHTML='<p class="empty-cart">Tu carrito está vacío.</p>';$("total").textContent=`Total: ${money(0)}`;return}let total=0;$("cartItems").innerHTML=items.map(i=>{const sub=i.price*i.quantity;total+=sub;const a=Object.entries(i.attributes).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join(" · ");return `<div class="cart-item"><div><strong>${esc(i.name)}</strong>${a?`<small>${a}</small>`:""}<small>${i.quantity} × ${i.discounted?`<s>${money(i.originalPrice,i.currency)}</s> `:""}${money(i.price,i.currency)} = ${money(sub,i.currency)}</small></div><button class="remove-button" data-remove="${esc(i.key)}">−</button></div>`}).join("");$("total").textContent=`Total: ${money(total)}`;$("cartItems").querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{const i=cart.get(b.dataset.remove);if(i.quantity>1)i.quantity--;else cart.delete(b.dataset.remove);renderCart()})}
-function invoice(){const items=[...cart.values()];if(!items.length){alert("Agrega productos al carrito primero.");return}const total=items.reduce((s,i)=>s+i.price*i.quantity,0);$("invoiceArea").innerHTML=`<div class="invoice"><h2>${esc(catalogSettings.brand_name||"Concept by Lily")}</h2><p>WhatsApp: ${esc(catalogSettings.whatsapp_number||"+505 8798 4118")}</p><p>Proforma de pedido</p><hr>${items.map(i=>`<p><strong>${esc(i.name)}</strong><br>${Object.entries(i.attributes).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join("<br>")}<br>${i.discounted?`Precio regular: ${money(i.originalPrice,i.currency)}<br>Precio con descuento: ${money(i.price,i.currency)}<br>`:""}Cantidad: ${i.quantity}<br>Subtotal: ${money(i.price*i.quantity,i.currency)}</p>`).join("")}<hr><h2>Total: ${money(total)}</h2><p>Gracias por elegir Concept by Lily.</p></div>`;$("invoiceModal").classList.add("open")}
+function invoice(){
+ const items=[...cart.values()];if(!items.length){alert("Agrega productos al carrito primero.");return}
+ activeOrderRequestId=activeOrderRequestId||crypto.randomUUID();$("shareInvoice").hidden=true;
+ $("invoiceArea").innerHTML='<div class="checkout-card"><h2>'+esc(catalogSettings.brand_name||"Concept by Lily")+'</h2><p>Completa tus datos para registrar el pedido.</p><form id="checkoutForm" class="checkout-form"><label>Nombre completo<input name="customer_name" required minlength="2" maxlength="120"></label><label>Teléfono<input name="customer_phone" required minlength="8" maxlength="30"></label><label>Modalidad<select name="delivery_method"><option value="to_agree">Por coordinar</option><option value="pickup">Retiro</option><option value="delivery">Envío a domicilio</option></select></label><label>Dirección<textarea name="delivery_address" rows="2" maxlength="500"></textarea></label><label>Notas<textarea name="customer_notes" rows="2" maxlength="500"></textarea></label><div class="checkout-summary"><strong>Resumen</strong><span>'+items.length+' línea(s) · '+money(items.reduce((s,i)=>s+i.price*i.quantity,0))+'</span></div><button type="submit" class="checkout-submit" id="submitOrder">Registrar pedido</button><p id="checkoutMessage" role="status"></p></form></div>';
+ $("invoiceModal").classList.add("open");$("checkoutForm").addEventListener("submit",registerOrder);
+}
+let activeOrderRequestId=null;
+async function registerOrder(e){
+ e.preventDefault();const form=e.currentTarget,button=$("submitOrder"),message=$("checkoutMessage"),data=new FormData(form);button.disabled=true;button.textContent="Registrando…";
+ try{
+ const items=[...cart.values()],customer={name:String(data.get("customer_name")).trim(),phone:String(data.get("customer_phone")).trim(),method:String(data.get("delivery_method")),address:String(data.get("delivery_address")||"").trim()};
+ const {data:result,error}=await supabase.rpc("create_public_order",{p_store_id:cfg.storeId,p_client_request_id:activeOrderRequestId,p_customer_name:customer.name,p_customer_phone:customer.phone,p_delivery_method:customer.method,p_delivery_address:customer.address||null,p_customer_notes:String(data.get("customer_notes")||"").trim()||null,p_items:items.map(i=>({variant_id:i.variant_id,quantity:i.quantity}))});if(error)throw error;
+ const savedItems=Array.isArray(result.items)?result.items.map(i=>({name:i.product_name,price:Number(i.unit_price),originalPrice:Number(i.original_unit_price),discounted:Number(i.original_unit_price)>Number(i.unit_price),currency:i.currency,attributes:i.attributes||{},quantity:Number(i.quantity)})):items;const total=Number(result.total??savedItems.reduce((s,i)=>s+i.price*i.quantity,0));
+ $("invoiceArea").innerHTML='<div class="invoice invoice-saved"><p class="invoice-kicker">PEDIDO REGISTRADO</p><h2>'+esc(catalogSettings.brand_name||"Concept by Lily")+'</h2><div class="invoice-order-number">Pedido #'+esc(result.order_number)+'</div><p>Estado: Pendiente de confirmación</p><p>Cliente: '+esc(customer.name)+'</p><p>Teléfono: '+esc(customer.phone)+'</p><p>Entrega: '+esc(({pickup:"Retiro",delivery:"Envío a domicilio",to_agree:"Por coordinar"})[customer.method])+'</p>'+(customer.address?'<p>Dirección: '+esc(customer.address)+'</p>':'')+'<hr>'+savedItems.map(i=>'<div class="invoice-line"><strong>'+esc(i.name)+'</strong><small>'+Object.entries(i.attributes||{}).map(([k,v])=>esc(k)+": "+esc(v)).join(" · ")+'</small><span>'+i.quantity+' × '+money(i.price,i.currency)+' = '+money(i.price*i.quantity,i.currency)+'</span></div>').join("")+'<hr><h2 class="invoice-total">Total: '+money(total,items[0]?.currency||"NIO")+'</h2><p>Conserva este número para consultar el estado de tu pedido.</p></div>';
+ $("shareInvoice").hidden=false;cart.clear();renderCart();activeOrderRequestId=null;
+ }catch(err){console.error(err);message.textContent=err.message||"No fue posible registrar el pedido.";button.disabled=false;button.textContent="Reintentar registro"}
+}
+async function trackOrder(){
+ const number=Number($("trackOrderNumber").value),phone=$("trackOrderPhone").value.trim(),box=$("trackOrderResult");box.textContent="Consultando…";
+ try{const {data,error}=await supabase.rpc("get_public_order_status",{p_order_number:number,p_customer_phone:phone});if(error)throw error;if(!data?.order){box.textContent="No encontramos un pedido con esos datos.";return}const o=data.order,labels={pending_confirmation:"Pendiente de confirmación",confirmed:"Confirmado",preparing:"En preparación",ready_for_delivery:"Listo para entrega",in_transit:"En camino",delivered:"Entregado",cancelled_by_customer:"Cancelado",cancelled_by_store:"Cancelado",rejected:"Rechazado"};box.innerHTML='<strong>Pedido #'+esc(o.order_number)+' · '+esc(labels[o.status]||o.status)+'</strong><p>Total: '+money(o.total,o.currency)+'</p>'+(data.history||[]).map(h=>'<p>• '+esc(labels[h.status]||h.status)+' · '+new Date(h.created_at).toLocaleString("es-NI")+'</p>').join("")}catch(err){console.error(err);box.textContent="No fue posible consultar el pedido."}
+}
 async function share(){try{if(!window.html2canvas)throw Error("No se cargó html2canvas");const canvas=await html2canvas($("invoiceArea"),{backgroundColor:"#fff",scale:2}),blob=await new Promise(r=>canvas.toBlob(r,"image/png"));if(!blob)throw Error("No se generó la imagen");const file=new File([blob],"Pedido-Concept-by-Lily.png",{type:"image/png"});if(navigator.share&&navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:"Pedido Concept by Lily",text:"Hola, me gustaría realizar este pedido."});else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=file.name;a.click();URL.revokeObjectURL(u);alert("La proforma se descargó. Puedes adjuntarla en WhatsApp.")}}catch(e){if(!String(e.message).toLowerCase().includes("cancel")){console.error(e);alert("No fue posible compartir la proforma.")}}}
 async function load(){
  $("catalogMessage").textContent="Cargando catálogo…";
@@ -197,24 +217,17 @@ async function load(){
  }
 }
 $("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});
-// Efecto de destellos siguiendo el cursor sobre las imágenes.
+// Rastro de destellos sobre las imágenes al mover el cursor.
 const sparkleLastPoint=new WeakMap();
 document.addEventListener("pointermove",e=>{
  if(e.pointerType!=="mouse")return;
  const host=e.target.closest(".product-image-wrap,.quick-view-media");
  if(!host||!host.querySelector("img"))return;
- const rect=host.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
- const previous=sparkleLastPoint.get(host);
- if(previous&&Math.hypot(x-previous.x,y-previous.y)<9)return;
- sparkleLastPoint.set(host,{x,y});
- host.classList.add("sparkle-host");
- const particle=document.createElement("span");
- particle.className="sparkle-particle";
- particle.textContent=Math.random()>.42?"✦":"✧";
- particle.style.left=x+"px";particle.style.top=y+"px";
- particle.style.setProperty("--sparkle-size",(7+Math.random()*12)+"px");
- particle.style.setProperty("--sparkle-drift",(Math.random()*24-12)+"px");
- host.appendChild(particle);
- particle.addEventListener("animationend",()=>particle.remove(),{once:true});
+ const rect=host.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,prev=sparkleLastPoint.get(host);
+ if(prev&&Math.hypot(x-prev.x,y-prev.y)<9)return;
+ sparkleLastPoint.set(host,{x,y});host.classList.add("sparkle-host");
+ const p=document.createElement("span");p.className="sparkle-particle";p.textContent=Math.random()>.42?"✦":"✧";
+ p.style.left=x+"px";p.style.top=y+"px";p.style.setProperty("--sparkle-size",(7+Math.random()*12)+"px");p.style.setProperty("--sparkle-drift",(Math.random()*24-12)+"px");host.appendChild(p);
+ p.addEventListener("animationend",()=>p.remove(),{once:true});
 });
-$("whatsappBtn").onclick=invoice;$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
+$("whatsappBtn").onclick=invoice;$("trackOrderForm")?.addEventListener("submit",e=>{e.preventDefault();trackOrder()});$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
