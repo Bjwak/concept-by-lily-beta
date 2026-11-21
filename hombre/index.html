@@ -55,11 +55,11 @@
   <div id="invoiceModal" class="invoice-modal" role="dialog" aria-modal="true" aria-label="Proforma de pedido">
     <div class="invoice-dialog">
       <div id="invoiceArea"></div>
-      <button id="shareInvoice" class="share-button" type="button">💖 Compartir pedido</button>
+      <button id="shareInvoice" class="share-button" type="button" hidden>💖 Compartir pedido</button>
       <button id="closeInvoice" class="close-button" type="button">Cerrar</button>
     </div>
   </div>
 
-  <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
+<section class="order-tracking"><h2>Consultar mi pedido</h2><p>Revisa el estado de un pedido registrado.</p><form id="trackOrderForm"><input id="trackOrderNumber" type="number" min="1" placeholder="Número de pedido" required><input id="trackOrderPhone" type="tel" placeholder="Teléfono usado en el pedido" required><button type="submit">Consultar estado</button></form><div id="trackOrderResult" role="status"></div></section>\n  <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
 </body>
 </html>
