@@ -197,4 +197,24 @@ async function load(){
  }
 }
 $("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});
+// Efecto de destellos siguiendo el cursor sobre las imágenes.
+const sparkleLastPoint=new WeakMap();
+document.addEventListener("pointermove",e=>{
+ if(e.pointerType!=="mouse")return;
+ const host=e.target.closest(".product-image-wrap,.quick-view-media");
+ if(!host||!host.querySelector("img"))return;
+ const rect=host.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
+ const previous=sparkleLastPoint.get(host);
+ if(previous&&Math.hypot(x-previous.x,y-previous.y)<9)return;
+ sparkleLastPoint.set(host,{x,y});
+ host.classList.add("sparkle-host");
+ const particle=document.createElement("span");
+ particle.className="sparkle-particle";
+ particle.textContent=Math.random()>.42?"✦":"✧";
+ particle.style.left=x+"px";particle.style.top=y+"px";
+ particle.style.setProperty("--sparkle-size",(7+Math.random()*12)+"px");
+ particle.style.setProperty("--sparkle-drift",(Math.random()*24-12)+"px");
+ host.appendChild(particle);
+ particle.addEventListener("animationend",()=>particle.remove(),{once:true});
+});
 $("whatsappBtn").onclick=invoice;$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
