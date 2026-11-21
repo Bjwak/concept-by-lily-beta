@@ -3,6 +3,42 @@ const supabase=createClient("https://ftzfsxcnfcqdmwhpardt.supabase.co","sb_publi
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
 let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0;
 let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO"};
+const cartStorageKey=()=> "concept-by-lily:cart:"+String(cfg.storeId||"default");
+function saveCartDraft(){
+ try{
+  const draft=[...cart.values()].map(item=>({variant_id:item.variant_id,quantity:item.quantity}));
+  if(draft.length)localStorage.setItem(cartStorageKey(),JSON.stringify({version:1,updatedAt:Date.now(),items:draft}));
+  else localStorage.removeItem(cartStorageKey());
+ }catch(e){console.warn("No se pudo guardar el carrito localmente:",e)}
+}
+function restoreCartDraft(){
+ try{
+  const raw=localStorage.getItem(cartStorageKey());if(!raw)return;
+  const saved=JSON.parse(raw);if(saved.version!==1||!Array.isArray(saved.items))return;
+  let restored=0,removed=0;
+  for(const entry of saved.items){
+   const product=products.find(p=>p.variants.some(v=>v.id===entry.variant_id));
+   const v=product?.variants.find(v=>v.id===entry.variant_id);
+   const quantity=Math.floor(Number(entry.quantity));
+   if(!product||!v||!Number.isFinite(quantity)||quantity<1||Number(v.stock)<1){removed++;continue}
+   const available=Math.min(quantity,Number(v.stock));
+   const pInfo=pricing(product,v),key=product.id+":"+v.id;
+   cart.set(key,{key,variant_id:v.id,name:product.name,price:Number(pInfo.final),originalPrice:Number(pInfo.original),discounted:pInfo.active,currency:currencyOf(product),attributes:attrs(v),quantity:available,stock:Number(v.stock)});
+   restored+=available;if(available<quantity)removed++;
+  }
+  saveCartDraft();
+  if(restored)window.addEventListener("load",()=>showCartToast("Recuperamos "+restored+" unidad"+(restored===1?"":"es")+" de tu carrito."),{once:true});
+  if(removed)console.info("Se ajustaron artículos guardados que ya no están disponibles o superaban el inventario.");
+ }catch(e){console.warn("No se pudo recuperar el carrito guardado:",e)}
+}
+function clearSavedCart(){
+ if(!cart.size)return;
+ if(!confirm("¿Vaciar todos los productos del carrito?"))return;
+ cart.clear();saveCartDraft();renderCart();showCartToast("Tu carrito está vacío.");
+ document.querySelectorAll(".product-added-badge,.product-added-note").forEach(el=>el.remove());
+ document.querySelectorAll(".quick-view-info .product-added-confirmation").forEach(el=>el.remove());
+ document.querySelectorAll("[data-modal-add]").forEach(button=>{button.textContent="Agregar al carrito";button.classList.remove("is-added")});
+}
 const norm=s=>String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=(n,c="NIO")=>{try{return new Intl.NumberFormat("es-NI",{style:"currency",currency:c||"NIO"}).format(Number(n||0))}catch{return `C$ ${Number(n||0).toFixed(2)}`}};
@@ -166,7 +202,7 @@ function showProductCardAdded(productId,variantQuantity){
  if(info){
   let status=info.querySelector(".product-added-confirmation");
   if(!status){status=document.createElement("p");status.className="product-added-confirmation";status.setAttribute("role","status");info.querySelector("[data-modal-add]")?.insertAdjacentElement("afterend",status)}
-  if(status)status.textContent="✓ Se agregó otra unidad. Tienes "+variantQuantity+" de esta variante en tu carrito.";
+  if(status)status.textContent="✓ Tienes "+variantQuantity+" unidad"+(variantQuantity===1?"":"es")+" de esta variante en tu carrito.";
  }
 }
 function add(id,sourceButton){
@@ -186,12 +222,13 @@ function add(id,sourceButton){
   setTimeout(()=>{
    if(!sourceButton.isConnected)return;
    sourceButton.disabled=false;
+   sourceButton.classList.remove("is-added");
    sourceButton.textContent="Agregar otra unidad · "+qty;
   },750);
  }
  return true;
 }
-function renderCart(){const items=[...cart.values()];ensureCartFeedback();const quantity=items.reduce((sum,item)=>sum+item.quantity,0);$("floatingCartCount").textContent=quantity;$("floatingCartCount").hidden=quantity===0;$("floatingCart").classList.toggle("has-items",quantity>0);if(!items.length){$("cartItems").innerHTML='<p class="empty-cart">Tu carrito está vacío.</p>';$("total").textContent=`Total: ${money(0)}`;return}let total=0;$("cartItems").innerHTML=items.map(i=>{const sub=i.price*i.quantity;total+=sub;const a=Object.entries(i.attributes).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join(" · ");return `<div class="cart-item"><div><strong>${esc(i.name)}</strong>${a?`<small>${a}</small>`:""}<small>${i.quantity} × ${i.discounted?`<s>${money(i.originalPrice,i.currency)}</s> `:""}${money(i.price,i.currency)} = ${money(sub,i.currency)}</small></div><button class="remove-button" data-remove="${esc(i.key)}">−</button></div>`}).join("");$("total").textContent=`Total: ${money(total)}`;$("cartItems").querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{const i=cart.get(b.dataset.remove);if(i.quantity>1)i.quantity--;else cart.delete(b.dataset.remove);renderCart()})}
+function renderCart(){saveCartDraft();const items=[...cart.values()];ensureCartFeedback();const quantity=items.reduce((sum,item)=>sum+item.quantity,0);$("floatingCartCount").textContent=quantity;$("floatingCartCount").hidden=quantity===0;$("floatingCart").classList.toggle("has-items",quantity>0);if(!$("clearCartBtn")){const clear=document.createElement("button");clear.id="clearCartBtn";clear.type="button";clear.className="clear-cart-button";clear.textContent="Vaciar carrito";clear.onclick=clearSavedCart;$("total").insertAdjacentElement("afterend",clear)}$("clearCartBtn").hidden=!items.length;if(!items.length){$("cartItems").innerHTML='<p class="empty-cart">Tu carrito está vacío.</p>';$("total").textContent=`Total: ${money(0)}`;return}let total=0;$("cartItems").innerHTML=items.map(i=>{const sub=i.price*i.quantity;total+=sub;const a=Object.entries(i.attributes).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join(" · ");return `<div class="cart-item"><div><strong>${esc(i.name)}</strong>${a?`<small>${a}</small>`:""}<small>${i.quantity} × ${i.discounted?`<s>${money(i.originalPrice,i.currency)}</s> `:""}${money(i.price,i.currency)} = ${money(sub,i.currency)}</small></div><button class="remove-button" data-remove="${esc(i.key)}">−</button></div>`}).join("");$("total").textContent=`Total: ${money(total)}`;$("cartItems").querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{const i=cart.get(b.dataset.remove);if(i.quantity>1)i.quantity--;else cart.delete(b.dataset.remove);renderCart();showCartToast("Carrito actualizado.")})}
 function invoice(){
  const items=[...cart.values()];if(!items.length){alert("Agrega productos al carrito primero.");return}
  activeOrderRequestId=activeOrderRequestId||crypto.randomUUID();$("shareInvoice").hidden=true;
@@ -262,7 +299,7 @@ async function load(){
    visualAttributes:[...(visualByProduct.get(p.id)||[])],
    images:ir.data.filter(i=>i.product_id===p.id).map(i=>({...i,attributeValues:rulesByImage.get(i.id)||{}}))
   })).filter(p=>p.variants.length);
-  renderCategories();renderProducts();renderCart();$("catalogMessage").textContent="";
+  restoreCartDraft();renderCategories();renderProducts();renderCart();$("catalogMessage").textContent="";
  }catch(e){
   console.error("Catalog load error",e);
   $("catalogMessage").textContent="No fue posible cargar el catálogo. Revisa conexión, permisos de lectura y la migración de atributos visuales en Supabase.";
