@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const supabase=createClient("https://ftzfsxcnfcqdmwhpardt.supabase.co","sb_publishable_eRUu-PSs6VrdbtHMET1AvQ_pkZ_WHUv");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
-let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0;
+let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0,quickViewHistoryOpen=false;
 let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO"};
 const cartStorageKey=()=> "concept-by-lily:cart:"+String(cfg.storeId||"default");
 function saveCartDraft(){
@@ -164,14 +164,14 @@ function renderQuickView(id){
  const activeImage=images[quickViewImageIndex]||images[0];
  const modal=$("quickViewModal"),body=$("quickViewBody");
  body.innerHTML=`<div class="quick-view-layout"><div class="quick-view-gallery"><div class="quick-view-media">${activeImage?`<img class="quick-view-main-image" src="${esc(url(activeImage.image_path))}" alt="${esc(p.name)}">`:'<div class="image-placeholder">Imagen próximamente</div>'}${images.length>1?`<button type="button" class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Imagen anterior">‹</button><button type="button" class="gallery-arrow gallery-next" data-gallery-next aria-label="Imagen siguiente">›</button>`:""}</div>${images.length>1?`<div class="quick-view-thumbnails">${images.map((image,index)=>`<button type="button" class="quick-view-thumb ${index===quickViewImageIndex?"active":""}" data-gallery-index="${index}" aria-label="Ver imagen ${index+1}"><img src="${esc(url(image.image_path))}" alt=""></button>`).join("")}</div><p class="gallery-counter">${quickViewImageIndex+1} de ${images.length} imágenes</p>`:""}</div><div class="quick-view-info"><p class="product-category">${esc(p.category?.name||"")}</p><h2>${esc(p.name)}</h2>${catalogSettings.show_prices?`<div class="product-price">${priceMarkup(p,v)}</div>`:""}${catalogSettings.show_descriptions?`<section class="quick-view-description"><h3>Descripción</h3><p>${esc(p.description||"Este producto no tiene una descripción general.")}</p></section>${details.map(([k,val])=>`<section class="quick-view-detail"><h3>${esc(k)}</h3><p>${esc(val)}</p></section>`).join("")}`:""}<div class="quick-view-variants">${keys(p).map(k=>options(p,k,s)).join("")}</div>${catalogSettings.show_stock?`<div class="availability">${off?'<span class="stock-badge">AGOTADO</span>':`<span class="stock-note">${stock} disponible${stock===1?"":"s"}</span>`}</div>`:""}<button class="add-button" data-modal-add="${esc(p.id)}" ${off?"disabled":""}>${off?"No disponible":"Agregar al carrito"}</button></div></div>`;
- modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");
+ if(!quickViewHistoryOpen){history.pushState({...history.state,conceptQuickView:true},"",location.href);quickViewHistoryOpen=true;}modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.classList.add("modal-open");
  body.querySelectorAll("[data-attr]").forEach(b=>b.onclick=()=>{chosen(p)[b.dataset.attr]=b.dataset.val;quickViewImageIndex=0;renderQuickView(id)});
  body.querySelectorAll("[data-gallery-index]").forEach(b=>b.onclick=()=>{quickViewImageIndex=Number(b.dataset.galleryIndex);renderQuickView(id)});
  body.querySelector("[data-gallery-prev]")?.addEventListener("click",()=>{quickViewImageIndex=(quickViewImageIndex-1+images.length)%images.length;renderQuickView(id)});
  body.querySelector("[data-gallery-next]")?.addEventListener("click",()=>{quickViewImageIndex=(quickViewImageIndex+1)%images.length;renderQuickView(id)});
  body.querySelector("[data-modal-add]")?.addEventListener("click",e=>add(id,e.currentTarget));
 }
-function closeQuickView(){const modal=$("quickViewModal");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open");quickViewProductId=null}
+function closeQuickView(fromPopState=false){const modal=$("quickViewModal");if(!modal.classList.contains("open"))return;modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open");quickViewProductId=null;if(quickViewHistoryOpen){quickViewHistoryOpen=false;if(!fromPopState)history.back();}}
 function renderProducts(){const q=norm($("productSearch").value),list=products.filter(p=>(catalogSettings.show_out_of_stock||p.variants.some(v=>Number(v.stock)>0))&&(activeCategory==="all"||p.category_id===activeCategory)&&norm([p.name,p.description,p.category?.name].join(" ")).includes(q));$("productCount").textContent=`${list.length} ${list.length===1?"producto":"productos"}`;$("productsContainer").innerHTML=list.length?list.map(card).join(""):`<div class="empty-state"><h2>${products.length?"No encontramos productos":"Estamos preparando esta colección"}</h2><p>${products.length?"Prueba con otra búsqueda o categoría.":"Pronto encontrarás aquí los productos disponibles."}</p></div>`;$("productsContainer").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>renderQuickView(b.dataset.open))}
 const addCooldown=new Map();
 function ensureCartFeedback(){
@@ -306,7 +306,7 @@ async function load(){
   $("productsContainer").innerHTML='<div class="empty-state"><h2>No se pudo cargar la colección</h2><p>Verifica la conexión y la configuración de Supabase.</p></div>';
  }
 }
-$("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});
+$("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});window.addEventListener("popstate",()=>{if(quickViewHistoryOpen)closeQuickView(true)});
 // Sparkle Trail: mouse en escritorio y eventos táctiles nativos en móviles.
 const sparkleLastPoint=new WeakMap();
 const activeSparkleTouches=new Map();
