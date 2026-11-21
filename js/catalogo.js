@@ -27,7 +27,7 @@ function restoreCartDraft(){
    restored+=available;if(available<quantity)removed++;
   }
   saveCartDraft();
-  if(restored)window.addEventListener("load",()=>showCartToast("Recuperamos "+restored+" unidad"+(restored===1?"":"es")+" de tu carrito."),{once:true});
+  if(restored)showCartToast("Recuperamos "+restored+" unidad"+(restored===1?"":"es")+" de tu carrito.");
   if(removed)console.info("Se ajustaron artículos guardados que ya no están disponibles o superaban el inventario.");
  }catch(e){console.warn("No se pudo recuperar el carrito guardado:",e)}
 }
