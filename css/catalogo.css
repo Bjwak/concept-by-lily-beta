@@ -672,3 +672,10 @@ body.modal-open{overflow:hidden}
 .price-before{display:inline-block;margin-right:7px;color:#888;text-decoration:line-through;font-size:.88em;font-weight:400}
 .price-current{font-weight:700}
 .discount-badge{display:inline-block;margin-left:7px;padding:3px 7px;border-radius:999px;background:#fff0ed;color:#b42318;font-size:.72em;font-weight:700;vertical-align:middle}
+
+
+/* Destellos que siguen el cursor sobre las imágenes de producto */
+.sparkle-host{position:relative;isolation:isolate;overflow:hidden}
+.sparkle-particle{position:absolute;z-index:8;pointer-events:none;transform:translate(-50%,-50%);color:#fff;font-size:var(--sparkle-size,12px);line-height:1;text-shadow:0 0 4px #fff,0 0 9px #fff,0 0 15px #f5b6dc;animation:sparkleFloat .72s ease-out forwards;will-change:transform,opacity}
+@keyframes sparkleFloat{0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-25deg)}22%{opacity:1;transform:translate(calc(-50% + var(--sparkle-drift,0px)),calc(-50% - 3px)) scale(1.15) rotate(12deg)}100%{opacity:0;transform:translate(calc(-50% + var(--sparkle-drift,0px)), -24px) scale(.25) rotate(55deg)}}
+@media(prefers-reduced-motion:reduce){.sparkle-particle{animation-duration:.2s}}
