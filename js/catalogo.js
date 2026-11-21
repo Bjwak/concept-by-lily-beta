@@ -217,14 +217,14 @@ async function load(){
  }
 }
 $("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});
-// Sparkle Trail: mouse en escritorio y toque/deslizamiento en pantallas táctiles.
+// Sparkle Trail: mouse en escritorio y eventos táctiles nativos en móviles.
 const sparkleLastPoint=new WeakMap();
 const activeSparkleTouches=new Map();
 function spawnSparkle(host,x,y,count=1){
  if(!host||!host.querySelector("img"))return;
  host.classList.add("sparkle-host");
  const existing=host.querySelectorAll(".sparkle-particle");
- const available=Math.max(0,18-existing.length);
+ const available=Math.max(0,22-existing.length);
  for(let i=0;i<Math.min(count,available);i++){
   const angle=count>1?(Math.PI*2*i/count)+(Math.random()*.35):Math.random()*Math.PI*2;
   const radius=count>1?(5+Math.random()*17):0;
@@ -241,37 +241,45 @@ function spawnSparkle(host,x,y,count=1){
   p.addEventListener("animationend",()=>p.remove(),{once:true});
  }
 }
-function sparkleTarget(e){
- const host=e.target.closest(".product-image-wrap,.quick-view-media");
- if(!host)return null;
- const rect=host.getBoundingClientRect();
- return {host,x:e.clientX-rect.left,y:e.clientY-rect.top};
+function sparkleHostFrom(target){
+ return target instanceof Element?target.closest(".product-image-wrap,.quick-view-media"):null;
 }
+function sparklePoint(host,clientX,clientY){
+ const rect=host.getBoundingClientRect();
+ return {host,x:clientX-rect.left,y:clientY-rect.top,clientX,clientY};
+}
+// Escritorio: el rastro sigue el cursor.
 document.addEventListener("pointermove",e=>{
- const point=sparkleTarget(e);if(!point)return;
- if(e.pointerType==="mouse"){
-  const prev=sparkleLastPoint.get(point.host);
-  if(prev&&Math.hypot(point.x-prev.x,point.y-prev.y)<9)return;
-  sparkleLastPoint.set(point.host,{x:point.x,y:point.y});
-  spawnSparkle(point.host,point.x,point.y);
-  return;
- }
- if(e.pointerType==="touch"&&activeSparkleTouches.has(e.pointerId)){
-  const prev=activeSparkleTouches.get(e.pointerId);
-  if(prev.host!==point.host||Math.hypot(point.x-prev.x,point.y-prev.y)>=12){
-   spawnSparkle(point.host,point.x,point.y,Math.random()>.55?2:1);
-   activeSparkleTouches.set(e.pointerId,point);
-  }
+ if(e.pointerType!=="mouse")return;
+ const host=sparkleHostFrom(e.target);if(!host)return;
+ const point=sparklePoint(host,e.clientX,e.clientY),prev=sparkleLastPoint.get(host);
+ if(prev&&Math.hypot(point.x-prev.x,point.y-prev.y)<8)return;
+ sparkleLastPoint.set(host,point);
+ spawnSparkle(host,point.x,point.y);
+},{passive:true});
+// Móvil: touch events permiten continuar leyendo el dedo aunque el navegador
+// también esté desplazando la página (pointercancel suele cortar ese gesto).
+document.addEventListener("touchstart",e=>{
+ for(const touch of e.changedTouches){
+  const host=sparkleHostFrom(e.target);if(!host)continue;
+  const point=sparklePoint(host,touch.clientX,touch.clientY);
+  activeSparkleTouches.set(touch.identifier,point);
+  spawnSparkle(host,point.x,point.y,7);
  }
 },{passive:true});
-document.addEventListener("pointerdown",e=>{
- if(e.pointerType!=="touch")return;
- const point=sparkleTarget(e);if(!point)return;
- activeSparkleTouches.set(e.pointerId,point);
- // Pequeña explosión de destellos alrededor del primer toque.
- spawnSparkle(point.host,point.x,point.y,7);
+document.addEventListener("touchmove",e=>{
+ for(const touch of e.changedTouches){
+  const prev=activeSparkleTouches.get(touch.identifier);if(!prev)continue;
+  const rect=prev.host.getBoundingClientRect();
+  const x=touch.clientX-rect.left,y=touch.clientY-rect.top;
+  // Mantener la estela dentro de la imagen y evitar partículas demasiado juntas.
+  if(touch.clientX<rect.left||touch.clientX>rect.right||touch.clientY<rect.top||touch.clientY>rect.bottom)continue;
+  if(Math.hypot(x-prev.x,y-prev.y)<7)continue;
+  spawnSparkle(prev.host,x,y,Math.random()>.55?2:1);
+  activeSparkleTouches.set(touch.identifier,{host:prev.host,x,y,clientX:touch.clientX,clientY:touch.clientY});
+ }
 },{passive:true});
-const stopSparkleTouch=e=>activeSparkleTouches.delete(e.pointerId);
-document.addEventListener("pointerup",stopSparkleTouch,{passive:true});
-document.addEventListener("pointercancel",stopSparkleTouch,{passive:true});
+const stopSparkleTouch=e=>{for(const touch of e.changedTouches)activeSparkleTouches.delete(touch.identifier)};
+document.addEventListener("touchend",stopSparkleTouch,{passive:true});
+document.addEventListener("touchcancel",stopSparkleTouch,{passive:true});
 $("whatsappBtn").onclick=invoice;$("trackOrderForm")?.addEventListener("submit",e=>{e.preventDefault();trackOrder()});$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
