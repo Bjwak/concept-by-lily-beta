@@ -703,3 +703,6 @@ body.modal-open{overflow:hidden}
 .add-button.is-added{background:#208b59!important;color:#fff!important}
 .product-added-confirmation{margin:9px 0 0;padding:10px 12px;border:1px solid #bde8ce;border-radius:10px;background:#effaf3;color:#187a49;font-size:13px;font-weight:700;line-height:1.4}
 @keyframes addedBadgeIn{from{opacity:0;transform:translateY(-5px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.clear-cart-button{display:block;margin:10px 0 0 auto;padding:8px 12px;border:1px solid #ead1d9;border-radius:9px;background:#fff;color:#92576a;font-size:12px;font-weight:700;cursor:pointer}
+.clear-cart-button:hover{background:#fff5f8}
