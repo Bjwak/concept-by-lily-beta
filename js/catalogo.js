@@ -151,6 +151,18 @@ let cartToastTimer=null;
 function showCartToast(message){
  ensureCartFeedback();const toast=$("cartToast");toast.innerHTML='<span class="cart-toast-check">✓</span><span>'+esc(message)+'</span>';toast.classList.add("visible");clearTimeout(cartToastTimer);cartToastTimer=setTimeout(()=>toast.classList.remove("visible"),2100);
 }
+function showProductCardAdded(productId,quantity){
+ const card=[...document.querySelectorAll(".product-card")].find(el=>el.dataset.pid===productId);
+ if(card){
+  const image=card.querySelector(".product-image-wrap");
+  if(image){let badge=image.querySelector(".product-added-badge");if(!badge){badge=document.createElement("span");badge.className="product-added-badge";image.appendChild(badge)}badge.textContent="✓ En tu carrito";}
+  let note=card.querySelector(".product-added-note");if(!note){note=document.createElement("span");note.className="product-added-note";card.querySelector(".product-content")?.appendChild(note)}if(note)note.textContent="En tu carrito · "+quantity;
+ }
+ const modalButton=document.querySelector("[data-modal-add='"+CSS.escape(productId)+"']");
+ if(modalButton){modalButton.textContent="Agregado ✓";modalButton.classList.add("is-added");}
+ const info=document.querySelector(".quick-view-info");
+ if(info){let status=info.querySelector(".product-added-confirmation");if(!status){status=document.createElement("p");status.className="product-added-confirmation";status.setAttribute("role","status");info.querySelector("[data-modal-add]")?.insertAdjacentElement("afterend",status)}if(status)status.textContent="✓ Este producto ya está en tu carrito ("+quantity+"). Puedes seguir comprando.";}
+}
 function add(id,sourceButton){
  const p=products.find(x=>x.id===id),v=variant(p);if(!p||!v||Number(v.stock)<=0)return false;
  const key=p.id+":"+v.id,now=Date.now(),until=addCooldown.get(key)||0;
@@ -160,7 +172,7 @@ function add(id,sourceButton){
  addCooldown.set(key,now+750);
  const pricingInfo=pricing(p,v);
  cart.set(key,{key,variant_id:v.id,name:p.name,price:Number(pricingInfo.final),originalPrice:Number(pricingInfo.original),discounted:pricingInfo.active,currency:currencyOf(p),attributes:attrs(v),quantity:qty,stock:Number(v.stock)});
- renderCart();showCartToast("¡"+p.name+" agregado al carrito!");
+ renderCart();showProductCardAdded(p.id,qty);showCartToast("¡"+p.name+" agregado al carrito!");
  if(sourceButton){sourceButton.disabled=true;const old=sourceButton.textContent;sourceButton.textContent="Agregado ✓";setTimeout(()=>{sourceButton.disabled=false;sourceButton.textContent=old},750)}
  return true;
 }
