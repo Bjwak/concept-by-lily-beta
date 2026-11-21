@@ -217,17 +217,61 @@ async function load(){
  }
 }
 $("quickViewClose").onclick=closeQuickView;$("quickViewModal").addEventListener("click",e=>{if(e.target.id==="quickViewModal")closeQuickView()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickView()});
-// Rastro de destellos sobre las imágenes al mover el cursor.
+// Sparkle Trail: mouse en escritorio y toque/deslizamiento en pantallas táctiles.
 const sparkleLastPoint=new WeakMap();
-document.addEventListener("pointermove",e=>{
- if(e.pointerType!=="mouse")return;
- const host=e.target.closest(".product-image-wrap,.quick-view-media");
+const activeSparkleTouches=new Map();
+function spawnSparkle(host,x,y,count=1){
  if(!host||!host.querySelector("img"))return;
- const rect=host.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,prev=sparkleLastPoint.get(host);
- if(prev&&Math.hypot(x-prev.x,y-prev.y)<9)return;
- sparkleLastPoint.set(host,{x,y});host.classList.add("sparkle-host");
- const p=document.createElement("span");p.className="sparkle-particle";p.textContent=Math.random()>.42?"✦":"✧";
- p.style.left=x+"px";p.style.top=y+"px";p.style.setProperty("--sparkle-size",(7+Math.random()*12)+"px");p.style.setProperty("--sparkle-drift",(Math.random()*24-12)+"px");host.appendChild(p);
- p.addEventListener("animationend",()=>p.remove(),{once:true});
-});
+ host.classList.add("sparkle-host");
+ const existing=host.querySelectorAll(".sparkle-particle");
+ const available=Math.max(0,18-existing.length);
+ for(let i=0;i<Math.min(count,available);i++){
+  const angle=count>1?(Math.PI*2*i/count)+(Math.random()*.35):Math.random()*Math.PI*2;
+  const radius=count>1?(5+Math.random()*17):0;
+  const p=document.createElement("span");
+  p.className="sparkle-particle";
+  p.textContent=Math.random()>.38?"✦":"✧";
+  p.style.left=(x+Math.cos(angle)*radius)+"px";
+  p.style.top=(y+Math.sin(angle)*radius)+"px";
+  p.style.setProperty("--sparkle-size",(count>1?8+Math.random()*13:7+Math.random()*12)+"px");
+  p.style.setProperty("--sparkle-drift",(Math.random()*30-15)+"px");
+  p.style.setProperty("--sparkle-rise",(18+Math.random()*22)+"px");
+  p.style.setProperty("--sparkle-rotation",(Math.random()*100-50)+"deg");
+  host.appendChild(p);
+  p.addEventListener("animationend",()=>p.remove(),{once:true});
+ }
+}
+function sparkleTarget(e){
+ const host=e.target.closest(".product-image-wrap,.quick-view-media");
+ if(!host)return null;
+ const rect=host.getBoundingClientRect();
+ return {host,x:e.clientX-rect.left,y:e.clientY-rect.top};
+}
+document.addEventListener("pointermove",e=>{
+ const point=sparkleTarget(e);if(!point)return;
+ if(e.pointerType==="mouse"){
+  const prev=sparkleLastPoint.get(point.host);
+  if(prev&&Math.hypot(point.x-prev.x,point.y-prev.y)<9)return;
+  sparkleLastPoint.set(point.host,{x:point.x,y:point.y});
+  spawnSparkle(point.host,point.x,point.y);
+  return;
+ }
+ if(e.pointerType==="touch"&&activeSparkleTouches.has(e.pointerId)){
+  const prev=activeSparkleTouches.get(e.pointerId);
+  if(prev.host!==point.host||Math.hypot(point.x-prev.x,point.y-prev.y)>=12){
+   spawnSparkle(point.host,point.x,point.y,Math.random()>.55?2:1);
+   activeSparkleTouches.set(e.pointerId,point);
+  }
+ }
+},{passive:true});
+document.addEventListener("pointerdown",e=>{
+ if(e.pointerType!=="touch")return;
+ const point=sparkleTarget(e);if(!point)return;
+ activeSparkleTouches.set(e.pointerId,point);
+ // Pequeña explosión de destellos alrededor del primer toque.
+ spawnSparkle(point.host,point.x,point.y,7);
+},{passive:true});
+const stopSparkleTouch=e=>activeSparkleTouches.delete(e.pointerId);
+document.addEventListener("pointerup",stopSparkleTouch,{passive:true});
+document.addEventListener("pointercancel",stopSparkleTouch,{passive:true});
 $("whatsappBtn").onclick=invoice;$("trackOrderForm")?.addEventListener("submit",e=>{e.preventDefault();trackOrder()});$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
