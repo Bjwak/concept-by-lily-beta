@@ -260,11 +260,11 @@ const orderStatusLabels={pending_confirmation:"Pendiente de confirmación",confi
 const customerCanCancel=status=>["pending_confirmation","confirmed","preparing","ready_for_delivery"].includes(status);
 function renderTrackedOrder(order,historyRows,number,phone){
  const box=$("trackOrderResult"),statusLabel=orderStatusLabels[order.status]||order.status;
- const timeline=[...historyRows].sort((x,y)=>new Date(x.created_at)-new Date(y.created_at)).map(h=>'<li><span>'+esc(orderStatusLabels[h.status]||h.status)+'</span><time>'+new Date(h.created_at).toLocaleString("es-NI")+'</time></li>').join("");
+ const timeline=[...historyRows].sort((x,y)=>new Date(x.created_at)-new Date(y.created_at)).map(h=>'<li><div><span>'+esc(orderStatusLabels[h.status]||h.status)+'</span>'+(h.note?'<small>'+esc(h.note)+'</small>':'')+'</div><time>'+new Date(h.created_at).toLocaleString("es-NI")+'</time></li>').join("");
  const cancelPanel=customerCanCancel(order.status)
   ?'<div class="customer-order-cancel"><p>¿Ya no necesitas este pedido? Puedes cancelarlo desde aquí mientras no haya salido en camino.</p><label for="customerCancelReason">Motivo (opcional)</label><input id="customerCancelReason" type="text" maxlength="500" placeholder="Cuéntanos brevemente por qué lo cancelas"><button type="button" id="cancelCustomerOrder">Cancelar mi pedido</button><small id="customerCancelMessage" role="status"></small></div>'
   :'<p class="customer-order-lock">'+(order.status==="in_transit"?"El pedido ya está en camino y no se puede cancelar desde el catálogo. Contacta con la tienda para coordinar cualquier incidencia.":"Este pedido ya no admite cancelaciones.")+'</p>';
- box.innerHTML='<div class="customer-order-status"><strong>Pedido #'+esc(order.order_number)+' · '+esc(statusLabel)+'</strong><p>Total: '+money(order.total,order.currency)+'</p></div>'+(timeline?'<ol class="customer-order-timeline">'+timeline+'</ol>':'')+cancelPanel;
+ box.innerHTML='<div class="customer-order-status"><strong>Pedido #'+esc(order.order_number)+' · '+esc(statusLabel)+'</strong><p>Total: '+money(order.total,order.currency)+'</p>'+(order.cancellation_reason?'<p class="customer-order-reason">Motivo: '+esc(order.cancellation_reason)+'</p>':'')+'</div>'+(timeline?'<ol class="customer-order-timeline">'+timeline+'</ol>':'')+cancelPanel;
  const cancelButton=$("cancelCustomerOrder");
  if(cancelButton)cancelButton.onclick=async()=>{
   const reason=$("customerCancelReason").value.trim();
