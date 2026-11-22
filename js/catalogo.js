@@ -247,8 +247,40 @@ async function registerOrder(e){
  }catch(err){console.error(err);message.textContent=err.message||"No fue posible registrar el pedido.";button.disabled=false;button.textContent="Reintentar registro"}
 }
 async function trackOrder(){
- const number=Number($("trackOrderNumber").value),phone=$("trackOrderPhone").value.trim(),box=$("trackOrderResult");box.textContent="Consultando…";
- try{const {data,error}=await supabase.rpc("get_public_order_status",{p_order_number:number,p_customer_phone:phone});if(error)throw error;if(!data?.order){box.textContent="No encontramos un pedido con esos datos.";return}const o=data.order,labels={pending_confirmation:"Pendiente de confirmación",confirmed:"Confirmado",preparing:"En preparación",ready_for_delivery:"Listo para entrega",in_transit:"En camino",delivered:"Entregado",cancelled_by_customer:"Cancelado",cancelled_by_store:"Cancelado",rejected:"Rechazado"};box.innerHTML='<strong>Pedido #'+esc(o.order_number)+' · '+esc(labels[o.status]||o.status)+'</strong><p>Total: '+money(o.total,o.currency)+'</p>'+(data.history||[]).map(h=>'<p>• '+esc(labels[h.status]||h.status)+' · '+new Date(h.created_at).toLocaleString("es-NI")+'</p>').join("")}catch(err){console.error(err);box.textContent="No fue posible consultar el pedido."}
+ const number=Number($("trackOrderNumber").value),phone=$("trackOrderPhone").value.trim(),box=$("trackOrderResult");
+ box.textContent="Consultando…";
+ try{
+  const {data,error}=await supabase.rpc("get_public_order_status",{p_order_number:number,p_customer_phone:phone});
+  if(error)throw error;
+  if(!data?.order){box.textContent="No encontramos un pedido con esos datos.";return}
+  renderTrackedOrder(data.order,data.history||[],number,phone);
+ }catch(err){console.error(err);box.textContent="No fue posible consultar el pedido."}
+}
+const orderStatusLabels={pending_confirmation:"Pendiente de confirmación",confirmed:"Confirmado",preparing:"En preparación",ready_for_delivery:"Listo para entregar",in_transit:"En camino",delivered:"Entregado",cancelled_by_customer:"Cancelado por ti",cancelled_by_store:"Cancelado por la tienda",rejected:"Rechazado"};
+const customerCanCancel=status=>["pending_confirmation","confirmed","preparing","ready_for_delivery"].includes(status);
+function renderTrackedOrder(order,historyRows,number,phone){
+ const box=$("trackOrderResult"),statusLabel=orderStatusLabels[order.status]||order.status;
+ const timeline=[...historyRows].sort((x,y)=>new Date(x.created_at)-new Date(y.created_at)).map(h=>'<li><span>'+esc(orderStatusLabels[h.status]||h.status)+'</span><time>'+new Date(h.created_at).toLocaleString("es-NI")+'</time></li>').join("");
+ const cancelPanel=customerCanCancel(order.status)
+  ?'<div class="customer-order-cancel"><p>¿Ya no necesitas este pedido? Puedes cancelarlo desde aquí mientras no haya salido en camino.</p><label for="customerCancelReason">Motivo (opcional)</label><input id="customerCancelReason" type="text" maxlength="500" placeholder="Cuéntanos brevemente por qué lo cancelas"><button type="button" id="cancelCustomerOrder">Cancelar mi pedido</button><small id="customerCancelMessage" role="status"></small></div>'
+  :'<p class="customer-order-lock">'+(order.status==="in_transit"?"El pedido ya está en camino y no se puede cancelar desde el catálogo. Contacta con la tienda para coordinar cualquier incidencia.":"Este pedido ya no admite cancelaciones.")+'</p>';
+ box.innerHTML='<div class="customer-order-status"><strong>Pedido #'+esc(order.order_number)+' · '+esc(statusLabel)+'</strong><p>Total: '+money(order.total,order.currency)+'</p></div>'+(timeline?'<ol class="customer-order-timeline">'+timeline+'</ol>':'')+cancelPanel;
+ const cancelButton=$("cancelCustomerOrder");
+ if(cancelButton)cancelButton.onclick=async()=>{
+  const reason=$("customerCancelReason").value.trim();
+  if(!confirm("¿Confirmas que deseas cancelar el pedido #"+order.order_number+"? Esta acción no se puede deshacer."))return;
+  cancelButton.disabled=true;cancelButton.textContent="Cancelando…";
+  const message=$("customerCancelMessage");message.textContent="";
+  try{
+   const {data,error}=await supabase.rpc("cancel_public_order",{p_order_number:number,p_customer_phone:phone,p_reason:reason||null});
+   if(error)throw error;
+   if(!data?.success)throw new Error(data?.message||"No fue posible cancelar el pedido.");
+   message.textContent="Tu pedido fue cancelado correctamente.";
+   const refreshed=await supabase.rpc("get_public_order_status",{p_order_number:number,p_customer_phone:phone});
+   if(refreshed.error)throw refreshed.error;
+   if(refreshed.data?.order)renderTrackedOrder(refreshed.data.order,refreshed.data.history||[],number,phone);
+  }catch(err){console.error(err);message.textContent=err.message||"No fue posible cancelar el pedido.";cancelButton.disabled=false;cancelButton.textContent="Cancelar mi pedido";}
+ };
 }
 async function share(){try{if(!window.html2canvas)throw Error("No se cargó html2canvas");const canvas=await html2canvas($("invoiceArea"),{backgroundColor:"#fff",scale:2}),blob=await new Promise(r=>canvas.toBlob(r,"image/png"));if(!blob)throw Error("No se generó la imagen");const file=new File([blob],"Pedido-Concept-by-Lily.png",{type:"image/png"});if(navigator.share&&navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:"Pedido Concept by Lily",text:"Hola, me gustaría realizar este pedido."});else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=file.name;a.click();URL.revokeObjectURL(u);alert("La proforma se descargó. Puedes adjuntarla en WhatsApp.")}}catch(e){if(!String(e.message).toLowerCase().includes("cancel")){console.error(e);alert("No fue posible compartir la proforma.")}}}
 async function load(){
