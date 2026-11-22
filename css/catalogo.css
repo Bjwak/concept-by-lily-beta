@@ -677,3 +677,11 @@ body.modal-open{overflow:hidden}
 
 /* Sparkle trail */
 .sparkle-host{position:relative;isolation:isolate;overflow:hidden}.sparkle-particle{position:absolute;z-index:8;pointer-events:none;transform:translate(-50%,-50%);color:#fff;font-size:var(--sparkle-size,12px);line-height:1;text-shadow:0 0 4px #fff,0 0 9px #fff,0 0 15px #f5b6dc;animation:sparkleFloat .72s ease-out forwards;will-change:transform,opacity}@keyframes sparkleFloat{0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-25deg)}22%{opacity:1;transform:translate(calc(-50% + var(--sparkle-drift,0px)),calc(-50% - 3px)) scale(1.15) rotate(12deg)}100%{opacity:0;transform:translate(calc(-50% + var(--sparkle-drift,0px)),-24px) scale(.25) rotate(55deg)}}@media(prefers-reduced-motion:reduce){.sparkle-particle{animation-duration:.2s}}
+
+.customer-order-actions{margin-top:16px;padding:14px;border:1px solid #f0d9df;border-radius:12px;background:#fffafb;display:grid;gap:9px}
+.customer-order-actions p{margin:0;font-weight:600}
+.customer-order-actions small{line-height:1.45;color:#806b73}
+.customer-cancel-button{justify-self:start;border:1px solid #c65b68;border-radius:9px;background:#fff;color:#a33e4c;padding:10px 15px;font:inherit;font-weight:700;cursor:pointer}
+.customer-cancel-button:disabled{opacity:.6;cursor:wait}
+.customer-cancel-success{padding:10px 12px;border-radius:8px;background:#e9f7ee;color:#237348}
+@media(max-width:600px){.customer-cancel-button{width:100%}}
