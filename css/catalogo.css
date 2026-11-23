@@ -723,3 +723,5 @@ body.modal-open{overflow:hidden}
 
 /* El cierre permanece visible aunque el contenido del producto sea muy largo. */
 .quick-view-close{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px);float:none;margin:0;z-index:1601;width:42px;height:42px;display:grid;place-items:center;font-size:27px;line-height:1;box-shadow:0 3px 14px #0003}
+
+.customer-order-whatsapp{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:9px;background:#a94d5a;color:#fff;font-weight:700;text-decoration:none}.customer-order-whatsapp:hover{filter:brightness(.95)}.share-button[hidden]{display:none!important}.share-button:disabled{opacity:.5;cursor:not-allowed}
