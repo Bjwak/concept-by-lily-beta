@@ -261,7 +261,7 @@ const customerCanCancel=status=>["pending_confirmation","confirmed","preparing",
 function renderTrackedOrder(order,historyRows,number,phone){
  const box=$("trackOrderResult"),statusLabel=orderStatusLabels[order.status]||order.status;
  const timeline=[...historyRows].sort((x,y)=>new Date(x.created_at)-new Date(y.created_at)).map(h=>'<li><div><span>'+esc(orderStatusLabels[h.status]||h.status)+'</span>'+(h.note?'<small>'+esc(h.note)+'</small>':'')+'</div><time>'+new Date(h.created_at).toLocaleString("es-NI")+'</time></li>').join("");
- const phoneDigits=String(catalogSettings.whatsapp_number||"").replace(/\\D/g,"");
+ const phoneDigits=String(catalogSettings.whatsapp_number||"").replace(/\D/g,"");
  const whatsappMessage=encodeURIComponent("Hola, necesito ayuda con el pedido #"+order.order_number+". Quisiera consultar una posible cancelación.");
  const whatsappLink=phoneDigits?'<a class="customer-order-whatsapp" href="https://wa.me/'+phoneDigits+'?text='+whatsappMessage+'" target="_blank" rel="noopener noreferrer">Contactar por WhatsApp para solicitar una cancelación</a>':'<p class="customer-order-lock">Para solicitar una cancelación, contacta directamente con la tienda por WhatsApp.</p>';
  const cancelPanel='<div class="customer-order-cancel"><p>Las cancelaciones se gestionan directamente con la propietaria para revisar cada solicitud.</p>'+whatsappLink+'</div>';
