@@ -257,3 +257,139 @@ body{background:#fffdf7;color:#6b4a5a}
  .visual-stamp{background:#ffb8d2}
  .collection-card{background-color:#6b4a5a}
 }
+
+
+/* ===== NUEVA COMPOSICIÓN HOME: formas orgánicas y mosaico editorial ===== */
+.site-header{
+ position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center;
+ gap:28px;padding:22px clamp(22px,6vw,90px);text-align:left;background:#6b4a5a;
+}
+.brand{flex:0 0 auto}.brand-tagline{display:none}
+.main-nav{margin:0;gap:clamp(8px,1.8vw,26px);justify-content:flex-end}
+.main-nav a{padding:8px 0;border-bottom:1px solid transparent;background:transparent;font-size:10px;letter-spacing:1px}
+.main-nav a:hover{border-color:#ffb8d2;background:transparent;color:#ffb8d2}
+main{width:min(1380px,calc(100% - 72px))}
+.intro{
+ min-height:0;grid-template-columns:.85fr 1.15fr;align-items:center;gap:clamp(30px,6vw,90px);
+ padding:clamp(58px,8vw,112px) 3% clamp(80px,10vw,135px);
+}
+.intro-copy-block{padding:0;max-width:520px}
+.intro .eyebrow{margin-bottom:24px}
+.intro h1{font-size:clamp(50px,6.5vw,88px);line-height:1.02;letter-spacing:-2.8px}
+.intro h1 em{display:inline;color:#e58fb0}
+.intro-copy{max-width:390px;margin:25px 0 29px;font-size:14px;line-height:1.9}
+.primary-link{border-radius:999px;padding:15px 23px;text-transform:none;letter-spacing:.2px;font-size:11px}
+.intro-note{margin-top:34px}
+.intro-visual{min-height:clamp(380px,42vw,570px);padding:0;margin:0;position:relative}
+.visual-main{inset:0 7% 5% 8%;border-radius:48% 48% 42% 42%/42% 42% 48% 48%;overflow:hidden}
+.visual-main img{object-position:center;filter:saturate(.9)}
+.visual-main:after{background:linear-gradient(145deg,rgba(255,214,232,.08),rgba(107,74,90,.14))}
+.visual-stamp{
+ left:auto;right:0;bottom:4%;width:clamp(105px,13vw,165px);height:clamp(105px,13vw,165px);
+ border:8px solid #fffdf7;border-radius:50%;background:#ffb8d2;transform:rotate(8deg);
+}
+.visual-stamp strong{font-size:clamp(15px,1.7vw,22px)}
+.visual-caption{top:12%;right:0;letter-spacing:2px}
+.collections{padding:0 0 clamp(78px,10vw,130px)}
+.section-heading{margin-bottom:38px;display:grid;grid-template-columns:1fr auto;align-items:end}
+.section-heading h2{font-size:clamp(38px,5vw,64px);letter-spacing:-1.8px}
+.section-aside{max-width:220px}
+.collection-grid{
+ display:grid;grid-template-columns:1.05fr .95fr;grid-template-rows:auto auto;gap:20px;
+}
+.collection-card{
+ position:relative;min-height:0;aspect-ratio:unset;border-radius:0;padding:clamp(24px,3vw,42px);
+ overflow:hidden;box-shadow:none;transition:transform .3s ease;
+}
+.collection-woman{grid-column:1;grid-row:1;min-height:490px;border-radius:160px 160px 8px 8px}
+.collection-beauty{grid-column:2;grid-row:1;min-height:365px;border-radius:8px 145px 8px 8px}
+.collection-man{grid-column:2;grid-row:2;min-height:250px;border-radius:8px 8px 8px 110px;background-position:center}
+.collection-card:hover{transform:translateY(-5px);box-shadow:none}
+.collection-card:before{background:linear-gradient(180deg,rgba(40,22,31,.02) 12%,rgba(40,22,31,.7) 100%)}
+.card-number{top:25px;left:27px;font-size:9px}
+.card-content{gap:13px}
+.card-title{font-size:clamp(29px,3.2vw,46px);max-width:390px}
+.collection-man .card-title{font-size:clamp(26px,2.8vw,37px)}
+.card-action{padding:0 0 6px;border-bottom:1px solid #ffffffb5;font-size:10px;letter-spacing:.5px;text-transform:none}
+.new-arrivals{padding:clamp(72px,9vw,115px) 0;border-top:0;position:relative}
+.new-arrivals:before{
+ content:"";position:absolute;z-index:-1;left:50%;top:0;bottom:0;width:100vw;transform:translateX(-50%);
+ background:#fff4f7;border-top:1px solid #f0d6e1;border-bottom:1px solid #f0d6e1;
+}
+.new-arrivals .section-heading{max-width:100%;margin-bottom:30px}
+.new-products-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.new-product-card{padding:0 0 14px;background:#fffdf7;border-radius:18px;overflow:hidden}
+.new-product-card:hover{transform:translateY(-5px)}
+.new-product-image{aspect-ratio:1/1.12;border-radius:18px 18px 0 0;background:#ffd6e8}
+.new-product-image img{padding:15px;mix-blend-mode:multiply}
+.new-product-tag{top:14px;left:14px;padding:7px 11px;border-radius:999px;background:#6b4a5a;color:#fffdf7;font-size:8px}
+.new-product-info{padding:16px 17px 7px}
+.new-product-name{font-size:19px;line-height:1.25}
+.new-product-price{font-size:15px;margin-top:8px}
+.new-arrivals-footer{margin-top:32px}
+.new-arrivals-footer a{padding:12px 20px;border:1px solid #6b4a5a;border-radius:999px;letter-spacing:.2px;text-transform:none;font-size:11px}
+.closing{padding:clamp(55px,7vw,85px) 20px;background:#ffb8d2;border-radius:0 0 90px 90px}
+.closing p{max-width:700px;font-size:clamp(27px,4vw,48px)}
+.site-footer{margin-top:0}
+@media(max-width:900px){
+ main{width:calc(100% - 44px)}
+ .site-header{padding:18px 24px;gap:18px}
+ .main-nav{gap:16px}
+ .intro{grid-template-columns:.9fr 1.1fr;padding:58px 1% 75px;gap:25px}
+ .intro h1{font-size:clamp(48px,7vw,70px)}
+ .intro-visual{min-height:390px}
+ .collection-woman{min-height:390px}
+ .collection-beauty{min-height:300px}
+ .collection-man{min-height:220px}
+ .new-products-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+}
+@media(max-width:640px){
+ .site-header{flex-direction:column;align-items:center;padding:18px 12px 14px;gap:11px}
+ .brand-name{font-size:30px}
+ .main-nav{width:100%;justify-content:center;gap:clamp(15px,5vw,28px)}
+ .main-nav a{padding:7px 0;font-size:9px}
+ main{width:calc(100% - 28px)}
+ .intro{grid-template-columns:1fr;gap:27px;padding:43px 2px 59px}
+ .intro-copy-block{max-width:none}
+ .intro .eyebrow{margin-bottom:17px}
+ .intro h1{font-size:clamp(47px,12.5vw,66px);letter-spacing:-1.9px}
+ .intro h1 em{display:inline}
+ .intro-copy{font-size:13px;margin:17px 0 21px}
+ .intro-note{margin-top:25px}
+ .intro-visual{min-height:clamp(280px,84vw,390px);margin:0 8px}
+ .visual-main{inset:0 8% 5% 5%;border-radius:48%}
+ .visual-stamp{width:105px;height:105px;border-width:5px;right:0;bottom:2%}
+ .visual-stamp strong{font-size:15px}
+ .visual-caption{right:-6px;top:10%;font-size:7px}
+ .section-heading{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:23px}
+ .section-heading h2{font-size:clamp(34px,9vw,43px)}
+ .section-aside{text-align:left;max-width:none;font-size:11px}
+ .collection-grid{grid-template-columns:1fr;grid-template-rows:auto;gap:13px}
+ .collection-woman,.collection-beauty,.collection-man{
+  grid-column:1;grid-row:auto;min-height:0;aspect-ratio:1.08/1;border-radius:100px 100px 8px 8px;padding:22px;
+ }
+ .collection-beauty{aspect-ratio:1.18/1;border-radius:8px 100px 8px 8px}
+ .collection-man{aspect-ratio:1.55/1;border-radius:8px 8px 8px 80px}
+ .card-number{top:18px;left:20px}
+ .card-title{font-size:clamp(28px,8vw,36px)}
+ .collection-man .card-title{font-size:29px}
+ .new-arrivals{padding:57px 0 68px}
+ .new-products-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .new-product-card{border-radius:13px;padding-bottom:10px}
+ .new-product-image{border-radius:13px 13px 0 0;aspect-ratio:1/1.1}
+ .new-product-info{padding:12px 11px 5px}
+ .new-product-name{font-size:16px}
+ .new-product-price{font-size:14px}
+ .new-product-tag{top:9px;left:9px;padding:6px 8px;font-size:7px}
+ .new-arrivals-footer{align-items:center;flex-direction:column}
+ .new-arrivals-footer span{width:100%;flex:none}
+ .new-arrivals-footer a{align-self:center}
+ .closing{border-radius:0 0 42px 42px;padding:48px 18px 52px}
+ .closing p{font-size:27px}
+ .site-footer{padding:32px 15px 28px}
+}
+@media(max-width:380px){
+ .main-nav{gap:13px}.main-nav a{font-size:8px}
+ .collection-woman,.collection-beauty{aspect-ratio:1/1.12}
+ .new-product-name{font-size:15px}
+}
