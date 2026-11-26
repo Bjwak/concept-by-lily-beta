@@ -26,13 +26,13 @@
   </header>
 
   <main>
-    <section class="intro" aria-labelledby="intro-title">
+    <section class="intro" aria-labelledby="intro-title" data-home-section="hero">
       <div class="intro-copy-block">
-        <p class="eyebrow"><span></span> BIENVENIDOS A CONCEPT BY LILY</p>
+        <p class="eyebrow" id="hero-eyebrow"><span aria-hidden="true"></span> BIENVENIDOS A CONCEPT BY LILY</p>
         <h1 id="intro-title">Encuentra algo que <em>hable de ti.</em></h1>
-        <p class="intro-copy">Detalles que acompañan tu estilo, productos que te hacen sentir bien y pequeños favoritos que se vuelven parte de ti.</p>
-        <a class="primary-link" href="#colecciones">Explorar colecciones <span aria-hidden="true">↗</span></a>
-        <div class="intro-note"><span class="note-line"></span> ESTILO PROPIO. TODOS LOS DÍAS.</div>
+        <p class="intro-copy" id="hero-description">Detalles que acompañan tu estilo, productos que te hacen sentir bien y pequeños favoritos que se vuelven parte de ti.</p>
+        <a class="primary-link" id="hero-cta" href="#colecciones">Explorar colecciones <span aria-hidden="true">↗</span></a>
+        <div class="intro-note" id="hero-note"><span class="note-line" aria-hidden="true"></span> ESTILO PROPIO. TODOS LOS DÍAS.</div>
       </div>
       <div class="intro-visual" aria-label="Logo de Concept by Lily">
         <div class="visual-frame visual-main"><img src="imagenes/cards/logo.jpeg" alt="Concept by Lily"></div>
@@ -41,10 +41,10 @@
       </div>
     </section>
 
-    <section class="collections" id="colecciones" aria-labelledby="collections-title">
+    <section class="collections" id="colecciones" aria-labelledby="collections-title" data-home-section="collections">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">ENCUENTRA TU PRÓXIMO FAVORITO</p>
+          <p class="eyebrow" id="collections-eyebrow">ENCUENTRA TU PRÓXIMO FAVORITO</p>
           <h2 id="collections-title">¿Qué estás buscando?</h2>
         </div>
         <p class="section-aside" id="collectionsAside">Tres espacios, muchas formas<br>de expresar quién eres.</p>
@@ -75,29 +75,29 @@
       </div>
     </section>
 
-    <section class="new-arrivals" id="novedades" aria-labelledby="new-title">
+    <section class="new-arrivals" id="novedades" aria-labelledby="new-title" data-home-section="new_arrivals">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">DESCUBRE LO NUEVO</p>
+          <p class="eyebrow" id="new-eyebrow">DESCUBRE LO NUEVO</p>
           <h2 id="new-title">Recién llegados</h2>
         </div>
-        <p class="section-aside">Nuevos detalles para<br>encontrar tu favorito.</p>
+        <p class="section-aside" id="new-aside">Nuevos detalles para<br>encontrar tu favorito.</p>
       </div>
       <p id="newProductsMessage" class="new-products-message" role="status">Estamos buscando las últimas novedades…</p>
       <div id="newProducts" class="new-products-grid" aria-live="polite"></div>
       <div class="new-arrivals-footer"><span></span><a id="allCollectionsLink" href="acceso/index.html?tienda=mujer">Explorar todas las colecciones ↗</a></div>
     </section>
 
-    <section class="closing" id="contacto">
+    <section class="closing" id="contacto" data-home-section="closing">
       <span class="closing-symbol" aria-hidden="true">✧</span>
-      <p>Pequeños detalles. Grandes formas de expresar quién eres.</p>
-      <span class="closing-brand">CONCEPT BY LILY</span>
+      <p id="closing-text">Pequeños detalles. Grandes formas de expresar quién eres.</p>
+      <span class="closing-brand" id="closing-brand">CONCEPT BY LILY</span>
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" data-home-section="footer">
     <a class="footer-brand" href="./">Concept by Lily</a>
-    <p>Descubre accesorios, moda y belleza para expresar tu estilo.</p>
+    <p id="footer-description">Descubre accesorios, moda y belleza para expresar tu estilo.</p>
     <nav class="social-links" aria-label="Redes sociales">
       <a href="https://www.facebook.com/profile.php?id=61596244497554" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H7.3V13h2.8v8z"/></svg><span>Facebook</span>
