@@ -401,3 +401,39 @@ main{width:min(1380px,calc(100% - 72px))}
 .collection-man{background-image:url('../imagenes/cards/coleccion-hombre.svg');background-size:cover;background-position:center}
 .collection-card:before{background:linear-gradient(180deg,rgba(38,25,32,.02) 18%,rgba(38,25,32,.55) 100%)}
 .collection-card .card-title,.collection-card .card-action,.collection-card .card-number{position:relative;z-index:2}
+
+
+/* ===== Tarjetas de tiendas: banners originales de Concept by Lily ===== */
+.collection-woman{
+ background-image:url('../imagenes/accesorios-mujer.png');
+ background-size:cover;background-position:center 43%;
+}
+.collection-beauty{
+ background-image:url('../imagenes/cosmeticos.png');
+ background-size:cover;background-position:center 43%;
+}
+.collection-man{
+ background-image:url('../imagenes/accesorios-hombre.png');
+ background-size:cover;background-position:center 48%;
+}
+/* Los banners ya contienen el logotipo; dejamos que se vea completo y evitamos duplicarlo. */
+.collection-card:before{
+ background:linear-gradient(180deg,rgba(43,27,37,.02) 20%,rgba(43,27,37,.10) 48%,rgba(43,27,37,.72) 100%);
+}
+.collection-card .card-content{
+ position:absolute;left:clamp(22px,3vw,42px);right:clamp(22px,3vw,42px);bottom:clamp(26px,3vw,42px);
+ display:flex;flex-direction:column;align-items:flex-start;gap:12px;
+}
+.collection-card .card-title{
+ max-width:420px;font-family:Georgia,'Times New Roman',serif;font-weight:500;
+ font-size:clamp(27px,3vw,42px);line-height:1.04;text-shadow:0 2px 14px rgba(30,18,24,.3);
+}
+.collection-card .card-action{font-size:11px;letter-spacing:.3px}
+.collection-card .card-number{z-index:2}
+@media(max-width:640px){
+ .collection-woman{background-position:center 40%}
+ .collection-beauty{background-position:center 42%}
+ .collection-man{background-position:center 48%}
+ .collection-card .card-content{left:22px;right:22px;bottom:24px}
+ .collection-card .card-title{font-size:clamp(26px,7.5vw,34px)}
+}
