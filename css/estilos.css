@@ -493,3 +493,22 @@ main{width:min(1380px,calc(100% - 72px))}
 }
 .collection-card .card-title{display:none!important}
 .collection-card .card-content{bottom:22px!important}
+
+
+/* Cards: ajuste de encuadre sin recortar el arte original ni duplicar textos */
+.collection-woman,.collection-beauty,.collection-man{
+ background-size:100% 100%!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+}
+.collection-card:before{background:transparent!important}
+.collection-card:hover:before{background:rgba(107,74,90,.06)!important}
+/* El arte de las cards ya incluye marca y rótulos; ocultar overlays duplicados */
+.collection-card .card-title,
+.collection-card .card-action,
+.collection-card .card-number{display:none!important}
+@media(max-width:640px){
+ .collection-woman,.collection-beauty,.collection-man{
+  background-size:100% 100%!important;
+ }
+}
