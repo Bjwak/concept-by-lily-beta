@@ -762,3 +762,10 @@ main{width:min(1380px,calc(100% - 72px))}
 /* Ajuste fino de proporciones para respetar el formato casi cuadrado de cosméticos */
 .collection-grid{grid-template-columns:minmax(0,1.18fr) minmax(0,1fr)!important}
 @media(max-width:760px){.collection-grid{grid-template-columns:minmax(0,1fr)!important}}
+
+
+/* Logo principal: mostrar la marca completa sin recortes */
+.intro-visual .visual-main{background:#fffdf7}
+.intro-visual .visual-main img{object-fit:contain;object-position:center;padding:9%;filter:none}
+.intro-visual .visual-main:after{background:none}
+.intro-visual .visual-stamp{display:none}
