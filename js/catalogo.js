@@ -320,8 +320,8 @@ async function load(){
  $("catalogMessage").textContent="Cargando catálogo…";
  try{
   const storeStatus=await supabase.from("stores").select("name,is_active").eq("id",cfg.storeId).maybeSingle();
-  if(!storeStatus.error&&storeStatus.data&&!storeStatus.data.is_active){
-   const storeName=storeStatus.data.name||"Esta tienda";
+  if(!storeStatus.error&&(!storeStatus.data||!storeStatus.data.is_active)){
+   const storeName=storeStatus.data?.name||"Esta tienda";
    $("catalogMessage").textContent=storeName+" está temporalmente fuera de servicio.";
    $("productsContainer").innerHTML='<div class="empty-state"><h2>Catálogo temporalmente oculto</h2><p>Esta colección no está disponible en este momento.</p></div>';
    $("productCount").textContent="0 productos";
