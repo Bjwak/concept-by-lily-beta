@@ -857,3 +857,32 @@ main{width:min(1380px,calc(100% - 72px))}
   object-position:50% 50%!important;
   transform-origin:50% 50%!important;
 }
+
+
+/* Refinamiento del hero: eliminar microtexto lateral y dar presencia al medallón */
+.intro-visual{
+  isolation:isolate!important;
+}
+.intro-visual:before{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  width:100%!important;
+  aspect-ratio:1!important;
+  inset:50% auto auto 50%!important;
+  transform:translate(-50%,-50%)!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(247,220,231,.78) 0%,rgba(247,220,231,.38) 43%,rgba(255,253,247,0) 72%)!important;
+  pointer-events:none!important;
+}
+.intro-visual .visual-caption{
+  display:none!important;
+}
+.intro-visual .visual-main{
+  width:90%!important;
+  z-index:1!important;
+  box-shadow:0 20px 42px rgba(107,74,90,.13),0 0 0 1px rgba(184,121,145,.12)!important;
+}
+@media(max-width:640px){
+  .intro-visual .visual-main{width:88%!important}
+}
