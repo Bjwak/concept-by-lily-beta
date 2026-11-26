@@ -615,3 +615,66 @@ main{width:min(1380px,calc(100% - 72px))}
  .section-aside{margin-top:12px;text-align:left;max-width:none}
  .collection-card{border-radius:17px}
 }
+
+
+/* Hotfix de composición: cards proporcionadas y sección sin espacios fantasma */
+.intro{
+ min-height:0!important;
+ padding-bottom:clamp(36px,5vw,62px)!important;
+}
+.collections{
+ padding-top:clamp(22px,3vw,38px)!important;
+ padding-bottom:clamp(58px,7vw,86px)!important;
+}
+.collection-grid{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-template-rows:auto!important;
+ gap:clamp(12px,1.5vw,20px)!important;
+ align-items:stretch!important;
+}
+.collection-card{
+ grid-column:auto!important;
+ grid-row:auto!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:0!important;
+ height:auto!important;
+ aspect-ratio: 1.42 / 1!important;
+ padding:0!important;
+ border-radius:20px!important;
+ background-color:#f7e3eb!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:cover!important;
+ overflow:hidden!important;
+}
+.collection-woman{
+ background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+}
+.collection-beauty{
+ background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+}
+.collection-man{
+ background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+}
+.collection-card:before{display:none!important}
+.collection-card .card-number,
+.collection-card .card-content{
+ position:absolute!important;
+ width:1px!important;height:1px!important;
+ padding:0!important;margin:-1px!important;
+ overflow:hidden!important;clip:rect(0,0,0,0)!important;
+ white-space:nowrap!important;border:0!important;
+}
+@media(max-width:900px){
+ .collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .collection-card{aspect-ratio:1.45/1!important}
+ .collection-man{grid-column:1/-1!important;aspect-ratio:2.2/1!important}
+}
+@media(max-width:600px){
+ .intro{padding-bottom:36px!important}
+ .collections{padding-top:16px!important}
+ .collection-grid{grid-template-columns:1fr!important;gap:13px!important}
+ .collection-card,.collection-man{grid-column:1!important;aspect-ratio:1.45/1!important;border-radius:16px!important}
+}
