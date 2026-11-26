@@ -121,7 +121,7 @@ function applyHomepageSettings() {
     if (number && cardConfig.eyebrow) number.textContent = cardConfig.eyebrow;
     if (cardConfig.image_path) {
       const url = imageUrl(cardConfig.image_path);
-      if (url) card.style.backgroundImage = 'url("' + url.replace(/"/g, "%22") + '")';
+      if (url) card.style.setProperty("background-image", 'url("' + url.replace(/"/g, "%22") + '")', "important");
     } else {
       card.style.removeProperty("background-image");
     }
