@@ -11,6 +11,16 @@ const STORE_LINKS = {
   "a6ebf309-4a7e-4a9a-9411-fa956e4d4349": "cosmeticos"
 };
 
+let activeStoreIds = null;
+
+async function loadStoreVisibility() {
+  const { data, error } = await supabase.from("stores").select("id,is_active");
+  if (error) { console.warn("No se pudo consultar el estado de las tiendas:", error.message); return null; }
+  activeStoreIds = new Set((data || []).filter(store => store.is_active).map(store => store.id));
+  document.querySelectorAll(".collection-card[data-store-id]").forEach(card => { card.hidden = !activeStoreIds.has(card.dataset.storeId); });
+  return activeStoreIds;
+}
+
 const money = (amount, currency = "NIO") => {
   try {
     return new Intl.NumberFormat("es-NI", { style: "currency", currency }).format(Number(amount || 0));
@@ -33,16 +43,18 @@ async function loadNewArrivals() {
   if (!container || !message) return;
 
   try {
+    if (activeStoreIds === null) await loadStoreVisibility();
     const { data: products, error } = await supabase
       .from("products")
       .select("id, store_id, category_id, name, price, currency, created_at, is_archived")
       .eq("is_active", true)
       .eq("is_archived", false)
       .order("created_at", { ascending: false })
-      .limit(8);
+      .limit(24);
 
     if (error) throw error;
-    const productIds = (products || []).map(product => product.id);
+    const visibleProducts = (products || []).filter(product => activeStoreIds === null || activeStoreIds.has(product.store_id));
+    const productIds = visibleProducts.map(product => product.id);
     if (!productIds.length) {
       message.textContent = "Muy pronto encontrarás aquí nuestros productos disponibles.";
       return;
@@ -59,7 +71,7 @@ async function loadNewArrivals() {
     }
 
     const categoryMap = new Map((categoriesResult.data || []).map(category => [category.id, category.name]));
-    const cards = (products || []).map(product => {
+    const cards = visibleProducts.map(product => {
       const image = (imagesResult.data || []).find(item => item.product_id === product.id && item.is_primary)
         || (imagesResult.data || []).find(item => item.product_id === product.id);
       const available = (variantsResult.data || []).some(variant => variant.product_id === product.id && Number(variant.stock) > 0);
@@ -95,4 +107,4 @@ async function loadNewArrivals() {
   }
 }
 
-loadNewArrivals();
+loadStoreVisibility().finally(loadNewArrivals);
