@@ -769,3 +769,52 @@ main{width:min(1380px,calc(100% - 72px))}
 .intro-visual .visual-main img{object-fit:contain;object-position:center;padding:9%;filter:none}
 .intro-visual .visual-main:after{background:none}
 .intro-visual .visual-stamp{display:none}
+
+
+/* Hero: logo en medallón circular, sin el marco arqueado anterior */
+.intro-visual{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:530px!important;
+  min-height:0!important;
+  aspect-ratio:1!important;
+  margin-inline:auto!important;
+  padding:0!important;
+}
+.intro-visual .visual-main{
+  position:relative!important;
+  inset:auto!important;
+  width:86%!important;
+  height:auto!important;
+  aspect-ratio:1!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:#f6dce5!important;
+  box-shadow:0 22px 48px rgba(107,74,90,.16),0 0 0 1px rgba(184,121,145,.16)!important;
+}
+.intro-visual .visual-main img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+.intro-visual .visual-main:after{display:none!important}
+.intro-visual .visual-caption{
+  top:12%!important;
+  right:0!important;
+}
+@media(max-width:640px){
+  .intro-visual{
+    width:min(100%,440px)!important;
+    min-height:0!important;
+    aspect-ratio:1!important;
+    margin:0 auto!important;
+  }
+  .intro-visual .visual-main{width:84%!important}
+  .intro-visual .visual-caption{right:-2px!important}
+}
