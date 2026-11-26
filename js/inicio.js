@@ -154,7 +154,7 @@ function applyHomepageSettings() {
       document.body.prepend(layer);
     }
     const url = imageUrl(backgroundPath);
-    layer.style.backgroundImage = 'linear-gradient(rgba(255,250,252,.83),rgba(255,250,252,.83)),url("' + url.replace(/"/g, "%22") + '")';
+    layer.style.backgroundImage = 'linear-gradient(rgba(255,250,252,.62),rgba(255,250,252,.62)),url("' + url.replace(/"/g, "%22") + '")';
     document.body.classList.add("homepage-has-background");
   } else {
     layer?.remove();
