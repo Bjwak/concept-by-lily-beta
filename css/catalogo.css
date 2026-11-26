@@ -822,3 +822,49 @@ body{font-family:'DM Sans',Arial,sans-serif;background:radial-gradient(ellipse a
  .product-content{padding:17px}
 }
 @media(prefers-reduced-motion:reduce){.product-card,.product-image,.add-button,.category-btn,.back-home{transition:none!important}}
+
+
+/* ===== Paleta aprobada: #FFD6E8 #FFB8D2 #E58FB0 #FFFDF7 #6B4A5A ===== */
+:root{
+ --accent:#e58fb0;--accent-dark:#6b4a5a;--accent-soft:#ffb8d2;
+ --page:#fffdf7;--ink:#6b4a5a;--muted:#896b78;--border:#f0d6e1;
+ --shadow-soft:0 12px 32px rgba(107,74,90,.09);
+}
+body{background:#fffdf7;color:#6b4a5a}
+.site-header{background:#ffb8d2}
+.back-home{color:#6b4a5a;border-color:#ffd6e8;background:#fffdf7}
+#productSearch{border-color:#f0d6e1;background:#fffdf7;color:#6b4a5a}
+#productSearch:focus{border-color:#e58fb0;box-shadow:0 0 0 4px #e58fb02b}
+.category-btn,.value-option{border-color:#f0d6e1;background:#fffdf7;color:#6b4a5a}
+.category-btn:hover,.value-option:hover{border-color:#e58fb0;background:#ffd6e8;color:#6b4a5a}
+.category-btn.active,.value-option.selected{border-color:#6b4a5a;background:#6b4a5a;color:#fffdf7}
+.product-card{border-color:#f0d6e1;background:#fffdf7;box-shadow:0 5px 22px #6b4a5a12}
+.product-card:hover{border-color:#e58fb0;box-shadow:0 18px 38px #6b4a5a20}
+.product-image-wrap{background:linear-gradient(145deg,#fffdf7,#ffd6e8 58%,#fff0f6)}
+.product-content h2{color:#6b4a5a}
+.product-price,.variant-label,.quick-view-description h3,.quick-view-detail h3{color:#6b4a5a}
+.product-category,.product-count,.catalog-message{color:#896b78}
+.stock-badge{background:#ffd6e8;color:#6b4a5a}
+.add-button,.checkout-submit,.order-tracking button{background:#6b4a5a;color:#fffdf7}
+.add-button:hover,.checkout-submit:hover,.order-tracking button:hover{background:#e58fb0;color:#6b4a5a}
+.empty-state{border-color:#e58fb0;background:#fffdf7}
+.empty-state h2,.cart h2,.order-tracking h2{color:#6b4a5a}
+.cart,.order-tracking{border-color:#f0d6e1;background:#fffdf7}
+.remove-button{background:#ffd6e8;color:#6b4a5a}
+.total{color:#6b4a5a}
+.site-footer{background:#6b4a5a;color:#ffd6e8;border-color:#6b4a5a}
+.footer-brand{color:#fffdf7}
+.footer-socials a{border-color:#e58fb0;background:transparent;color:#fffdf7}
+.footer-socials a:hover{background:#e58fb0;color:#6b4a5a}
+.quick-view-dialog,.invoice-dialog{background:#fffdf7;border-color:#f0d6e1}
+.quick-view-media{background:linear-gradient(145deg,#fffdf7,#ffd6e8)}
+.quick-view-description,.quick-view-detail,.customer-order-status{background:#fff5f8;border-color:#f0d6e1}
+.quick-view-thumb.active{border-color:#6b4a5a;box-shadow:0 0 0 2px #ffd6e8}
+.checkout-form input,.checkout-form select,.checkout-form textarea,.order-tracking input{border-color:#f0d6e1;background:#fffdf7;color:#6b4a5a}
+.customer-order-timeline li:before{background:#e58fb0}
+.customer-order-cancel{border-color:#f0d6e1;background:#fff5f8}
+.floating-cart{border-color:#f0d6e1;color:#6b4a5a;background:#fffdf7}
+.floating-cart-count{background:#e58fb0;color:#6b4a5a}
+.cart-toast{border-color:#f0d6e1;background:#fffdf7;color:#6b4a5a}
+.clear-cart-button{border-color:#f0d6e1;color:#6b4a5a;background:#fffdf7}
+.clear-cart-button:hover{background:#ffd6e8}
