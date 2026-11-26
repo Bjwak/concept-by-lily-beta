@@ -1,8 +1,8 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabase = createClient(
-  "https://ftzfsxcnfcqdmwhpardt.supabase.co",
-  "sb_publishable_eRUu-PS6sVrdbtHMET1AvQ_pkZ_WHUv"
+  "https://lljlmyshxijzuzyzafxa.supabase.co",
+  "sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK"
 );
 
 const STORE_LINKS = {

@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const supabase=createClient("https://ftzfsxcnfcqdmwhpardt.supabase.co","sb_publishable_eRUu-PSs6VrdbtHMET1AvQ_pkZ_WHUv");
+const supabase=createClient("https://lljlmyshxijzuzyzafxa.supabase.co","sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
 let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0,quickViewHistoryOpen=false;
 let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO"};
