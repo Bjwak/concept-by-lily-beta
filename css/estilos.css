@@ -393,3 +393,11 @@ main{width:min(1380px,calc(100% - 72px))}
  .collection-woman,.collection-beauty{aspect-ratio:1/1.12}
  .new-product-name{font-size:15px}
 }
+
+
+/* Ilustraciones propias para las tres tarjetas de acceso a tiendas */
+.collection-woman{background-image:url('../imagenes/cards/coleccion-mujer.svg');background-size:cover;background-position:center}
+.collection-beauty{background-image:url('../imagenes/cards/coleccion-belleza.svg');background-size:cover;background-position:center}
+.collection-man{background-image:url('../imagenes/cards/coleccion-hombre.svg');background-size:cover;background-position:center}
+.collection-card:before{background:linear-gradient(180deg,rgba(38,25,32,.02) 18%,rgba(38,25,32,.55) 100%)}
+.collection-card .card-title,.collection-card .card-action,.collection-card .card-number{position:relative;z-index:2}
