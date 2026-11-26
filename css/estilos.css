@@ -841,3 +841,11 @@ main{width:min(1380px,calc(100% - 72px))}
   object-position:50% 50%!important;
   transform-origin:50% 50%!important;
 }
+
+
+/* Microajuste del logo: apenas menos zoom y un poco más a la izquierda */
+.intro-visual .visual-main img{
+  transform:translateX(1.2%) scale(1.115)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
