@@ -758,3 +758,7 @@ main{width:min(1380px,calc(100% - 72px))}
   aspect-ratio:710 / 417!important;
  }
 }
+
+/* Ajuste fino de proporciones para respetar el formato casi cuadrado de cosméticos */
+.collection-grid{grid-template-columns:minmax(0,1.18fr) minmax(0,1fr)!important}
+@media(max-width:760px){.collection-grid{grid-template-columns:minmax(0,1fr)!important}}
