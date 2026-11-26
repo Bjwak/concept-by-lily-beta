@@ -17,7 +17,15 @@ async function loadStoreVisibility() {
   const { data, error } = await supabase.from("stores").select("id,is_active");
   if (error) { console.warn("No se pudo consultar el estado de las tiendas:", error.message); return null; }
   activeStoreIds = new Set((data || []).filter(store => store.is_active).map(store => store.id));
-  document.querySelectorAll(".collection-card[data-store-id]").forEach(card => { card.hidden = !activeStoreIds.has(card.dataset.storeId); });
+  const cards=[...document.querySelectorAll(".collection-card[data-store-id]")];
+  cards.forEach(card => { card.hidden = !activeStoreIds.has(card.dataset.storeId); });
+  const count=cards.filter(card=>activeStoreIds.has(card.dataset.storeId)).length;
+  const aside=document.getElementById("collectionsAside");
+  if(aside)aside.innerHTML=count===3?"Tres espacios, muchas formas<br>de expresar quién eres.":count===1?"Una colección activa para<br>expresar quién eres.":count+" colecciones activas para<br>expresar quién eres.";
+  const allLink=document.getElementById("allCollectionsLink");
+  const preferred=["937fc539-9b4f-4f8f-a0d6-676408a5359a","a6ebf309-4a7e-4a9a-9411-fa956e4d4349","8c109c37-c8ed-4726-b950-24a453ba999b"];
+  const first=preferred.find(id=>activeStoreIds.has(id));
+  if(allLink){allLink.hidden=!first;if(first)allLink.href="acceso/index.html?tienda="+encodeURIComponent(STORE_LINKS[first]);}
   return activeStoreIds;
 }
 
