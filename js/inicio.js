@@ -192,8 +192,8 @@ function applyHomepageSettings() {
     }
     if (number) number.textContent = (number.dataset.cardNumber ? number.dataset.cardNumber + " " : "") + (cardConfig.eyebrow || "");
     let cardImage = card.querySelector(".collection-card-image");
-    if (cardConfig.image_path) {
-      const url = imageUrl(cardConfig.image_path);
+    if (cardConfig.image_path || fallbackCard.image_path) {
+      const url = imageUrl(cardConfig.image_path || fallbackCard.image_path);
       if (url) {
         if (!cardImage) {
           cardImage = document.createElement("img");
