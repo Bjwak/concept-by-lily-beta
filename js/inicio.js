@@ -60,6 +60,16 @@ function applyHomepageSettings() {
     const key = section.dataset.homeSection;
     section.hidden = sections[key] === false;
   });
+  const main = document.querySelector("main");
+  if (main) {
+    const mainSections = [...main.querySelectorAll("[data-home-section]")].filter(section =>
+      ["hero", "collections", "new_arrivals", "closing"].includes(section.dataset.homeSection)
+    );
+    const sectionMap = new Map(mainSections.map(section => [section.dataset.homeSection, section]));
+    const order = Array.isArray(config.section_order) ? config.section_order : ["hero", "collections", "new_arrivals", "closing"];
+    order.forEach(key => { if (sectionMap.has(key)) main.appendChild(sectionMap.get(key)); });
+    mainSections.forEach(section => { if (!order.includes(section.dataset.homeSection)) main.appendChild(section); });
+  }
 
   const setText = (selector, value) => {
     const node = document.querySelector(selector);
