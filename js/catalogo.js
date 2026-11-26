@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const supabase=createClient("https://lljlmyshxijzuzyzafxa.supabase.co","sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
 let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0,quickViewHistoryOpen=false;
-let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO"};
+let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO",banner_path:null,background_path:null};
 const cartStorageKey=()=> "concept-by-lily:cart:"+String(cfg.storeId||"default");
 function saveCartDraft(){
  try{
@@ -127,6 +127,20 @@ function applyCatalogSettings(){
   const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
   if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";}
  }
+ const backgroundPath=typeof catalogSettings.background_path==="string"?catalogSettings.background_path.trim():"";
+ const wallpaperClass=[...document.body.classList].find(name=>name.endsWith("-wallpaper"));
+ const customBackgroundStyle=document.getElementById("customCatalogBackgroundStyle");
+ if(backgroundPath&&wallpaperClass){
+  const backgroundUrl=supabase.storage.from("product-images").getPublicUrl(backgroundPath).data?.publicUrl;
+  if(backgroundUrl){
+   const overlays={"cosmetics-wallpaper":["rgba(255,248,250,.78)","rgba(255,248,250,.90)"],"mujer-wallpaper":["rgba(255,248,250,.70)","rgba(255,248,250,.84)"],"hombre-wallpaper":["rgba(250,248,247,.62)","rgba(250,248,247,.78)"]};
+   const overlay=overlays[wallpaperClass]||["rgba(255,248,250,.70)","rgba(255,248,250,.84)"];
+   const style=customBackgroundStyle||document.createElement("style");
+   style.id="customCatalogBackgroundStyle";
+   style.textContent=`body.${wallpaperClass}::before{background-image:linear-gradient(${overlay[0]},${overlay[1]}),url("${backgroundUrl.replace(/"/g,"%22")}")!important;}`;
+   if(!customBackgroundStyle)document.head.appendChild(style);
+  }
+ }else if(customBackgroundStyle){customBackgroundStyle.remove();}
  renderContactElements();
 }
 function safeExternalUrl(value){
@@ -290,6 +304,14 @@ async function share(){try{if(!registeredOrder?.id||!$("invoiceArea").querySelec
 async function load(){
  $("catalogMessage").textContent="Cargando catálogo…";
  try{
+  const storeStatus=await supabase.from("stores").select("name,is_active").eq("id",cfg.storeId).maybeSingle();
+  if(!storeStatus.error&&storeStatus.data&&!storeStatus.data.is_active){
+   const storeName=storeStatus.data.name||"Esta tienda";
+   $("catalogMessage").textContent=storeName+" está temporalmente fuera de servicio.";
+   $("productsContainer").innerHTML='<div class="empty-state"><h2>Catálogo temporalmente oculto</h2><p>Esta colección no está disponible en este momento.</p></div>';
+   $("productCount").textContent="0 productos";
+   return;
+  }
   const settingsResult=await supabase.from("store_settings").select("settings").eq("store_id",cfg.storeId).maybeSingle();
   if(!settingsResult.error&&settingsResult.data?.settings)catalogSettings={...catalogSettings,...settingsResult.data.settings};
   else if(settingsResult.error)console.warn("Se utilizarán los ajustes predeterminados del catálogo:",settingsResult.error.message);
