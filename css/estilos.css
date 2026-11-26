@@ -825,3 +825,11 @@ main{width:min(1380px,calc(100% - 72px))}
   transform:scale(1.14)!important;
   transform-origin:center!important;
 }
+
+
+/* Refinamiento del logo circular: pequeño margen uniforme y centrado */
+.intro-visual .visual-main img{
+  transform:scale(1.07)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
