@@ -11,14 +11,61 @@
   <style>
     :root{--accent:#344b63;--accent-dark:#203448;--accent-soft:#e3e9ef;--page:#f5f7fa;}
   </style>
+  <style>
+    /* Fondo de pantalla para Accesorios de hombre */
+    body.hombre-wallpaper{
+      background:transparent!important;
+      position:relative;
+      isolation:isolate;
+    }
+    body.hombre-wallpaper::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      background-image:linear-gradient(rgba(250,248,247,.62),rgba(250,248,247,.78)),url("../imagenes/accesorios-hombre.png");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+    }
+    body.hombre-wallpaper .site-header{
+      background:transparent;
+      min-height:60px;
+      height:60px;
+      position:relative;
+      overflow:visible;
+    }
+    body.hombre-wallpaper .site-header img{display:none;}
+    body.hombre-wallpaper .site-header .back-home{
+      display:inline-flex;
+      position:absolute;
+      top:12px;
+      left:16px;
+      z-index:20;
+    }
+    body.hombre-wallpaper .catalog-tools,
+    body.hombre-wallpaper .products{background:transparent;}
+    body.hombre-wallpaper .product-card,
+    body.hombre-wallpaper .cart,
+    body.hombre-wallpaper .quick-view-dialog{
+      background:#fff;
+    }
+    @media(max-width:650px){
+      body.hombre-wallpaper::before{
+        background-position:center;
+        background-attachment:scroll;
+      }
+    }
+  </style>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>window.CATALOG_CONFIG={storeId:"8c109c37-c8ed-4726-b950-24a453ba999b"};</script>
   <script type="module" src="../js/catalogo.js"></script>
 </head>
-<body>
+<body class="hombre-wallpaper">
   <header class="site-header">
     <a href="../" class="back-home"><span aria-hidden="true">←</span> Volver al inicio</a>
-    <img src="banner-masculino.png" alt="Concept by Lily | Accesorios para hombre">
+    <img src="../imagenes/cards/concept-by-lily-accesorios-hombre.png" alt="Concept by Lily | Accesorios para hombre">
   </header>
 
   <main>

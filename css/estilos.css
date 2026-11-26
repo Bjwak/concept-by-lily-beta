@@ -396,9 +396,9 @@ main{width:min(1380px,calc(100% - 72px))}
 
 
 /* Ilustraciones propias para las tres tarjetas de acceso a tiendas */
-.collection-woman{background-image:url('../imagenes/cards/coleccion-mujer.svg');background-size:cover;background-position:center}
-.collection-beauty{background-image:url('../imagenes/cards/coleccion-belleza.svg');background-size:cover;background-position:center}
-.collection-man{background-image:url('../imagenes/cards/coleccion-hombre.svg');background-size:cover;background-position:center}
+.collection-woman{background-image:url('../imagenes/accesorios-mujer.png');background-size:cover;background-position:center}
+.collection-beauty{background-image:url('../imagenes/cosmeticos.png');background-size:cover;background-position:center}
+.collection-man{background-image:url('../imagenes/accesorios-hombre.png');background-size:cover;background-position:center}
 .collection-card:before{background:linear-gradient(180deg,rgba(38,25,32,.02) 18%,rgba(38,25,32,.55) 100%)}
 .collection-card .card-title,.collection-card .card-action,.collection-card .card-number{position:relative;z-index:2}
 
@@ -474,17 +474,17 @@ main{width:min(1380px,calc(100% - 72px))}
 
 /* Fix final: usar los archivos preparados específicamente para las cards */
 .collection-woman{
- background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
  background-size:cover!important;background-position:center center!important;
  background-repeat:no-repeat!important;background-color:#f7e3eb!important;
 }
 .collection-beauty{
- background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
  background-size:cover!important;background-position:center center!important;
  background-repeat:no-repeat!important;background-color:#f7e3eb!important;
 }
 .collection-man{
- background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
  background-size:cover!important;background-position:center center!important;
  background-repeat:no-repeat!important;background-color:#f7e3eb!important;
 }
@@ -570,17 +570,17 @@ main{width:min(1380px,calc(100% - 72px))}
 .collection-woman{
  grid-column:1;
  grid-row:1/3;
- background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
 }
 .collection-beauty{
  grid-column:2;
  grid-row:1;
- background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
 }
 .collection-man{
  grid-column:2;
  grid-row:2;
- background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
 }
 /* El logo y el botón ya vienen dibujados en cada arte. Mantener el texto del enlace accesible sin duplicarlo visualmente. */
 .collection-card .card-number,
@@ -650,13 +650,13 @@ main{width:min(1380px,calc(100% - 72px))}
  overflow:hidden!important;
 }
 .collection-woman{
- background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
 }
 .collection-beauty{
- background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
 }
 .collection-man{
- background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
 }
 .collection-card:before{display:none!important}
 .collection-card .card-number,
@@ -712,19 +712,19 @@ main{width:min(1380px,calc(100% - 72px))}
  grid-column:2!important;
  grid-row:1!important;
  aspect-ratio:710 / 418!important;
- background-image:url('../imagenes/cards/concept-by-lily-accesorios-mujer.png')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
 }
 .collection-beauty{
  grid-column:1!important;
  grid-row:1 / 3!important;
  aspect-ratio:893 / 850!important;
- background-image:url('../imagenes/cards/concept-by-lily-cosmeticos.png')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
 }
 .collection-man{
  grid-column:2!important;
  grid-row:2!important;
  aspect-ratio:710 / 417!important;
- background-image:url('../imagenes/cards/concept-by-lily-accesorios-hombre.png')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
 }
 .collection-card:before{display:none!important}
 .collection-card .card-number,
@@ -762,3 +762,187 @@ main{width:min(1380px,calc(100% - 72px))}
 /* Ajuste fino de proporciones para respetar el formato casi cuadrado de cosméticos */
 .collection-grid{grid-template-columns:minmax(0,1.18fr) minmax(0,1fr)!important}
 @media(max-width:760px){.collection-grid{grid-template-columns:minmax(0,1fr)!important}}
+
+
+/* Logo principal: mostrar la marca completa sin recortes */
+.intro-visual .visual-main{background:#fffdf7}
+.intro-visual .visual-main img{object-fit:contain;object-position:center;padding:9%;filter:none}
+.intro-visual .visual-main:after{background:none}
+.intro-visual .visual-stamp{display:none}
+
+
+/* Hero: logo en medallón circular, sin el marco arqueado anterior */
+.intro-visual{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:530px!important;
+  min-height:0!important;
+  aspect-ratio:1!important;
+  margin-inline:auto!important;
+  padding:0!important;
+}
+.intro-visual .visual-main{
+  position:relative!important;
+  inset:auto!important;
+  width:86%!important;
+  height:auto!important;
+  aspect-ratio:1!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:#f6dce5!important;
+  box-shadow:0 22px 48px rgba(107,74,90,.16),0 0 0 1px rgba(184,121,145,.16)!important;
+}
+.intro-visual .visual-main img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+.intro-visual .visual-main:after{display:none!important}
+.intro-visual .visual-caption{
+  top:12%!important;
+  right:0!important;
+}
+@media(max-width:640px){
+  .intro-visual{
+    width:min(100%,440px)!important;
+    min-height:0!important;
+    aspect-ratio:1!important;
+    margin:0 auto!important;
+  }
+  .intro-visual .visual-main{width:84%!important}
+  .intro-visual .visual-caption{right:-2px!important}
+}
+
+
+/* Ajuste del medallón: ampliar el arte para que el aro dorado llegue al borde circular */
+.intro-visual .visual-main img{
+  transform:scale(1.14)!important;
+  transform-origin:center!important;
+}
+
+
+/* Refinamiento del logo circular: pequeño margen uniforme y centrado */
+.intro-visual .visual-main img{
+  transform:scale(1.07)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
+
+
+/* Alineación final del medallón: escala un poco mayor y desplazamiento leve a la derecha */
+.intro-visual .visual-main img{
+  transform:translateX(2%) scale(1.12)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
+
+
+/* Microajuste del logo: apenas menos zoom y un poco más a la izquierda */
+.intro-visual .visual-main img{
+  transform:translateX(1.2%) scale(1.115)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
+
+
+/* Zoom solicitado para el logo circular: 111% */
+.intro-visual .visual-main img{
+  transform:translateX(1.2%) scale(1.11)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
+
+
+/* Refinamiento del hero: eliminar microtexto lateral y dar presencia al medallón */
+.intro-visual{
+  isolation:isolate!important;
+}
+.intro-visual:before{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  width:100%!important;
+  aspect-ratio:1!important;
+  inset:50% auto auto 50%!important;
+  transform:translate(-50%,-50%)!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(247,220,231,.78) 0%,rgba(247,220,231,.38) 43%,rgba(255,253,247,0) 72%)!important;
+  pointer-events:none!important;
+}
+.intro-visual .visual-caption{
+  display:none!important;
+}
+.intro-visual .visual-main{
+  width:90%!important;
+  z-index:1!important;
+  box-shadow:0 20px 42px rgba(107,74,90,.13),0 0 0 1px rgba(184,121,145,.12)!important;
+}
+@media(max-width:640px){
+  .intro-visual .visual-main{width:88%!important}
+}
+
+
+/* Halo rosado visible detrás del medallón: luz difusa y sombra de profundidad */
+.intro-visual:before{
+  z-index:0!important;
+  width:116%!important;
+  aspect-ratio:1!important;
+  background:radial-gradient(circle,
+    rgba(225,143,177,.58) 0%,
+    rgba(239,177,202,.48) 42%,
+    rgba(246,211,225,.28) 61%,
+    rgba(255,253,247,0) 76%)!important;
+  filter:blur(16px)!important;
+  opacity:1!important;
+}
+.intro-visual .visual-main{
+  z-index:1!important;
+  box-shadow:
+    0 24px 48px rgba(107,74,90,.22),
+    0 0 38px rgba(218,126,165,.38),
+    0 0 0 1px rgba(184,121,145,.16)!important;
+}
+.intro-visual .visual-main img{
+  filter:drop-shadow(0 8px 12px rgba(107,74,90,.08))!important;
+}
+
+
+/* Halo rosado más sutil y elegante */
+.intro-visual:before{
+  background:radial-gradient(circle,
+    rgba(225,143,177,.30) 0%,
+    rgba(239,177,202,.24) 42%,
+    rgba(246,211,225,.14) 61%,
+    rgba(255,253,247,0) 76%)!important;
+  filter:blur(20px)!important;
+}
+.intro-visual .visual-main{
+  box-shadow:
+    0 22px 42px rgba(107,74,90,.18),
+    0 0 30px rgba(218,126,165,.20),
+    0 0 0 1px rgba(184,121,145,.12)!important;
+}
+
+
+/* Nuevos productos: tarjetas blancas, sin bloque rosa detrás de las fotos */
+.new-product-card{
+  background:#ffffff!important;
+  border:1px solid #f0e6e9!important;
+  box-shadow:0 8px 24px rgba(107,74,90,.07)!important;
+}
+.new-product-image{
+  background:#ffffff!important;
+}
+.new-product-image img{
+  background:#ffffff!important;
+  mix-blend-mode:normal!important;
+}
+.new-product-info{
+  background:#ffffff!important;
+}
