@@ -1006,3 +1006,22 @@ body.homepage-has-background{isolation:isolate;position:relative}
  }
  .collection-grid[data-template="three"] .collection-beauty{aspect-ratio:893/850!important}
 }
+
+/* Flexible store-card arrangement controlled by the homepage editor. */
+.collection-grid[data-template="one"]{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"primary"!important}
+.collection-grid[data-template="one"] .collection-card{grid-area:primary!important}
+.collection-grid[data-template="two"]{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"left right"!important;grid-template-rows:auto!important}
+.collection-grid[data-template="two"] .collection-card{grid-area:var(--store-layout-area)!important;min-height:0!important;aspect-ratio:1.45/1!important}
+.collection-grid[data-template="three"]{grid-template-columns:minmax(0,1.18fr) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"left right_top" "left right_bottom"!important;gap:14px!important}
+.collection-grid[data-template="three"] .collection-card{grid-area:var(--store-layout-area)!important;min-height:0!important;aspect-ratio:auto!important}
+.collection-card[data-layout-position="primary"]{--store-layout-area:primary}
+.collection-card[data-layout-position="left"]{--store-layout-area:left}
+.collection-card[data-layout-position="right"]{--store-layout-area:right}
+.collection-card[data-layout-position="right_top"]{--store-layout-area:right_top}
+.collection-card[data-layout-position="right_bottom"]{--store-layout-area:right_bottom}
+@media(max-width:760px){
+ .collection-grid[data-template="two"]{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"left" "right"!important}
+ .collection-grid[data-template="two"] .collection-card{aspect-ratio:1.45/1!important}
+ .collection-grid[data-template="three"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;grid-template-areas:"left" "right_top" "right_bottom"!important}
+ .collection-grid[data-template="three"] .collection-card{aspect-ratio:1.45/1!important}
+}
