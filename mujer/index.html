@@ -11,11 +11,22 @@
   <style>
     :root{--accent:#c98796;--accent-dark:#a96576;--accent-soft:#f3dde2;--page:#fff7f8;}
   </style>
+  <style>
+    /* Fondo completo para Accesorios de mujer */
+    body.mujer-wallpaper{background:transparent!important;position:relative;isolation:isolate;}
+    body.mujer-wallpaper::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,248,250,.70),rgba(255,248,250,.84)),url("../imagenes/accesorios-mujer.png");background-size:cover;background-position:center;background-repeat:no-repeat;}
+    body.mujer-wallpaper .site-header{background:transparent;min-height:0;}
+    body.mujer-wallpaper .site-header img{display:none;}
+    body.mujer-wallpaper .catalog-tools,body.mujer-wallpaper .products{background:transparent;}
+    body.mujer-wallpaper .product-card,body.mujer-wallpaper .cart,body.mujer-wallpaper .quick-view-dialog{background:#fff;}
+    @media(max-width:650px){body.mujer-wallpaper::before{background-position:center;background-attachment:scroll;}}
+  </style>
+
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>window.CATALOG_CONFIG={storeId:"937fc539-9b4f-4f8f-a0d6-676408a5359a"};</script>
   <script type="module" src="../js/catalogo.js"></script>
 </head>
-<body>
+<body class="mujer-wallpaper">
   <header class="site-header">
     <a href="../" class="back-home"><span aria-hidden="true">←</span> Volver al inicio</a>
     <img src="../imagenes/cards/concept-by-lily-accesorios-mujer.png" alt="Concept by Lily | Accesorios para mujer">
