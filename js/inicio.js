@@ -43,7 +43,7 @@ const HOME_DEFAULTS = {
   visible_store_ids: [],
   sections: {},
   texts: {},
-  cards: { mujer: { image_path: "imagenes/cards/concept-by-lily-accesorios-mujer.png" }, hombre: { image_path: "imagenes/cards/concept-by-lily-accesorios-hombre.png" }, cosmeticos: { image_path: "imagenes/cards/concept-by-lily-cosmeticos.png" } }
+  hero_image_path: "imagenes/cards/logo.jpeg",\n  cards: { mujer: { image_path: "imagenes/cards/concept-by-lily-accesorios-mujer.png" }, hombre: { image_path: "imagenes/cards/concept-by-lily-accesorios-hombre.png" }, cosmeticos: { image_path: "imagenes/cards/concept-by-lily-cosmeticos.png" } }
 };
 
 async function loadHomepageSettings() {
