@@ -818,3 +818,10 @@ main{width:min(1380px,calc(100% - 72px))}
   .intro-visual .visual-main{width:84%!important}
   .intro-visual .visual-caption{right:-2px!important}
 }
+
+
+/* Ajuste del medallón: ampliar el arte para que el aro dorado llegue al borde circular */
+.intro-visual .visual-main img{
+  transform:scale(1.14)!important;
+  transform-origin:center!important;
+}
