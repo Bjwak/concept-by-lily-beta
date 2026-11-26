@@ -123,12 +123,27 @@ function applyCatalogSettings(){
  // se conserva intacta la imagen estática definida en el HTML como respaldo.
  const banner=document.querySelector(".site-header img");
  const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
- if(banner&&bannerPath){
-  const bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl;
-  if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";}
- }
- const backgroundPath=typeof catalogSettings.background_path==="string"?catalogSettings.background_path.trim():"";
  const wallpaperClass=[...document.body.classList].find(name=>name.endsWith("-wallpaper"));
+ let bannerUrl="";
+ if(banner){
+  if(!banner.dataset.defaultSrc)banner.dataset.defaultSrc=banner.getAttribute("src")||"";
+  if(bannerPath){
+   bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl||"";
+   if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";document.body.classList.add("has-custom-catalog-banner");}
+  }else{
+   banner.src=banner.dataset.defaultSrc;
+   delete banner.dataset.customBanner;
+   document.body.classList.remove("has-custom-catalog-banner");
+  }
+ }
+ const bannerStyle=document.getElementById("customCatalogBannerStyle");
+ if(banner&&bannerUrl&&wallpaperClass){
+  const style=bannerStyle||document.createElement("style");
+  style.id="customCatalogBannerStyle";
+  style.textContent=`body.${wallpaperClass}.has-custom-catalog-banner .site-header{height:auto!important;min-height:0!important;overflow:hidden!important;position:relative!important;}body.${wallpaperClass}.has-custom-catalog-banner .site-header img{display:block!important;width:100%!important;height:auto!important;max-height:280px!important;object-fit:cover!important;}body.${wallpaperClass}.has-custom-catalog-banner .site-header .back-home{position:absolute!important;top:12px!important;left:16px!important;z-index:100!important;}`;
+  if(!bannerStyle)document.head.appendChild(style);
+ }else if(bannerStyle){bannerStyle.remove();}
+ const backgroundPath=typeof catalogSettings.background_path==="string"?catalogSettings.background_path.trim():"";
  const customBackgroundStyle=document.getElementById("customCatalogBackgroundStyle");
  if(backgroundPath&&wallpaperClass){
   const backgroundUrl=supabase.storage.from("product-images").getPublicUrl(backgroundPath).data?.publicUrl;
