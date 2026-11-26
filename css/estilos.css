@@ -960,7 +960,7 @@ body.homepage-has-background{isolation:isolate;position:relative}
 .homepage-background-layer{
  position:fixed;inset:0;z-index:-1;pointer-events:none;
  background-position:center;background-size:cover;background-repeat:no-repeat;
- opacity:.32;transform:translateZ(0)
+ opacity:.75;transform:translateZ(0)
 }
 .collection-grid[data-template="one"]{
  grid-template-columns:minmax(0,1fr)!important;
