@@ -886,3 +886,28 @@ main{width:min(1380px,calc(100% - 72px))}
 @media(max-width:640px){
   .intro-visual .visual-main{width:88%!important}
 }
+
+
+/* Halo rosado visible detrás del medallón: luz difusa y sombra de profundidad */
+.intro-visual:before{
+  z-index:0!important;
+  width:116%!important;
+  aspect-ratio:1!important;
+  background:radial-gradient(circle,
+    rgba(225,143,177,.58) 0%,
+    rgba(239,177,202,.48) 42%,
+    rgba(246,211,225,.28) 61%,
+    rgba(255,253,247,0) 76%)!important;
+  filter:blur(16px)!important;
+  opacity:1!important;
+}
+.intro-visual .visual-main{
+  z-index:1!important;
+  box-shadow:
+    0 24px 48px rgba(107,74,90,.22),
+    0 0 38px rgba(218,126,165,.38),
+    0 0 0 1px rgba(184,121,145,.16)!important;
+}
+.intro-visual .visual-main img{
+  filter:drop-shadow(0 8px 12px rgba(107,74,90,.08))!important;
+}
