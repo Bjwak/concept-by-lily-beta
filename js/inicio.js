@@ -139,8 +139,17 @@ function applyHomepageSettings() {
 
   const grid = document.querySelector(".collection-grid");
   if (grid) {
-    const count = [...grid.querySelectorAll(".collection-card")].filter(card => !card.hidden).length;
-    grid.dataset.template = count <= 1 ? "one" : count === 2 ? "two" : "three";
+    const visibleCards = [...grid.querySelectorAll(".collection-card")].filter(card => !card.hidden);
+    const count = visibleCards.length;
+    const template = count <= 1 ? "one" : count === 2 ? "two" : "three";
+    grid.dataset.template = template;
+    const layoutDefaults = { one: { primary: "cosmeticos" }, two: { left: "cosmeticos", right: "mujer" }, three: { left: "cosmeticos", right_top: "mujer", right_bottom: "hombre" } };
+    const layout = { ...layoutDefaults[template], ...(config.layout?.[template] || {}) };
+    const slotBySlug = new Map(Object.entries(layout).map(([slot, slug]) => [slug, slot]));
+    const slugById = new Map(Object.entries(STORE_LINKS).map(([id, slug]) => [id, slug]));
+    const order = template === "one" ? ["primary"] : template === "two" ? ["left", "right"] : ["left", "right_top", "right_bottom"];
+    visibleCards.forEach(card => { const slug = slugById.get(card.dataset.storeId); const slot = slotBySlug.get(slug) || order[0]; card.dataset.layoutPosition = slot; card.style.gridArea = slot; });
+    visibleCards.sort((a,b) => order.indexOf(a.dataset.layoutPosition) - order.indexOf(b.dataset.layoutPosition)).forEach(card => grid.appendChild(card));
   }
 
   const backgroundPath = config.background_image_path || "";
