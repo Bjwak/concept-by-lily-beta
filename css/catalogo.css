@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 /* =========================================
    VARIABLES Y ESTILOS GENERALES
 ========================================= */
@@ -728,7 +729,6 @@ body.modal-open{overflow:hidden}
 
 
 /* ===== Concept by Lily: editorial beauty redesign ===== */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 :root{
  --accent:#b8798b;--accent-dark:#8f5267;--accent-soft:#f3e4e8;
  --page:#fbf7f4;--ink:#44363b;--muted:#8b777d;--border:#eadde0;
