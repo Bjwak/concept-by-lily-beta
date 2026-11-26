@@ -396,9 +396,9 @@ main{width:min(1380px,calc(100% - 72px))}
 
 
 /* Ilustraciones propias para las tres tarjetas de acceso a tiendas */
-.collection-woman{background-image:url('../imagenes/cards/coleccion-mujer.svg');background-size:cover;background-position:center}
-.collection-beauty{background-image:url('../imagenes/cards/coleccion-belleza.svg');background-size:cover;background-position:center}
-.collection-man{background-image:url('../imagenes/cards/coleccion-hombre.svg');background-size:cover;background-position:center}
+.collection-woman{background-image:url('../imagenes/accesorios-mujer.png');background-size:cover;background-position:center}
+.collection-beauty{background-image:url('../imagenes/cosmeticos.png');background-size:cover;background-position:center}
+.collection-man{background-image:url('../imagenes/accesorios-hombre.png');background-size:cover;background-position:center}
 .collection-card:before{background:linear-gradient(180deg,rgba(38,25,32,.02) 18%,rgba(38,25,32,.55) 100%)}
 .collection-card .card-title,.collection-card .card-action,.collection-card .card-number{position:relative;z-index:2}
 
@@ -474,17 +474,17 @@ main{width:min(1380px,calc(100% - 72px))}
 
 /* Fix final: usar los archivos preparados específicamente para las cards */
 .collection-woman{
- background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
  background-size:cover!important;background-position:center center!important;
  background-repeat:no-repeat!important;background-color:#f7e3eb!important;
 }
 .collection-beauty{
- background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
  background-size:cover!important;background-position:center center!important;
  background-repeat:no-repeat!important;background-color:#f7e3eb!important;
 }
 .collection-man{
- background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
  background-size:cover!important;background-position:center center!important;
  background-repeat:no-repeat!important;background-color:#f7e3eb!important;
 }
@@ -570,17 +570,17 @@ main{width:min(1380px,calc(100% - 72px))}
 .collection-woman{
  grid-column:1;
  grid-row:1/3;
- background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
 }
 .collection-beauty{
  grid-column:2;
  grid-row:1;
- background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
 }
 .collection-man{
  grid-column:2;
  grid-row:2;
- background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
 }
 /* El logo y el botón ya vienen dibujados en cada arte. Mantener el texto del enlace accesible sin duplicarlo visualmente. */
 .collection-card .card-number,
@@ -650,13 +650,13 @@ main{width:min(1380px,calc(100% - 72px))}
  overflow:hidden!important;
 }
 .collection-woman{
- background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
 }
 .collection-beauty{
- background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
 }
 .collection-man{
- background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
 }
 .collection-card:before{display:none!important}
 .collection-card .card-number,
@@ -712,19 +712,19 @@ main{width:min(1380px,calc(100% - 72px))}
  grid-column:2!important;
  grid-row:1!important;
  aspect-ratio:710 / 418!important;
- background-image:url('../imagenes/cards/concept-by-lily-accesorios-mujer.png')!important;
+ background-image:url('../imagenes/accesorios-mujer.png')!important;
 }
 .collection-beauty{
  grid-column:1!important;
  grid-row:1 / 3!important;
  aspect-ratio:893 / 850!important;
- background-image:url('../imagenes/cards/concept-by-lily-cosmeticos.png')!important;
+ background-image:url('../imagenes/cosmeticos.png')!important;
 }
 .collection-man{
  grid-column:2!important;
  grid-row:2!important;
  aspect-ratio:710 / 417!important;
- background-image:url('../imagenes/cards/concept-by-lily-accesorios-hombre.png')!important;
+ background-image:url('../imagenes/accesorios-hombre.png')!important;
 }
 .collection-card:before{display:none!important}
 .collection-card .card-number,
