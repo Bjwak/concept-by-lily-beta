@@ -172,7 +172,25 @@ function renderQuickView(id){
  body.querySelector("[data-modal-add]")?.addEventListener("click",e=>add(id,e.currentTarget));
 }
 function closeQuickView(fromPopState=false){const modal=$("quickViewModal");if(!modal.classList.contains("open"))return;modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("modal-open");quickViewProductId=null;if(quickViewHistoryOpen){quickViewHistoryOpen=false;if(!fromPopState)history.back();}}
-function renderProducts(){const q=norm($("productSearch").value),list=products.filter(p=>(catalogSettings.show_out_of_stock||p.variants.some(v=>Number(v.stock)>0))&&(activeCategory==="all"||p.category_id===activeCategory)&&norm([p.name,p.description,p.category?.name].join(" ")).includes(q));$("productCount").textContent=`${list.length} ${list.length===1?"producto":"productos"}`;$("productsContainer").innerHTML=list.length?list.map(card).join(""):`<div class="empty-state"><h2>${products.length?"No encontramos productos":"Estamos preparando esta colección"}</h2><p>${products.length?"Prueba con otra búsqueda o categoría.":"Pronto encontrarás aquí los productos disponibles."}</p></div>`;$("productsContainer").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>renderQuickView(b.dataset.open))}
+function renderProducts(){
+ const q=norm($("productSearch").value);
+ const list=products.filter(p=>(catalogSettings.show_out_of_stock||p.variants.some(v=>Number(v.stock)>0))&&(activeCategory==="all"||p.category_id===activeCategory)&&norm([p.name,p.description,p.category?.name].join(" ")).includes(q));
+ $("productCount").textContent=`${list.length} ${list.length===1?"producto":"productos"}`;
+ if(!list.length){
+  $("productsContainer").innerHTML=`<div class="empty-state"><h2>${products.length?"No encontramos productos":"Estamos preparando esta colección"}</h2><p>${products.length?"Prueba con otra búsqueda o categoría.":"Pronto encontrarás aquí los productos disponibles."}</p></div>`;
+  return;
+ }
+ const categoryOrder=new Map(categories.map((category,index)=>[category.id,index]));
+ const grouped=new Map();
+ list.forEach(product=>{
+  const key=product.category_id||"uncategorized";
+  if(!grouped.has(key))grouped.set(key,{name:product.category?.name||"Otros productos",products:[]});
+  grouped.get(key).products.push(product);
+ });
+ const groups=[...grouped.entries()].sort((a,b)=>(categoryOrder.get(a[0])??9999)-(categoryOrder.get(b[0])??9999)||a[1].name.localeCompare(b[1].name,"es"));
+ $("productsContainer").innerHTML=groups.map(([id,group])=>`<section class="category-group" data-category-group="${esc(id)}"><header class="category-heading"><div class="category-heading-copy"><span class="category-eyebrow">Explora la colección</span><h2>${esc(group.name)}</h2></div><span class="category-heading-count">${group.products.length} ${group.products.length===1?"producto":"productos"}</span></header><div class="category-products">${group.products.map(card).join("")}</div></section>`).join("");
+ $("productsContainer").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>renderQuickView(b.dataset.open));
+}
 const addCooldown=new Map();
 function ensureCartFeedback(){
  if(!$("floatingCart")){
