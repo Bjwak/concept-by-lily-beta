@@ -928,3 +928,21 @@ main{width:min(1380px,calc(100% - 72px))}
     0 0 30px rgba(218,126,165,.20),
     0 0 0 1px rgba(184,121,145,.12)!important;
 }
+
+
+/* Nuevos productos: tarjetas blancas, sin bloque rosa detrás de las fotos */
+.new-product-card{
+  background:#ffffff!important;
+  border:1px solid #f0e6e9!important;
+  box-shadow:0 8px 24px rgba(107,74,90,.07)!important;
+}
+.new-product-image{
+  background:#ffffff!important;
+}
+.new-product-image img{
+  background:#ffffff!important;
+  mix-blend-mode:normal!important;
+}
+.new-product-info{
+  background:#ffffff!important;
+}
