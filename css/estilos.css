@@ -946,3 +946,7 @@ main{width:min(1380px,calc(100% - 72px))}
 .new-product-info{
   background:#ffffff!important;
 }
+
+
+/* Oculta tarjetas de colecciones desactivadas desde Administración. */
+.collection-card[hidden]{display:none!important}
