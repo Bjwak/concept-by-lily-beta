@@ -833,3 +833,11 @@ main{width:min(1380px,calc(100% - 72px))}
   object-position:50% 50%!important;
   transform-origin:50% 50%!important;
 }
+
+
+/* Alineación final del medallón: escala un poco mayor y desplazamiento leve a la derecha */
+.intro-visual .visual-main img{
+  transform:translateX(2%) scale(1.12)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
