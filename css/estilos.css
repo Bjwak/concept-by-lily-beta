@@ -210,3 +210,50 @@ main{width:min(var(--max),calc(100% - 64px))}
  .site-footer{padding:32px 15px 28px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+
+/* ===== Paleta aprobada por la dueña: rosa pastel + malva ===== */
+:root{
+ --ink:#6b4a5a;--muted:#896b78;--rose:#e58fb0;--rose-deep:#6b4a5a;
+ --rose-soft:#ffb8d2;--paper:#fffdf7;--line:#f0d6e1;
+}
+body{background:#fffdf7;color:#6b4a5a}
+.site-header{background:#6b4a5a;color:#fffdf7}
+.brand-name{color:#fffdf7}
+.brand-mark{color:#ffb8d2}
+.brand-tagline{color:#ffd6e8}
+.main-nav a{color:#fffdf7}
+.main-nav a:hover{background:#e58fb0;color:#6b4a5a}
+.intro .eyebrow,.section-heading .eyebrow{color:#b85f85}
+.intro h1 em{color:#e58fb0}
+.intro-copy{color:#896b78}
+.primary-link{background:#6b4a5a;color:#fffdf7}
+.primary-link:hover{background:#e58fb0;color:#6b4a5a}
+.note-line{background:#e58fb0}
+.visual-main{background:#ffd6e8}
+.visual-stamp{background:#ffb8d2;color:#6b4a5a}
+.visual-stamp span{color:#6b4a5a}
+.visual-caption,.intro-note{color:#9b6f83}
+.section-heading h2{color:#6b4a5a}
+.collection-card{background-color:#6b4a5a}
+.collection-card:before{background:linear-gradient(180deg,rgba(47,30,40,.02) 0%,rgba(47,30,40,.72) 100%)}
+.new-arrivals{border-color:#f0d6e1}
+.new-product-image{background:#fff0f6}
+.new-product-tag{background:#fffdf7;color:#6b4a5a}
+.new-product-category{color:#b85f85}
+.new-product-price,.new-arrivals-footer a{color:#6b4a5a}
+.new-arrivals-footer span{background:#f0d6e1}
+.closing{background:#ffd6e8;color:#6b4a5a}
+.closing-symbol,.closing-brand{color:#6b4a5a}
+.site-footer{background:#6b4a5a;color:#ffd6e8}
+.footer-brand{color:#fffdf7}
+.site-footer p{color:#ffd6e8}
+.social-links a{border-color:#e58fb0;background:transparent;color:#fffdf7}
+.social-links a:hover{background:#e58fb0;color:#6b4a5a}
+.site-footer small{color:#ffb8d2}
+@media(max-width:640px){
+ .main-nav a{color:#fffdf7}
+ .intro h1 em{color:#e58fb0}
+ .visual-stamp{background:#ffb8d2}
+ .collection-card{background-color:#6b4a5a}
+}
