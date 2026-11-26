@@ -43,7 +43,8 @@ const HOME_DEFAULTS = {
   visible_store_ids: [],
   sections: {},
   texts: {},
-  hero_image_path: "imagenes/cards/logo.jpeg",\n  cards: { mujer: { image_path: "imagenes/cards/concept-by-lily-accesorios-mujer.png" }, hombre: { image_path: "imagenes/cards/concept-by-lily-accesorios-hombre.png" }, cosmeticos: { image_path: "imagenes/cards/concept-by-lily-cosmeticos.png" } }
+  hero_image_path: "imagenes/cards/logo.jpeg",
+  cards: { mujer: { image_path: "imagenes/cards/concept-by-lily-accesorios-mujer.png" }, hombre: { image_path: "imagenes/cards/concept-by-lily-accesorios-hombre.png" }, cosmeticos: { image_path: "imagenes/cards/concept-by-lily-cosmeticos.png" } }
 };
 
 async function loadHomepageSettings() {
@@ -177,7 +178,8 @@ function applyHomepageSettings() {
   document.querySelectorAll(".collection-card[data-store-id]").forEach(card => {
     const storeId = card.dataset.storeId;
     const slug = STORE_LINKS[storeId];
-    const cardConfig = cards[slug] || {};\n    const fallbackCard = HOME_DEFAULTS.cards[slug] || {};
+    const cardConfig = cards[slug] || {};
+    const fallbackCard = HOME_DEFAULTS.cards[slug] || {};
     card.hidden = !(visibleIds.has(storeId) && (activeStoreIds === null || activeStoreIds.has(storeId)));
     const title = card.querySelector(".card-title");
     const action = card.querySelector(".card-action");
