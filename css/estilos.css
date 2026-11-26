@@ -950,3 +950,59 @@ main{width:min(1380px,calc(100% - 72px))}
 
 /* Oculta tarjetas de colecciones desactivadas desde Administración. */
 .collection-card[hidden]{display:none!important}
+
+
+/* Editor de portada: secciones y plantillas administrables desde Admin Beta */
+[data-home-section][hidden]{display:none!important}
+.intro h1{white-space:pre-line}
+.section-aside{white-space:pre-line}
+body.homepage-has-background{isolation:isolate;position:relative}
+.homepage-background-layer{
+ position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background-position:center;background-size:cover;background-repeat:no-repeat;
+ opacity:.32;transform:translateZ(0)
+}
+.collection-grid[data-template="one"]{
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-template-rows:auto!important;
+ max-width:920px!important;margin-inline:auto!important;
+}
+.collection-grid[data-template="one"] .collection-card{
+ grid-column:1!important;grid-row:auto!important;
+ aspect-ratio:1.65/1!important;max-width:100%!important;
+}
+.collection-grid[data-template="two"]{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-template-rows:auto!important;
+}
+.collection-grid[data-template="two"] .collection-card{
+ grid-column:auto!important;grid-row:auto!important;
+ aspect-ratio:1.42/1!important;
+}
+.collection-grid[data-template="three"]{
+ grid-template-columns:minmax(0,1.18fr) minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;
+}
+.collection-grid[data-template="three"] .collection-beauty{
+ grid-column:1!important;grid-row:1/3!important;aspect-ratio:893/850!important;
+}
+.collection-grid[data-template="three"] .collection-woman{
+ grid-column:2!important;grid-row:1!important;aspect-ratio:710/418!important;
+}
+.collection-grid[data-template="three"] .collection-man{
+ grid-column:2!important;grid-row:2!important;aspect-ratio:710/417!important;
+}
+.collection-card[hidden]{display:none!important}
+@media(max-width:760px){
+ .collection-grid[data-template="one"],
+ .collection-grid[data-template="two"],
+ .collection-grid[data-template="three"]{
+  grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;
+ }
+ .collection-grid[data-template="one"] .collection-card,
+ .collection-grid[data-template="two"] .collection-card,
+ .collection-grid[data-template="three"] .collection-card{
+  grid-column:1!important;grid-row:auto!important;aspect-ratio:1.48/1!important;
+ }
+ .collection-grid[data-template="three"] .collection-beauty{aspect-ratio:893/850!important}
+}
