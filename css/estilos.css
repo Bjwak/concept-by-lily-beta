@@ -911,3 +911,20 @@ main{width:min(1380px,calc(100% - 72px))}
 .intro-visual .visual-main img{
   filter:drop-shadow(0 8px 12px rgba(107,74,90,.08))!important;
 }
+
+
+/* Halo rosado más sutil y elegante */
+.intro-visual:before{
+  background:radial-gradient(circle,
+    rgba(225,143,177,.30) 0%,
+    rgba(239,177,202,.24) 42%,
+    rgba(246,211,225,.14) 61%,
+    rgba(255,253,247,0) 76%)!important;
+  filter:blur(20px)!important;
+}
+.intro-visual .visual-main{
+  box-shadow:
+    0 22px 42px rgba(107,74,90,.18),
+    0 0 30px rgba(218,126,165,.20),
+    0 0 0 1px rgba(184,121,145,.12)!important;
+}
