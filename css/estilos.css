@@ -470,3 +470,26 @@ main{width:min(1380px,calc(100% - 72px))}
  .collection-card .card-content{left:18px!important;right:18px!important;bottom:18px!important}
  .collection-card .card-number{top:16px!important;left:16px!important}
 }
+
+
+/* Fix final: usar los archivos preparados específicamente para las cards */
+.collection-woman{
+ background-image:url('../imagenes/cards/concept-by-lily-mujer.webp')!important;
+ background-size:cover!important;background-position:center center!important;
+ background-repeat:no-repeat!important;background-color:#f7e3eb!important;
+}
+.collection-beauty{
+ background-image:url('../imagenes/cards/concept-by-lily-belleza.webp')!important;
+ background-size:cover!important;background-position:center center!important;
+ background-repeat:no-repeat!important;background-color:#f7e3eb!important;
+}
+.collection-man{
+ background-image:url('../imagenes/cards/concept-by-lily-hombre.webp')!important;
+ background-size:cover!important;background-position:center center!important;
+ background-repeat:no-repeat!important;background-color:#f7e3eb!important;
+}
+.collection-card:before{
+ background:linear-gradient(180deg,rgba(43,27,37,0) 55%,rgba(43,27,37,.32) 100%)!important;
+}
+.collection-card .card-title{display:none!important}
+.collection-card .card-content{bottom:22px!important}
