@@ -849,3 +849,11 @@ main{width:min(1380px,calc(100% - 72px))}
   object-position:50% 50%!important;
   transform-origin:50% 50%!important;
 }
+
+
+/* Zoom solicitado para el logo circular: 111% */
+.intro-visual .visual-main img{
+  transform:translateX(1.2%) scale(1.11)!important;
+  object-position:50% 50%!important;
+  transform-origin:50% 50%!important;
+}
