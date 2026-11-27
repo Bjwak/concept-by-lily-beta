@@ -60,7 +60,7 @@
   </style>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>window.CATALOG_CONFIG={storeId:"8c109c37-c8ed-4726-b950-24a453ba999b"};</script>
-  <script type="module" src="../js/catalogo.js?v=20261127-cart-modal-close-01"></script>
+  <script type="module" src="../js/catalogo.js?v=20261127-verified-order-lookup-01"></script>
 </head>
 <body class="hombre-wallpaper">
   <header class="site-header">
@@ -107,7 +107,7 @@
     </div>
   </div>
 
-<section class="order-tracking"><h2>Consultar mi pedido</h2><p>Revisa el estado de un pedido registrado.</p><form id="trackOrderForm"><input id="trackOrderNumber" type="number" min="1" placeholder="Número de pedido" required><input id="trackOrderPhone" type="tel" placeholder="Teléfono usado en el pedido" required><button type="submit">Consultar estado</button></form><div id="trackOrderResult" role="status"></div></section>
+<section class="order-tracking"><h2>Mis pedidos</h2><p>Verifica tu número telefónico con un código SMS para consultar todos tus pedidos y sus estados.</p><form id="trackOrderForm"><input id="trackOrderPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Teléfono usado en tus pedidos" aria-label="Teléfono usado en tus pedidos" required><input id="trackOrderOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="Código de 6 dígitos" aria-label="Código de verificación SMS" hidden><button id="trackOrderSubmit" type="submit">Enviar código de verificación</button></form><div id="trackOrderResult" role="status" aria-live="polite"></div></section>
   <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
 </body>
 </html>
