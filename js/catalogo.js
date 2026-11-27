@@ -285,7 +285,7 @@ async function registerOrder(e){
  }catch(err){console.error(err);message.textContent=err.message||"No fue posible registrar el pedido.";button.disabled=false;button.textContent="Reintentar registro"}
 }
 function normalizeTrackingPhone(value){
- let digits=String(value||"").replace(/\\D/g,"");
+ let digits=String(value||"").replace(/\D/g,"");
  if(digits.startsWith("00"))digits=digits.slice(2);
  if(digits.length===8)digits="505"+digits;
  return digits.length>=10&&digits.length<=15?"+"+digits:"";
@@ -319,7 +319,7 @@ async function trackOrder(){
    return;
   }
   if(!trackingPhoneVerified){
-   if(!/^\\d{6}$/.test(code)){box.textContent="Ingresa el código de 6 dígitos que recibiste por SMS.";return}
+   if(!/^\d{6}$/.test(code)){box.textContent="Ingresa el código de 6 dígitos que recibiste por SMS.";return}
    const {error}=await supabase.auth.verifyOtp({phone:trackingPhone,token:code,type:"sms"});
    if(error)throw error;
    trackingPhoneVerified=true;
