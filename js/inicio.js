@@ -181,7 +181,7 @@ function applyHomepageSettings() {
     const cardConfig = cards[slug] || {};
     const fallbackCard = HOME_DEFAULTS.cards[slug] || {};
     const legacyStoreIds = new Set(Object.keys(STORE_LINKS));
-    card.hidden = !((visibleIds.has(storeId) || !legacyStoreIds.has(storeId)) && (activeStoreIds === null || activeStoreIds.has(storeId)));
+    card.hidden = !((visibleIds.size === 0 || visibleIds.has(storeId) || !legacyStoreIds.has(storeId)) && (activeStoreIds === null || activeStoreIds.has(storeId)));
     const title = card.querySelector(".card-title");
     const action = card.querySelector(".card-action");
     const number = card.querySelector(".card-number");
