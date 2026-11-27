@@ -1239,3 +1239,6 @@ body{font-family:'DM Sans',Arial,sans-serif;background:radial-gradient(ellipse a
 .add-button,.checkout-submit,.order-tracking button{background:var(--accent-dark);color:var(--page);border-radius:999px;font-family:'DM Sans',sans-serif;font-weight:700;}
 .add-button:hover,.checkout-submit:hover,.order-tracking button:hover{background:var(--accent);color:var(--ink);}
 .category-heading-count{background:color-mix(in srgb,var(--page) 92%,white);color:var(--muted);}
+
+/* Lista de pedidos del cliente verificado */
+.customer-orders-list{display:grid;gap:10px;margin:14px 0}.customer-order-status-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.customer-order-status-head .order-status{display:inline-flex;align-items:center}.customer-order-status p{margin:6px 0;color:var(--muted)}.customer-order-status time{display:block;margin-top:8px;color:var(--muted);font-size:12px}
