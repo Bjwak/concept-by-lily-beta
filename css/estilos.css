@@ -1148,3 +1148,7 @@ body.homepage-config-loading main,body.homepage-config-loading .site-header,body
 /* Public brand word colors are supplied by homepage_settings from Supabase. */
 .site-header .brand-name[data-brand-color-mode="uniform"] .brand-word{color:inherit}
 .site-header .brand-name .brand-word{display:inline}
+
+
+.collection-dynamic{background-image:linear-gradient(135deg,#d9a7b5 0%,#785362 100%);background-color:#785362;}
+.collection-dynamic .card-title{overflow-wrap:anywhere;}
