@@ -329,7 +329,7 @@ async function trackOrder(){
   renderCustomerOrders(data||[]);
  }catch(err){
   console.error("No se pudieron consultar los pedidos del teléfono verificado:",err);
-  box.textContent="No fue posible verificar el teléfono o consultar los pedidos. Comprueba el código e inténtalo de nuevo.";
+  box.textContent=!trackingOtpSent?"No se pudo enviar el SMS. Revisa que Phone Auth y un proveedor SMS estén configurados en Supabase.": "No fue posible verificar el teléfono o consultar los pedidos. Comprueba el código e inténtalo de nuevo.";
  }finally{button.disabled=false}
 }
 const orderStatusLabels={pending_confirmation:"Pendiente de confirmación",confirmed:"Confirmado",preparing:"En preparación",ready_for_delivery:"Listo para entregar",in_transit:"En camino",delivered:"Entregado",cancelled_by_customer:"Cancelado por ti",cancelled_by_store:"Cancelado por la tienda",rejected:"Rechazado"};
