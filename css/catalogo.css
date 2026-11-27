@@ -1242,3 +1242,5 @@ body{font-family:'DM Sans',Arial,sans-serif;background:radial-gradient(ellipse a
 
 /* Lista de pedidos del cliente verificado */
 .customer-orders-list{display:grid;gap:10px;margin:14px 0}.customer-order-status-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.customer-order-status-head .order-status{display:inline-flex;align-items:center}.customer-order-status p{margin:6px 0;color:var(--muted)}.customer-order-status time{display:block;margin-top:8px;color:var(--muted);font-size:12px}
+
+.customer-orders-shortcut{position:fixed;z-index:1599;top:18px;right:122px;display:inline-flex;align-items:center;justify-content:center;padding:10px 15px;border:1px solid #efd6de;border-radius:999px;background:rgba(255,255,255,.96);color:#92576a;box-shadow:0 5px 20px rgba(80,35,50,.13);font:700 13px system-ui,sans-serif;text-decoration:none;backdrop-filter:blur(10px)}.customer-orders-shortcut:hover{transform:translateY(-2px)}@media(max-width:650px){.customer-orders-shortcut{top:10px;right:104px;padding:9px 12px;font-size:12px}}
