@@ -215,7 +215,7 @@ function ensureCartFeedback(){
  if(!$("floatingCart")){
   const button=document.createElement("button");button.id="floatingCart";button.className="floating-cart";button.type="button";button.setAttribute("aria-label","Ver carrito");
   button.innerHTML='<span class="floating-cart-icon" aria-hidden="true">🛒</span><span class="floating-cart-label">Carrito</span><span class="floating-cart-count" id="floatingCartCount">0</span>';
-  button.addEventListener("click",()=>{$("cartTitle")?.scrollIntoView({behavior:"smooth",block:"center"});$("cart")?.focus?.({preventScroll:true})});
+  button.addEventListener("click",()=>{if(quickViewProductId)closeQuickView();const goToCart=()=>{$("cartTitle")?.scrollIntoView({behavior:"smooth",block:"center"});$("cart")?.focus?.({preventScroll:true})};requestAnimationFrame(()=>requestAnimationFrame(goToCart))});
   document.body.appendChild(button);
  }
  if(!$("cartToast")){const toast=document.createElement("div");toast.id="cartToast";toast.className="cart-toast";toast.setAttribute("role","status");toast.setAttribute("aria-live","polite");document.body.appendChild(toast)}
