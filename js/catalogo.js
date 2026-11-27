@@ -1,6 +1,14 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const supabase=createClient("https://lljlmyshxijzuzyzafxa.supabase.co","sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
+let catalogStore=null;
+async function resolveCatalogStore(){
+ const query=cfg.storeId?supabase.from("stores").select("id,name,slug,is_active,is_open,closed_message").eq("id",cfg.storeId):supabase.from("stores").select("id,name,slug,is_active,is_open,closed_message").eq("slug",String(cfg.storeSlug||new URLSearchParams(location.search).get("tienda")||"").trim());
+ const {data,error}=await query.maybeSingle();if(error)throw error;if(!data||!data.is_active)throw new Error("Esta tienda no está disponible actualmente.");catalogStore=data;cfg.storeId=data.id;
+ document.title=String(data.name||"Tienda")+" | Concept by Lily";const nameNode=$("storeCatalogName");if(nameNode)nameNode.textContent=data.name||"Concept by Lily";
+ const meta=document.querySelector('meta[name="description"]');if(meta)meta.content=data.description||("Descubre "+data.name+" de Concept by Lily.");
+}
+
 let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0,quickViewHistoryOpen=false;
 let trackingPhone="",trackingOtpSent=false,trackingPhoneVerified=false;
 let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO",banner_path:null,banner_enabled:false,background_path:null,background_enabled:false,background_overlay:35};
@@ -268,6 +276,7 @@ function add(id,sourceButton){
 }
 function renderCart(){saveCartDraft();const items=[...cart.values()];ensureCartFeedback();const quantity=items.reduce((sum,item)=>sum+item.quantity,0);$("floatingCartCount").textContent=quantity;$("floatingCartCount").hidden=quantity===0;$("floatingCart").classList.toggle("has-items",quantity>0);if(!$("clearCartBtn")){const clear=document.createElement("button");clear.id="clearCartBtn";clear.type="button";clear.className="clear-cart-button";clear.textContent="Vaciar carrito";clear.onclick=clearSavedCart;$("total").insertAdjacentElement("afterend",clear)}$("clearCartBtn").hidden=!items.length;if(!items.length){$("cartItems").innerHTML='<p class="empty-cart">Tu carrito está vacío.</p>';$("total").textContent=`Total: ${money(0)}`;return}let total=0;$("cartItems").innerHTML=items.map(i=>{const sub=i.price*i.quantity;total+=sub;const a=Object.entries(i.attributes).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join(" · ");return `<div class="cart-item"><div><strong>${esc(i.name)}</strong>${a?`<small>${a}</small>`:""}<small>${i.quantity} × ${i.discounted?`<s>${money(i.originalPrice,i.currency)}</s> `:""}${money(i.price,i.currency)} = ${money(sub,i.currency)}</small></div><button class="remove-button" data-remove="${esc(i.key)}">−</button></div>`}).join("");$("total").textContent=`Total: ${money(total)}`;$("cartItems").querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{const i=cart.get(b.dataset.remove);if(i.quantity>1)i.quantity--;else cart.delete(b.dataset.remove);renderCart();showCartToast("Carrito actualizado.")})}
 function invoice(){
+ if(catalogStore?.is_open===false){alert(catalogStore.closed_message||"Esta tienda está cerrada temporalmente para nuevos pedidos.");return;}
  const items=[...cart.values()];if(!items.length){alert("Agrega productos al carrito primero.");return}
  activeOrderRequestId=activeOrderRequestId||crypto.randomUUID();registeredOrder=null;$("shareInvoice").hidden=true;$("shareInvoice").disabled=true;
  $("invoiceArea").innerHTML='<div class="checkout-card"><h2>'+esc(catalogSettings.brand_name||"Concept by Lily")+'</h2><p>Completa tus datos para registrar el pedido.</p><form id="checkoutForm" class="checkout-form"><label>Nombre completo<input name="customer_name" required minlength="2" maxlength="120"></label><label>Teléfono<input name="customer_phone" required minlength="8" maxlength="30"></label><label>Modalidad<select name="delivery_method"><option value="to_agree">Por coordinar</option><option value="pickup">Retiro</option><option value="delivery">Envío a domicilio</option></select></label><label>Dirección<textarea name="delivery_address" rows="2" maxlength="500"></textarea></label><label>Notas<textarea name="customer_notes" rows="2" maxlength="500"></textarea></label><label>Método de pago<select name="payment_method" required><option value="transfer">Transferencia</option><option value="cash">Efectivo</option></select></label><div class="checkout-summary"><strong>Resumen</strong><span>'+items.length+' línea(s) · '+money(items.reduce((s,i)=>s+i.price*i.quantity,0))+'</span></div><button type="submit" class="checkout-submit" id="submitOrder">Registrar pedido</button><p id="checkoutMessage" role="status"></p></form></div>';
@@ -348,6 +357,9 @@ async function share(){try{if(!registeredOrder?.id||!$("invoiceArea").querySelec
 async function load(){
  $("catalogMessage").textContent="Cargando catálogo…";
  try{
+  await resolveCatalogStore();
+  const closedNotice=$("storeClosedNotice");
+  if(catalogStore.is_open===false){const orderButton=$("whatsappBtn");if(orderButton){orderButton.disabled=true;orderButton.textContent="Pedidos temporalmente cerrados";}if(closedNotice){closedNotice.hidden=false;closedNotice.textContent=catalogStore.closed_message||"Esta tienda está cerrada temporalmente para nuevos pedidos. Puedes explorar el catálogo y volver más tarde.";}}
   const settingsResult=await supabase.from("store_settings").select("settings").eq("store_id",cfg.storeId).maybeSingle();
   if(!settingsResult.error&&settingsResult.data?.settings)catalogSettings={...catalogSettings,...settingsResult.data.settings};
   else if(settingsResult.error)console.warn("Se utilizarán los ajustes predeterminados del catálogo:",settingsResult.error.message);
