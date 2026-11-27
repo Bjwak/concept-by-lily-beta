@@ -177,17 +177,18 @@ function applyHomepageSettings() {
   const cards = config.cards || {};
   document.querySelectorAll(".collection-card[data-store-id]").forEach(card => {
     const storeId = card.dataset.storeId;
-    const slug = STORE_LINKS[storeId];
+    const slug = card.dataset.storeSlug || STORE_LINKS[storeId];
     const cardConfig = cards[slug] || {};
     const fallbackCard = HOME_DEFAULTS.cards[slug] || {};
-    card.hidden = !(visibleIds.has(storeId) && (activeStoreIds === null || activeStoreIds.has(storeId)));
+    const legacyStoreIds = new Set(Object.keys(STORE_LINKS));
+    card.hidden = !((visibleIds.has(storeId) || !legacyStoreIds.has(storeId)) && (activeStoreIds === null || activeStoreIds.has(storeId)));
     const title = card.querySelector(".card-title");
     const action = card.querySelector(".card-action");
     const number = card.querySelector(".card-number");
-    if (title) title.textContent = cardConfig.title || "";
+    if (title) title.textContent = cardConfig.title || card.dataset.storeName || "";
     if (action) {
       const arrow = action.querySelector("span");
-      action.textContent = (cardConfig.action || "") + " ";
+      action.textContent = (cardConfig.action || (card.dataset.storeOpen === "false" ? "Pedidos cerrados" : "Explorar colección")) + " ";
       if (arrow) action.append(arrow);
     }
     if (number) number.textContent = (number.dataset.cardNumber ? number.dataset.cardNumber + " " : "") + (cardConfig.eyebrow || "");
@@ -252,20 +253,50 @@ function applyHomepageSettings() {
   }
 }
 
+function renderStoreCards(stores) {
+  const grid = document.getElementById("collectionGrid");
+  if (!grid) return;
+  grid.replaceChildren();
+  (stores || []).filter(store => store.is_active).forEach((store,index) => {
+    const card = document.createElement("a");
+    card.className = "collection-card collection-dynamic";
+    card.dataset.storeId = store.id;
+    card.dataset.storeSlug = store.slug;
+    card.dataset.storeName = store.name;
+    card.dataset.storeOpen = String(store.is_open !== false);
+    card.href = "acceso/index.html?tienda=" + encodeURIComponent(store.slug);
+    const number = document.createElement("span");
+    number.className = "card-number";
+    number.dataset.cardNumber = String(index+1).padStart(2,"0");
+    number.innerHTML = "<i></i>";
+    const content = document.createElement("span");
+    content.className = "card-content";
+    const title = document.createElement("span");
+    title.className = "card-title";
+    title.textContent = store.name || "Tienda";
+    const action = document.createElement("span");
+    action.className = "card-action";
+    action.innerHTML = (store.is_open === false ? "Pedidos cerrados " : "Explorar colección ") + '<span aria-hidden="true">↗</span>';
+    content.append(title,action);
+    card.append(number,content);
+    grid.append(card);
+  });
+}
 async function loadStoreVisibility() {
-  const { data, error } = await supabase.from("stores").select("id,is_active");
+  const { data, error } = await supabase.from("stores").select("id,name,slug,is_active,is_open");
   if (error) {
     console.warn("No se pudo consultar el estado de las tiendas:", error.message);
     return null;
   }
-  activeStoreIds = new Set((data || []).filter(store => store.is_active).map(store => store.id));
+  const stores = data || [];
+  activeStoreIds = new Set(stores.filter(store => store.is_active).map(store => store.id));
+  renderStoreCards(stores);
   applyHomepageSettings();
   const allLink = document.getElementById("allCollectionsLink");
-  const preferred = ["937fc539-9b4f-4f8f-a0d6-676408a5359a","a6ebf309-4a7e-4a9a-9411-fa956e4d4349","8c109c37-c8ed-4726-b950-24a453ba999b"];
-  const first = preferred.find(id => activeStoreIds.has(id));
+  const first = stores.find(store => store.is_active);
   if (allLink) {
     allLink.hidden = !first;
-    if (first) allLink.href = "acceso/index.html?tienda=" + encodeURIComponent(STORE_LINKS[first]);
+    if (first) allLink.href = "acceso/index.html?tienda=" + encodeURIComponent(first.slug);
   }
   return activeStoreIds;
 }
