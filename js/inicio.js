@@ -13,6 +13,7 @@ const STORE_LINKS = {
 
 let activeStoreIds = null;
 let homepageSettings = null;
+let storeSlugById = new Map(Object.entries(STORE_LINKS));
 
 const HOME_PALETTES = {"lily_signature":{"paper":"#fffaf5","ink":"#49343f","muted":"#846f78","accent":"#d78aa5","deep":"#6b4a5a","soft":"#f7dce7","line":"#eadde1","header":"#6b4a5a","footer":"#f7e9ed","cardStart":"#f4c8d8","cardEnd":"#d98aa7","heroStart":"#fffaf5","heroEnd":"#f9eaf0","closing":"#f7e9ed"},"rose_garden":{"paper":"#fff7f8","ink":"#512f40","muted":"#866777","accent":"#d97d9b","deep":"#8d3e60","soft":"#f8dce6","line":"#efd6df","header":"#7b3d59","footer":"#f8e7ed","cardStart":"#f1b7ca","cardEnd":"#c96d8e","heroStart":"#fff7f8","heroEnd":"#f8e0e9","closing":"#f8e7ed"},"sage_cream":{"paper":"#faf8f0","ink":"#35483d","muted":"#7a887c","accent":"#a9bda8","deep":"#526e5c","soft":"#e8eee3","line":"#dfe6d9","header":"#425b4b","footer":"#e8eee3","cardStart":"#c6d5c1","cardEnd":"#718d78","heroStart":"#faf8f0","heroEnd":"#e8eee3","closing":"#e8eee3"},"midnight_lilac":{"paper":"#f7f5f9","ink":"#302b3d","muted":"#777185","accent":"#b9a8d4","deep":"#4e4268","soft":"#e8e0f2","line":"#e0d9ea","header":"#342c45","footer":"#e8e0f2","cardStart":"#c9bce0","cardEnd":"#76658f","heroStart":"#f7f5f9","heroEnd":"#e8e0f2","closing":"#e8e0f2"},"cocoa_blush":{"paper":"#fbf5ef","ink":"#4a332d","muted":"#8c756b","accent":"#c99684","deep":"#745044","soft":"#f0dfd5","line":"#e9d9ce","header":"#65483e","footer":"#f0dfd5","cardStart":"#e4b9a8","cardEnd":"#a87560","heroStart":"#fbf5ef","heroEnd":"#f0dfd5","closing":"#f0dfd5"}};
 function renderPublicBrandName(node, value, config = {}) {
@@ -86,7 +87,9 @@ function applyHomepageSettings() {
   document.documentElement.style.setProperty("--home-section-content-bg", backgroundMode === "custom" ? contentBackground : palette.paper);
   const texts = config.texts || {};
   const sections = { ...HOME_DEFAULTS.sections, ...(config.sections || {}) };
-  const visibleIds = new Set(Array.isArray(config.visible_store_ids) ? config.visible_store_ids : HOME_DEFAULTS.visible_store_ids);
+  const configuredVisibleIds = Array.isArray(config.visible_store_ids) ? config.visible_store_ids : HOME_DEFAULTS.visible_store_ids;
+  const defaultVisibleIds = activeStoreIds ? [...activeStoreIds].slice(0, 5) : Object.keys(STORE_LINKS);
+  const visibleIds = new Set((configuredVisibleIds.length ? configuredVisibleIds : defaultVisibleIds).slice(0, 5));
 
   document.querySelectorAll("[data-home-section]").forEach(section => {
     const key = section.dataset.homeSection;
@@ -177,11 +180,10 @@ function applyHomepageSettings() {
   const cards = config.cards || {};
   document.querySelectorAll(".collection-card[data-store-id]").forEach(card => {
     const storeId = card.dataset.storeId;
-    const slug = card.dataset.storeSlug || STORE_LINKS[storeId];
+    const slug = card.dataset.storeSlug || storeSlugById.get(storeId) || STORE_LINKS[storeId];
     const cardConfig = cards[slug] || {};
     const fallbackCard = HOME_DEFAULTS.cards[slug] || {};
-    const legacyStoreIds = new Set(Object.keys(STORE_LINKS));
-    card.hidden = !((visibleIds.size === 0 || visibleIds.has(storeId) || !legacyStoreIds.has(storeId)) && (activeStoreIds === null || activeStoreIds.has(storeId)));
+    card.hidden = !(visibleIds.has(storeId) && (activeStoreIds === null || activeStoreIds.has(storeId)));
     const title = card.querySelector(".card-title");
     const action = card.querySelector(".card-action");
     const number = card.querySelector(".card-number");
@@ -223,14 +225,38 @@ function applyHomepageSettings() {
   if (grid) {
     const visibleCards = [...grid.querySelectorAll(".collection-card")].filter(card => !card.hidden);
     const count = visibleCards.length;
-    const template = count <= 1 ? "one" : count === 2 ? "two" : "three";
+    const template = count <= 1 ? "one" : count === 2 ? "two" : count === 3 ? "three" : count === 4 ? "four" : "five";
     grid.dataset.template = template;
-    const layoutDefaults = { one: { primary: "cosmeticos" }, two: { left: "cosmeticos", right: "mujer" }, three: { left: "cosmeticos", right_top: "mujer", right_bottom: "hombre" } };
-    const layout = { ...layoutDefaults[template], ...(config.layout?.[template] || {}) };
-    const slotBySlug = new Map(Object.entries(layout).map(([slot, slug]) => [slug, slot]));
-    const slugById = new Map(Object.entries(STORE_LINKS).map(([id, slug]) => [id, slug]));
-    const order = template === "one" ? ["primary"] : template === "two" ? ["left", "right"] : ["left", "right_top", "right_bottom"];
-    visibleCards.forEach(card => { const slug = slugById.get(card.dataset.storeId); const slot = slotBySlug.get(slug) || order[0]; card.dataset.layoutPosition = slot; card.style.gridArea = slot; });
+    const positionsByTemplate = {
+      one: ["primary"],
+      two: ["left", "right"],
+      three: ["left", "right_top", "right_bottom"],
+      four: ["top_left", "top_right", "bottom_left", "bottom_right"],
+      five: ["left", "right_top", "right_bottom", "bottom_left", "bottom_right"]
+    };
+    const order = positionsByTemplate[template];
+    const layout = config.layout?.[template] || {};
+    const assignedSlugs = new Set();
+    const slotBySlug = new Map();
+    order.forEach(slot => {
+      const slug = layout[slot];
+      if (slug && visibleCards.some(card => card.dataset.storeSlug === slug) && !assignedSlugs.has(slug)) {
+        slotBySlug.set(slug, slot);
+        assignedSlugs.add(slug);
+      }
+    });
+    visibleCards.forEach(card => {
+      const slug = card.dataset.storeSlug || storeSlugById.get(card.dataset.storeId);
+      if (!slug || slotBySlug.has(slug)) return;
+      const freeSlot = order.find(slot => ![...slotBySlug.values()].includes(slot));
+      if (freeSlot) { slotBySlug.set(slug, freeSlot); assignedSlugs.add(slug); }
+    });
+    visibleCards.forEach(card => {
+      const slug = card.dataset.storeSlug || storeSlugById.get(card.dataset.storeId);
+      const slot = slotBySlug.get(slug) || order[0];
+      card.dataset.layoutPosition = slot;
+      card.style.gridArea = slot;
+    });
     visibleCards.sort((a,b) => order.indexOf(a.dataset.layoutPosition) - order.indexOf(b.dataset.layoutPosition)).forEach(card => grid.appendChild(card));
   }
 
@@ -289,6 +315,7 @@ async function loadStoreVisibility() {
     return null;
   }
   const stores = data || [];
+  storeSlugById = new Map(stores.filter(store => store.id && store.slug).map(store => [store.id, store.slug]));
   activeStoreIds = new Set(stores.filter(store => store.is_active).map(store => store.id));
   renderStoreCards(stores);
   applyHomepageSettings();
@@ -331,7 +358,9 @@ async function loadNewArrivals() {
       .limit(24);
 
     if (error) throw error;
-    const visibleHomepageIds = new Set(Array.isArray(homepageSettings?.visible_store_ids) ? homepageSettings.visible_store_ids : Object.keys(STORE_LINKS));
+    const configuredHomepageIds = Array.isArray(homepageSettings?.visible_store_ids) ? homepageSettings.visible_store_ids : [];
+    const defaultHomepageIds = activeStoreIds ? [...activeStoreIds].slice(0, 5) : Object.keys(STORE_LINKS);
+    const visibleHomepageIds = new Set((configuredHomepageIds.length ? configuredHomepageIds : defaultHomepageIds).slice(0, 5));
     const visibleProducts = (products || []).filter(product => (activeStoreIds === null || activeStoreIds.has(product.store_id)) && visibleHomepageIds.has(product.store_id));
     const productIds = visibleProducts.map(product => product.id);
     if (!productIds.length) {
@@ -357,7 +386,7 @@ async function loadNewArrivals() {
       const image = images.find(item => item.product_id === product.id && item.is_primary)
         || images.find(item => item.product_id === product.id);
       const available = variants.some(variant => variant.product_id === product.id && Number(variant.stock) > 0);
-      const storeSlug = STORE_LINKS[product.store_id];
+      const storeSlug = storeSlugById.get(product.store_id) || STORE_LINKS[product.store_id];
       if (!storeSlug) return "";
       const href = `acceso/index.html?tienda=${encodeURIComponent(storeSlug)}`;
       const picture = image?.image_path
