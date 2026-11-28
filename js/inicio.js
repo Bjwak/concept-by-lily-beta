@@ -1,8 +1,8 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabase = createClient(
-  "https://ftzfsxcnfcqdmwhpardt.supabase.co",
-  "sb_publishable_eRUu-PSs6VrdbtHMET1AvQ_pkZ_WHUv"
+  "https://lljlmyshxijzuzyzafxa.supabase.co",
+  "sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK"
 );
 
 const STORE_LINKS = {
@@ -282,7 +282,7 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[char]));
 
-const imageUrl = path => { const value = String(path || "").trim(); const prefix = "https://ftzfsxcnfcqdmwhpardt.supabase.co/storage/v1/object/public/product-images/"; if (value.startsWith(prefix)) return value; if (!value || /^https?:/i.test(value)) return ""; return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl || ""; };
+const imageUrl = path => { const value = String(path || "").trim(); const prefix = "https://lljlmyshxijzuzyzafxa.supabase.co/storage/v1/object/public/product-images/"; if (value.startsWith(prefix)) return value; if (!value || /^https?:/i.test(value)) return ""; return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl || ""; };
 
 async function loadNewArrivals() {
   const container = document.getElementById("newProducts");
