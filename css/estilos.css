@@ -1212,3 +1212,34 @@ body.homepage-config-loading main,body.homepage-config-loading .site-header,body
     aspect-ratio:1.5/1!important;
   }
 }
+
+
+/* Cards for dynamic stores without artwork must always show the store name. */
+.collection-dynamic:not(:has(.collection-card-image)){
+  background-image:none!important;
+  background-color:var(--home-palette-deep,#6b4a5a)!important;
+}
+.collection-dynamic:not(:has(.collection-card-image)) .card-content{
+  display:flex!important;
+  position:absolute!important;
+  left:clamp(18px,3vw,32px)!important;
+  right:clamp(18px,3vw,32px)!important;
+  bottom:clamp(18px,3vw,30px)!important;
+  z-index:5!important;
+  visibility:visible!important;
+  opacity:1!important;
+  align-items:flex-start!important;
+}
+.collection-dynamic:not(:has(.collection-card-image)) .card-title{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  color:#fff!important;
+  font-size:clamp(25px,3vw,40px)!important;
+  line-height:1.1!important;
+  max-width:100%!important;
+}
+.collection-dynamic:not(:has(.collection-card-image)) .card-number,
+.collection-dynamic:not(:has(.collection-card-image)) .card-action{
+  display:none!important;
+}
