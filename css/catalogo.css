@@ -1254,3 +1254,8 @@ body{font-family:'DM Sans',Arial,sans-serif;background:radial-gradient(ellipse a
 .customer-order-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}.customer-order-meta p{padding:10px;border-radius:9px;background:var(--page)}.customer-order-meta span,.customer-order-totals span{display:block;color:var(--muted);font-size:12px}.customer-order-meta strong{font-size:13px}
 .customer-order-detail h3,.customer-order-history h3{margin:15px 0 8px;color:var(--accent-dark);font-size:15px}.customer-order-totals{margin-top:12px}.customer-order-totals p{display:flex;justify-content:space-between;gap:12px;padding:7px 0}.customer-order-totals strong{color:var(--accent-dark)}.customer-order-totals .customer-order-grand-total{border-top:1px solid var(--border);padding-top:12px;font-size:15px}.customer-order-grand-total span{font-weight:700;color:var(--accent-dark)}.customer-order-history{margin-top:16px}
 @media(max-width:650px){.order-lookup-method button{white-space:normal;padding:10px 8px}.customer-order-meta{grid-template-columns:1fr}.customer-order-item{font-size:12px}}
+/* Catálogo dinámico por tienda */
+.dynamic-store-page .store-catalog-brand{display:block;margin:0 auto;max-width:70%;text-align:center;font-family:'Playfair Display',Georgia,serif;font-size:clamp(20px,3vw,32px);font-weight:600;color:var(--accent-dark,var(--accent));}
+.dynamic-store-page .store-closed-notice{display:block;margin:14px auto;padding:14px 18px;max-width:1100px;border:1px solid var(--border);border-radius:12px;background:#fff8f9;color:var(--accent-dark,var(--accent));font-weight:600;text-align:center;}
+.dynamic-store-page .store-closed-notice[hidden]{display:none;}
+.whatsapp-btn:disabled{opacity:.62;cursor:not-allowed;filter:grayscale(.15);}

@@ -1,8 +1,17 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-(() => {
-    // ======================================
-    // CONFIGURACIÓN
-    // ======================================
+const supabase = createClient(
+  "https://lljlmyshxijzuzyzafxa.supabase.co",
+  "sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK"
+);
+const WHATSAPP_NUMBER = "50587984118";
+const PUBLIC_BASE_URL = "https://bjwak.github.io/concept-by-lily-beta/";
+const CUSTOMER_KEY = "conceptByLilyReturningCustomer";
+const params = new URLSearchParams(window.location.search);
+const storeSlug = String(params.get("tienda") || "").trim();
+let store = null;
+let catalogUrl = "";
+let publicCatalogUrl = "";
 
     const WHATSAPP_NUMBER = "50587984118";
 

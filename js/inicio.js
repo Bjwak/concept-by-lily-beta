@@ -13,6 +13,27 @@ const STORE_LINKS = {
 
 let activeStoreIds = null;
 let homepageSettings = null;
+let storeSlugById = new Map(Object.entries(STORE_LINKS));
+
+const HOME_PALETTES = {"lily_signature":{"paper":"#fffaf5","ink":"#49343f","muted":"#846f78","accent":"#d78aa5","deep":"#6b4a5a","soft":"#f7dce7","line":"#eadde1","header":"#6b4a5a","footer":"#f7e9ed","cardStart":"#f4c8d8","cardEnd":"#d98aa7","heroStart":"#fffaf5","heroEnd":"#f9eaf0","closing":"#f7e9ed"},"rose_garden":{"paper":"#fff7f8","ink":"#512f40","muted":"#866777","accent":"#d97d9b","deep":"#8d3e60","soft":"#f8dce6","line":"#efd6df","header":"#7b3d59","footer":"#f8e7ed","cardStart":"#f1b7ca","cardEnd":"#c96d8e","heroStart":"#fff7f8","heroEnd":"#f8e0e9","closing":"#f8e7ed"},"sage_cream":{"paper":"#faf8f0","ink":"#35483d","muted":"#7a887c","accent":"#a9bda8","deep":"#526e5c","soft":"#e8eee3","line":"#dfe6d9","header":"#425b4b","footer":"#e8eee3","cardStart":"#c6d5c1","cardEnd":"#718d78","heroStart":"#faf8f0","heroEnd":"#e8eee3","closing":"#e8eee3"},"midnight_lilac":{"paper":"#f7f5f9","ink":"#302b3d","muted":"#777185","accent":"#b9a8d4","deep":"#4e4268","soft":"#e8e0f2","line":"#e0d9ea","header":"#342c45","footer":"#e8e0f2","cardStart":"#c9bce0","cardEnd":"#76658f","heroStart":"#f7f5f9","heroEnd":"#e8e0f2","closing":"#e8e0f2"},"cocoa_blush":{"paper":"#fbf5ef","ink":"#4a332d","muted":"#8c756b","accent":"#c99684","deep":"#745044","soft":"#f0dfd5","line":"#e9d9ce","header":"#65483e","footer":"#f0dfd5","cardStart":"#e4b9a8","cardEnd":"#a87560","heroStart":"#fbf5ef","heroEnd":"#f0dfd5","closing":"#f0dfd5"}};
+function renderPublicBrandName(node, value, config = {}) {
+  if (!node) return;
+  const words = String(value ?? '').trim().split(/\s+/).filter(Boolean);
+  node.replaceChildren();
+  const separated = config.brand_color_mode === 'separated';
+  const colors = Array.isArray(config.brand_word_colors) ? config.brand_word_colors : [];
+  const first = /^#[0-9a-f]{6}$/i.test(config.brand_color_one || '') ? config.brand_color_one : '#ffffff';
+  const second = /^#[0-9a-f]{6}$/i.test(config.brand_color_two || '') ? config.brand_color_two : '#d78aa5';
+  const byIndex = words.findIndex(word => word.toLowerCase() === 'by');
+  words.forEach((word, index) => {
+    const span = document.createElement('span');
+    span.className = 'brand-word';
+    span.textContent = word;
+    if (byIndex >= 0 && index >= byIndex) span.style.fontStyle = 'italic';
+    if (separated) span.style.color = Number(colors[index]) === 2 ? second : first;
+    node.append(span, document.createTextNode(index < words.length - 1 ? ' ' : ''));
+  });
+}
 
 const HOME_PALETTES = {"lily_signature":{"paper":"#fffaf5","ink":"#49343f","muted":"#846f78","accent":"#d78aa5","deep":"#6b4a5a","soft":"#f7dce7","line":"#eadde1","header":"#6b4a5a","footer":"#f7e9ed","cardStart":"#f4c8d8","cardEnd":"#d98aa7","heroStart":"#fffaf5","heroEnd":"#f9eaf0","closing":"#f7e9ed"},"rose_garden":{"paper":"#fff7f8","ink":"#512f40","muted":"#866777","accent":"#d97d9b","deep":"#8d3e60","soft":"#f8dce6","line":"#efd6df","header":"#7b3d59","footer":"#f8e7ed","cardStart":"#f1b7ca","cardEnd":"#c96d8e","heroStart":"#fff7f8","heroEnd":"#f8e0e9","closing":"#f8e7ed"},"sage_cream":{"paper":"#faf8f0","ink":"#35483d","muted":"#7a887c","accent":"#a9bda8","deep":"#526e5c","soft":"#e8eee3","line":"#dfe6d9","header":"#425b4b","footer":"#e8eee3","cardStart":"#c6d5c1","cardEnd":"#718d78","heroStart":"#faf8f0","heroEnd":"#e8eee3","closing":"#e8eee3"},"midnight_lilac":{"paper":"#f7f5f9","ink":"#302b3d","muted":"#777185","accent":"#b9a8d4","deep":"#4e4268","soft":"#e8e0f2","line":"#e0d9ea","header":"#342c45","footer":"#e8e0f2","cardStart":"#c9bce0","cardEnd":"#76658f","heroStart":"#f7f5f9","heroEnd":"#e8e0f2","closing":"#e8e0f2"},"cocoa_blush":{"paper":"#fbf5ef","ink":"#4a332d","muted":"#8c756b","accent":"#c99684","deep":"#745044","soft":"#f0dfd5","line":"#e9d9ce","header":"#65483e","footer":"#f0dfd5","cardStart":"#e4b9a8","cardEnd":"#a87560","heroStart":"#fbf5ef","heroEnd":"#f0dfd5","closing":"#f0dfd5"}};
 function renderPublicBrandName(node, value, config = {}) {
@@ -43,7 +64,8 @@ const HOME_DEFAULTS = {
   visible_store_ids: [],
   sections: {},
   texts: {},
-  cards: {}
+  hero_image_path: "imagenes/cards/logo.jpeg",
+  cards: { mujer: { image_path: "imagenes/cards/concept-by-lily-accesorios-mujer.png" }, hombre: { image_path: "imagenes/cards/concept-by-lily-accesorios-hombre.png" }, cosmeticos: { image_path: "imagenes/cards/concept-by-lily-cosmeticos.png" } }
 };
 
 async function loadHomepageSettings() {
@@ -85,7 +107,9 @@ function applyHomepageSettings() {
   document.documentElement.style.setProperty("--home-section-content-bg", backgroundMode === "custom" ? contentBackground : palette.paper);
   const texts = config.texts || {};
   const sections = { ...HOME_DEFAULTS.sections, ...(config.sections || {}) };
-  const visibleIds = new Set(Array.isArray(config.visible_store_ids) ? config.visible_store_ids : HOME_DEFAULTS.visible_store_ids);
+  const configuredVisibleIds = Array.isArray(config.visible_store_ids) ? config.visible_store_ids : HOME_DEFAULTS.visible_store_ids;
+  const defaultVisibleIds = activeStoreIds ? [...activeStoreIds].slice(0, 5) : Object.keys(STORE_LINKS);
+  const visibleIds = new Set((configuredVisibleIds.length ? configuredVisibleIds : defaultVisibleIds).slice(0, 5));
 
   document.querySelectorAll("[data-home-section]").forEach(section => {
     const key = section.dataset.homeSection;
@@ -167,7 +191,7 @@ function applyHomepageSettings() {
     if (visual) visual.classList.remove("image-load-failed");
     heroImage.onerror = () => { heroImage.hidden = true; visual?.classList.add("image-load-failed"); };
     heroImage.onload = () => { heroImage.hidden = false; visual?.classList.remove("image-load-failed"); };
-    const path = config.hero_image_path || "";
+    const path = config.hero_image_path || HOME_DEFAULTS.hero_image_path || "";
     const source = path ? imageUrl(path) : "";
     if (source) { heroImage.hidden = false; heroImage.src = source; }
     else { heroImage.removeAttribute("src"); heroImage.hidden = true; }
@@ -176,22 +200,23 @@ function applyHomepageSettings() {
   const cards = config.cards || {};
   document.querySelectorAll(".collection-card[data-store-id]").forEach(card => {
     const storeId = card.dataset.storeId;
-    const slug = STORE_LINKS[storeId];
+    const slug = card.dataset.storeSlug || storeSlugById.get(storeId) || STORE_LINKS[storeId];
     const cardConfig = cards[slug] || {};
+    const fallbackCard = HOME_DEFAULTS.cards[slug] || {};
     card.hidden = !(visibleIds.has(storeId) && (activeStoreIds === null || activeStoreIds.has(storeId)));
     const title = card.querySelector(".card-title");
     const action = card.querySelector(".card-action");
     const number = card.querySelector(".card-number");
-    if (title) title.textContent = cardConfig.title || "";
+    if (title) title.textContent = cardConfig.title || card.dataset.storeName || "";
     if (action) {
       const arrow = action.querySelector("span");
-      action.textContent = (cardConfig.action || "") + " ";
+      action.textContent = (cardConfig.action || (card.dataset.storeOpen === "false" ? "Pedidos cerrados" : "Explorar colección")) + " ";
       if (arrow) action.append(arrow);
     }
     if (number) number.textContent = (number.dataset.cardNumber ? number.dataset.cardNumber + " " : "") + (cardConfig.eyebrow || "");
     let cardImage = card.querySelector(".collection-card-image");
-    if (cardConfig.image_path) {
-      const url = imageUrl(cardConfig.image_path);
+    if (cardConfig.image_path || fallbackCard.image_path) {
+      const url = imageUrl(cardConfig.image_path || fallbackCard.image_path);
       if (url) {
         if (!cardImage) {
           cardImage = document.createElement("img");
@@ -216,20 +241,76 @@ function applyHomepageSettings() {
       cardImage?.remove();
       card.style.removeProperty("background-image");
     }
+
+    // The catalog has legacy CSS rules that intentionally hide card titles
+    // when artwork is present. Force the title on solid-color cards directly
+    // so it remains visible even if an older selector wins in the cascade.
+    const content = card.querySelector(".card-content");
+    if (!cardImage) {
+      card.classList.add("collection-no-art");
+      if (content) {
+        content.style.setProperty("display", "flex", "important");
+        content.style.setProperty("visibility", "visible", "important");
+        content.style.setProperty("opacity", "1", "important");
+      }
+      if (title) {
+        title.style.setProperty("display", "block", "important");
+        title.style.setProperty("visibility", "visible", "important");
+        title.style.setProperty("opacity", "1", "important");
+        title.style.setProperty("color", "#fff", "important");
+      }
+    } else {
+      card.classList.remove("collection-no-art");
+      if (content) {
+        content.style.removeProperty("display");
+        content.style.removeProperty("visibility");
+        content.style.removeProperty("opacity");
+      }
+      if (title) {
+        title.style.removeProperty("display");
+        title.style.removeProperty("visibility");
+        title.style.removeProperty("opacity");
+        title.style.removeProperty("color");
+      }
+    }
   });
 
   const grid = document.querySelector(".collection-grid");
   if (grid) {
     const visibleCards = [...grid.querySelectorAll(".collection-card")].filter(card => !card.hidden);
     const count = visibleCards.length;
-    const template = count <= 1 ? "one" : count === 2 ? "two" : "three";
+    const template = count <= 1 ? "one" : count === 2 ? "two" : count === 3 ? "three" : count === 4 ? "four" : "five";
     grid.dataset.template = template;
-    const layoutDefaults = { one: { primary: "cosmeticos" }, two: { left: "cosmeticos", right: "mujer" }, three: { left: "cosmeticos", right_top: "mujer", right_bottom: "hombre" } };
-    const layout = { ...layoutDefaults[template], ...(config.layout?.[template] || {}) };
-    const slotBySlug = new Map(Object.entries(layout).map(([slot, slug]) => [slug, slot]));
-    const slugById = new Map(Object.entries(STORE_LINKS).map(([id, slug]) => [id, slug]));
-    const order = template === "one" ? ["primary"] : template === "two" ? ["left", "right"] : ["left", "right_top", "right_bottom"];
-    visibleCards.forEach(card => { const slug = slugById.get(card.dataset.storeId); const slot = slotBySlug.get(slug) || order[0]; card.dataset.layoutPosition = slot; card.style.gridArea = slot; });
+    const positionsByTemplate = {
+      one: ["primary"],
+      two: ["left", "right"],
+      three: ["left", "right_top", "right_bottom"],
+      four: ["top_left", "top_right", "bottom_left", "bottom_right"],
+      five: ["left", "right_top", "right_bottom", "bottom_left", "bottom_right"]
+    };
+    const order = positionsByTemplate[template];
+    const layout = config.layout?.[template] || {};
+    const assignedSlugs = new Set();
+    const slotBySlug = new Map();
+    order.forEach(slot => {
+      const slug = layout[slot];
+      if (slug && visibleCards.some(card => card.dataset.storeSlug === slug) && !assignedSlugs.has(slug)) {
+        slotBySlug.set(slug, slot);
+        assignedSlugs.add(slug);
+      }
+    });
+    visibleCards.forEach(card => {
+      const slug = card.dataset.storeSlug || storeSlugById.get(card.dataset.storeId);
+      if (!slug || slotBySlug.has(slug)) return;
+      const freeSlot = order.find(slot => ![...slotBySlug.values()].includes(slot));
+      if (freeSlot) { slotBySlug.set(slug, freeSlot); assignedSlugs.add(slug); }
+    });
+    visibleCards.forEach(card => {
+      const slug = card.dataset.storeSlug || storeSlugById.get(card.dataset.storeId);
+      const slot = slotBySlug.get(slug) || order[0];
+      card.dataset.layoutPosition = slot;
+      card.style.gridArea = slot;
+    });
     visibleCards.sort((a,b) => order.indexOf(a.dataset.layoutPosition) - order.indexOf(b.dataset.layoutPosition)).forEach(card => grid.appendChild(card));
   }
 
@@ -252,20 +333,51 @@ function applyHomepageSettings() {
   }
 }
 
+function renderStoreCards(stores) {
+  const grid = document.getElementById("collectionGrid");
+  if (!grid) return;
+  grid.replaceChildren();
+  (stores || []).filter(store => store.is_active).forEach((store,index) => {
+    const card = document.createElement("a");
+    card.className = "collection-card collection-dynamic";
+    card.dataset.storeId = store.id;
+    card.dataset.storeSlug = store.slug;
+    card.dataset.storeName = store.name;
+    card.dataset.storeOpen = String(store.is_open !== false);
+    card.href = "acceso/index.html?tienda=" + encodeURIComponent(store.slug);
+    const number = document.createElement("span");
+    number.className = "card-number";
+    number.dataset.cardNumber = String(index+1).padStart(2,"0");
+    number.innerHTML = "<i></i>";
+    const content = document.createElement("span");
+    content.className = "card-content";
+    const title = document.createElement("span");
+    title.className = "card-title";
+    title.textContent = store.name || "Tienda";
+    const action = document.createElement("span");
+    action.className = "card-action";
+    action.innerHTML = (store.is_open === false ? "Pedidos cerrados " : "Explorar colección ") + '<span aria-hidden="true">↗</span>';
+    content.append(title,action);
+    card.append(number,content);
+    grid.append(card);
+  });
+}
 async function loadStoreVisibility() {
-  const { data, error } = await supabase.from("stores").select("id,is_active");
+  const { data, error } = await supabase.from("stores").select("id,name,slug,is_active,is_open");
   if (error) {
     console.warn("No se pudo consultar el estado de las tiendas:", error.message);
     return null;
   }
-  activeStoreIds = new Set((data || []).filter(store => store.is_active).map(store => store.id));
+  const stores = data || [];
+  storeSlugById = new Map(stores.filter(store => store.id && store.slug).map(store => [store.id, store.slug]));
+  activeStoreIds = new Set(stores.filter(store => store.is_active).map(store => store.id));
+  renderStoreCards(stores);
   applyHomepageSettings();
   const allLink = document.getElementById("allCollectionsLink");
-  const preferred = ["937fc539-9b4f-4f8f-a0d6-676408a5359a","a6ebf309-4a7e-4a9a-9411-fa956e4d4349","8c109c37-c8ed-4726-b950-24a453ba999b"];
-  const first = preferred.find(id => activeStoreIds.has(id));
+  const first = stores.find(store => store.is_active);
   if (allLink) {
     allLink.hidden = !first;
-    if (first) allLink.href = "acceso/index.html?tienda=" + encodeURIComponent(STORE_LINKS[first]);
+    if (first) allLink.href = "acceso/index.html?tienda=" + encodeURIComponent(first.slug);
   }
   return activeStoreIds;
 }
@@ -282,7 +394,7 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[char]));
 
-const imageUrl = path => { const value = String(path || "").trim(); const prefix = "https://ftzfsxcnfcqdmwhpardt.supabase.co/storage/v1/object/public/product-images/"; if (value.startsWith(prefix)) return value; if (!value || /^https?:/i.test(value)) return ""; return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl || ""; };
+const imageUrl = path => { const value = String(path || "").trim(); if (/^imagenes\//i.test(value)) return value; const prefix = "https://lljlmyshxijzuzyzafxa.supabase.co/storage/v1/object/public/product-images/"; if (value.startsWith(prefix)) return value; if (!value || /^https?:/i.test(value)) return ""; return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl || ""; };
 
 async function loadNewArrivals() {
   const container = document.getElementById("newProducts");
@@ -300,7 +412,9 @@ async function loadNewArrivals() {
       .limit(24);
 
     if (error) throw error;
-    const visibleHomepageIds = new Set(Array.isArray(homepageSettings?.visible_store_ids) ? homepageSettings.visible_store_ids : Object.keys(STORE_LINKS));
+    const configuredHomepageIds = Array.isArray(homepageSettings?.visible_store_ids) ? homepageSettings.visible_store_ids : [];
+    const defaultHomepageIds = activeStoreIds ? [...activeStoreIds].slice(0, 5) : Object.keys(STORE_LINKS);
+    const visibleHomepageIds = new Set((configuredHomepageIds.length ? configuredHomepageIds : defaultHomepageIds).slice(0, 5));
     const visibleProducts = (products || []).filter(product => (activeStoreIds === null || activeStoreIds.has(product.store_id)) && visibleHomepageIds.has(product.store_id));
     const productIds = visibleProducts.map(product => product.id);
     if (!productIds.length) {
@@ -326,7 +440,7 @@ async function loadNewArrivals() {
       const image = images.find(item => item.product_id === product.id && item.is_primary)
         || images.find(item => item.product_id === product.id);
       const available = variants.some(variant => variant.product_id === product.id && Number(variant.stock) > 0);
-      const storeSlug = STORE_LINKS[product.store_id];
+      const storeSlug = storeSlugById.get(product.store_id) || STORE_LINKS[product.store_id];
       if (!storeSlug) return "";
       const href = `acceso/index.html?tienda=${encodeURIComponent(storeSlug)}`;
       const picture = image?.image_path

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3dde2">
+  <meta name="description" content="Explora las tiendas y colecciones de Concept by Lily.">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../css/catalogo.css?v=20261127-store-open-close-01">
+  <title>Catálogo | Concept by Lily</title>
+  <style>.dynamic-store-page .site-header{aspect-ratio:auto!important;min-height:64px!important;height:64px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:var(--accent-soft)!important;overflow:visible!important}.dynamic-store-page .site-header .back-home{top:12px!important;left:16px!important}.dynamic-store-page .store-catalog-brand{display:block;margin:0 auto;max-width:70%;text-align:center;font-family:"Playfair Display",Georgia,serif;font-size:clamp(20px,3vw,32px);font-weight:600;color:var(--accent-dark,var(--accent));}</style>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>window.CATALOG_CONFIG={storeSlug:new URLSearchParams(location.search).get("tienda")};</script>
+  <script type="module" src="../js/catalogo.js?v=20261127-dynamic-store-01"></script>
+</head>
+<body class="dynamic-store-page">
+  <header class="site-header">
+    <a href="../" class="back-home"><span aria-hidden="true">←</span> Volver al inicio</a>
+    <span id="storeCatalogName" class="store-catalog-brand">Concept by Lily</span>
+  </header>
+  <a class="customer-orders-shortcut" href="#orderTracking">Mis pedidos</a>
+
+  <main>
+    <p id="storeClosedNotice" class="catalog-message store-closed-notice" role="status" hidden></p>
+    <section class="catalog-tools">
+      <div class="search-wrap">
+        <input id="productSearch" type="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+      </div>
+      <nav id="categoryNav" class="category-nav" aria-label="Filtrar por categoría">
+        <button class="category-btn active" type="button">Todos</button>
+      </nav>
+      <p id="productCount" class="product-count" aria-live="polite"></p>
+      <p id="catalogMessage" class="catalog-message" role="status"></p>
+    </section>
+
+    <section id="productsContainer" class="products" aria-live="polite">
+      <div class="empty-state"><h2>Cargando colección…</h2></div>
+    </section>
+
+    <section class="cart" aria-labelledby="cartTitle">
+      <h2 id="cartTitle">🛒 Tu carrito</h2>
+      <div id="cartItems"><p class="empty-cart">Tu carrito está vacío.</p></div>
+      <div id="total" class="total">Total: C$ 0.00</div>
+      <button id="whatsappBtn" class="whatsapp-btn" type="button">Preparar pedido</button>
+    </section>
+  </main>
+
+  <div id="quickViewModal" class="quick-view-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Detalles del producto">
+    <section class="quick-view-dialog">
+      <button id="quickViewClose" class="quick-view-close" type="button" aria-label="Cerrar detalles">×</button>
+      <div id="quickViewBody"></div>
+    </section>
+  </div>
+
+  <div id="invoiceModal" class="invoice-modal" role="dialog" aria-modal="true" aria-label="Proforma de pedido">
+    <div class="invoice-dialog">
+      <div id="invoiceArea"></div>
+      <button id="shareInvoice" class="share-button" type="button" hidden>💖 Compartir pedido</button>
+      <button id="closeInvoice" class="close-button" type="button">Cerrar</button>
+    </div>
+  </div>
+
+<section class="order-tracking" id="orderTracking"><h2>Mis pedidos</h2><p>Verifica tu número telefónico con un código SMS para consultar todos tus pedidos y sus estados.</p><form id="trackOrderForm"><input id="trackOrderPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Teléfono usado en tus pedidos" aria-label="Teléfono usado en tus pedidos" required><input id="trackOrderOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="Código de 6 dígitos" aria-label="Código de verificación SMS" hidden><button id="trackOrderSubmit" type="submit">Enviar código de verificación</button></form><div id="trackOrderResult" role="status" aria-live="polite"></div></section>
+  <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
+</body>
+</html>
