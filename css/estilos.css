@@ -1152,3 +1152,63 @@ body.homepage-config-loading main,body.homepage-config-loading .site-header,body
 
 .collection-dynamic{background-image:linear-gradient(135deg,#d9a7b5 0%,#785362 100%);background-color:#785362;}
 .collection-dynamic .card-title{overflow-wrap:anywhere;}
+
+
+/* Beta homepage layouts for four and five active stores, responsive and position-driven. */
+.collection-grid[data-template="four"]{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:repeat(2,minmax(230px,auto))!important;
+  grid-template-areas:"top_left top_right" "bottom_left bottom_right"!important;
+  gap:14px!important;
+}
+.collection-grid[data-template="four"] .collection-card{
+  grid-area:var(--store-layout-area)!important;
+  min-height:220px!important;
+  aspect-ratio:auto!important;
+}
+.collection-grid[data-template="five"]{
+  grid-template-columns:minmax(0,1.08fr) minmax(0,1fr)!important;
+  grid-template-rows:clamp(220px,22vw,340px) clamp(220px,22vw,340px) minmax(190px,auto)!important;
+  grid-template-areas:"left right_top" "left right_bottom" "bottom_left bottom_right"!important;
+  gap:14px!important;
+}
+.collection-grid[data-template="five"] .collection-card{
+  grid-area:var(--store-layout-area)!important;
+  min-height:190px!important;
+  aspect-ratio:auto!important;
+}
+.collection-card[data-layout-position="top_left"]{--store-layout-area:top_left}
+.collection-card[data-layout-position="top_right"]{--store-layout-area:top_right}
+.collection-card[data-layout-position="bottom_left"]{--store-layout-area:bottom_left}
+.collection-card[data-layout-position="bottom_right"]{--store-layout-area:bottom_right}
+.collection-card[data-layout-position="left"]{--store-layout-area:left}
+.collection-card[data-layout-position="right_top"]{--store-layout-area:right_top}
+.collection-card[data-layout-position="right_bottom"]{--store-layout-area:right_bottom}
+/* A store without artwork remains visible as a clean, single-color card with its name. */
+.collection-card:not(:has(.collection-card-image)){
+  background-image:none!important;
+  background-color:var(--home-palette-cardEnd,#d98aa7)!important;
+}
+.collection-card:not(:has(.collection-card-image)) .card-title,
+.collection-card:not(:has(.collection-card-image)) .card-number,
+.collection-card:not(:has(.collection-card-image)) .card-action{color:#fff!important}
+@media(max-width:760px){
+  .collection-grid[data-template="four"]{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:auto!important;
+    grid-template-areas:"top_left" "top_right" "bottom_left" "bottom_right"!important;
+  }
+  .collection-grid[data-template="four"] .collection-card{
+    min-height:0!important;
+    aspect-ratio:1.5/1!important;
+  }
+  .collection-grid[data-template="five"]{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:auto!important;
+    grid-template-areas:"left" "right_top" "right_bottom" "bottom_left" "bottom_right"!important;
+  }
+  .collection-grid[data-template="five"] .collection-card{
+    min-height:0!important;
+    aspect-ratio:1.5/1!important;
+  }
+}
