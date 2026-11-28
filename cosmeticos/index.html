@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3e0e5">
+  <meta name="description" content="Cosméticos y maquillaje de Concept by Lily. Consulta productos, variantes y disponibilidad."><link rel="stylesheet" href="../css/catalogo.css?v=20261127-public-order-details-03">
+  <title>Cosméticos y maquillaje | Concept by Lily</title>
+  <style>
+    :root{--accent:#e58fb0;--accent-dark:#6b4a5a;--accent-soft:#ffb8d2;--page:#fffdf7;--ink:#6b4a5a;--muted:#896b78;--border:#f0d6e1;}
+    /* Igual que Beta: el botón de regreso permanece visible al desplazarse. */
+    .site-header .back-home{position:fixed!important;top:12px!important;left:16px!important;z-index:1000!important;margin:0!important;}
+    @media(max-width:650px){.site-header .back-home{top:10px!important;left:10px!important;}}
+  </style>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>window.CATALOG_CONFIG={storeId:"a6ebf309-4a7e-4a9a-9411-fa956e4d4349"};</script>
+  <script type="module" src="../js/catalogo.js?v=20261127-public-order-details-05"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a href="../" class="back-home"><span aria-hidden="true">←</span> Volver al inicio</a>
+    <div class="catalog-banner-surface" aria-hidden="true"></div>
+  </header>
+  <a class="customer-orders-shortcut" href="#orderTracking">Mis pedidos</a>
+
+  <main>
+    <section class="catalog-tools">
+      <div class="search-wrap">
+        <input id="productSearch" type="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+      </div>
+      <nav id="categoryNav" class="category-nav" aria-label="Filtrar por categoría">
+        <button class="category-btn active" type="button">Todos</button>
+      </nav>
+      <p id="productCount" class="product-count" aria-live="polite"></p>
+      <p id="catalogMessage" class="catalog-message" role="status"></p>
+    </section>
+
+    <section id="productsContainer" class="products" aria-live="polite">
+      <div class="empty-state"><h2>Cargando colección…</h2></div>
+    </section>
+
+    <section class="cart" aria-labelledby="cartTitle">
+      <h2 id="cartTitle">🛒 Tu carrito</h2>
+      <div id="cartItems"><p class="empty-cart">Tu carrito está vacío.</p></div>
+      <div id="total" class="total">Total: C$ 0.00</div>
+      <button id="whatsappBtn" class="whatsapp-btn" type="button">Preparar pedido</button>
+    </section>
+  </main>
+
+  <div id="quickViewModal" class="quick-view-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Detalles del producto">
+    <section class="quick-view-dialog">
+      <button id="quickViewClose" class="quick-view-close" type="button" aria-label="Cerrar detalles">×</button>
+      <div id="quickViewBody"></div>
+    </section>
+  </div>
+
+  <div id="invoiceModal" class="invoice-modal" role="dialog" aria-modal="true" aria-label="Proforma de pedido">
+    <div class="invoice-dialog">
+      <div id="invoiceArea"></div>
+      <button id="shareInvoice" class="share-button" type="button" hidden>💖 Compartir pedido</button>
+      <button id="closeInvoice" class="close-button" type="button">Cerrar</button>
+    </div>
+  </div>
+
+<section class="order-tracking" id="orderTracking"><h2>Consultar pedido</h2><p>Consulta tus pedidos usando el número de pedido o el teléfono registrado. No se enviará ningún SMS.</p><div class="order-lookup-method" role="group" aria-label="Método de consulta"><button type="button" class="active" data-track-mode="phone">Número celular</button><button type="button" data-track-mode="number">Número de pedido</button></div><form id="trackOrderForm"><div id="trackOrderPhoneField"><input id="trackOrderPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Número telefónico (8 dígitos)" aria-label="Número telefónico usado en tus pedidos" required></div><div id="trackOrderNumberField" hidden><input id="trackOrderNumber" type="text" inputmode="numeric" autocomplete="off" placeholder="Número de pedido" aria-label="Número de pedido" maxlength="18"></div><button id="trackOrderSubmit" type="submit">Consultar</button></form><p class="order-lookup-note">Mostramos únicamente información del pedido y sus productos. No se muestran nombres, teléfonos, direcciones ni notas privadas.</p><div id="trackOrderResult" role="status" aria-live="polite"></div></section>
+  <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
+</body>
+</html>
