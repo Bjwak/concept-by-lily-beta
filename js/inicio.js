@@ -219,6 +219,38 @@ function applyHomepageSettings() {
       cardImage?.remove();
       card.style.removeProperty("background-image");
     }
+
+    // The catalog has legacy CSS rules that intentionally hide card titles
+    // when artwork is present. Force the title on solid-color cards directly
+    // so it remains visible even if an older selector wins in the cascade.
+    const content = card.querySelector(".card-content");
+    if (!cardImage) {
+      card.classList.add("collection-no-art");
+      if (content) {
+        content.style.setProperty("display", "flex", "important");
+        content.style.setProperty("visibility", "visible", "important");
+        content.style.setProperty("opacity", "1", "important");
+      }
+      if (title) {
+        title.style.setProperty("display", "block", "important");
+        title.style.setProperty("visibility", "visible", "important");
+        title.style.setProperty("opacity", "1", "important");
+        title.style.setProperty("color", "#fff", "important");
+      }
+    } else {
+      card.classList.remove("collection-no-art");
+      if (content) {
+        content.style.removeProperty("display");
+        content.style.removeProperty("visibility");
+        content.style.removeProperty("opacity");
+      }
+      if (title) {
+        title.style.removeProperty("display");
+        title.style.removeProperty("visibility");
+        title.style.removeProperty("opacity");
+        title.style.removeProperty("color");
+      }
+    }
   });
 
   const grid = document.querySelector(".collection-grid");
