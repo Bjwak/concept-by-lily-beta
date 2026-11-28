@@ -1187,7 +1187,7 @@ body.homepage-config-loading main,body.homepage-config-loading .site-header,body
 /* A store without artwork remains visible as a clean, single-color card with its name. */
 .collection-card:not(:has(.collection-card-image)){
   background-image:none!important;
-  background-color:var(--home-palette-cardEnd,#d98aa7)!important;
+  background-color:var(--home-palette-deep,#6b4a5a)!important;
 }
 .collection-card:not(:has(.collection-card-image)) .card-title,
 .collection-card:not(:has(.collection-card-image)) .card-number,
