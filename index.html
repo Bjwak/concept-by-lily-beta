@@ -4,16 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8edf0">
-  <meta name="description" content="Descubre las colecciones de Concept by Lily: accesorios para mujer, cosméticos y maquillaje, y accesorios para hombre.">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <title>Concept by Lily | Estilo, belleza y personalidad</title>
-  <link rel="stylesheet" href="css/estilos.css">
-  <script src="js/principal.js" defer></script>
-  <script type="module" src="js/inicio.js"></script>
+  <meta name="description" content="Descubre las colecciones de Concept by Lily: accesorios para mujer, cosméticos y maquillaje, y accesorios para hombre."><title>Concept by Lily | Estilo, belleza y personalidad</title>
+  <link rel="stylesheet" href="css/estilos.css?v=20261127-home-image-pan-07">
+  <script src="js/principal.js?v=20261126-logo-settings-01" defer></script>
+  <script type="module" src="js/inicio.js?v=20261127-home-image-pan-07"></script>
 </head>
-<body>
+<body class="homepage-config-loading">
   <header class="site-header">
     <a class="brand" href="./" aria-label="Concept by Lily, página principal">
+      <img class="brand-logo-image" id="brand-logo-image" alt="Logo de Concept by Lily" hidden>
       <span class="brand-mark" aria-hidden="true">✦</span>
       <span class="brand-name">Concept <em>by Lily</em></span>
     </a>
@@ -22,20 +21,21 @@
       <a href="#colecciones">Colecciones</a>
       <a href="#novedades">Novedades</a>
       <a href="#contacto">Contacto</a>
+      <a href="cosmeticos/index.html#orderTracking">Mis pedidos</a>
     </nav>
   </header>
 
   <main>
     <section class="intro" aria-labelledby="intro-title" data-home-section="hero">
       <div class="intro-copy-block">
-        <p class="eyebrow" id="hero-eyebrow"><span aria-hidden="true"></span> BIENVENIDOS A CONCEPT BY LILY</p>
-        <h1 id="intro-title">Encuentra algo que <em>hable de ti.</em></h1>
-        <p class="intro-copy" id="hero-description">Detalles que acompañan tu estilo, productos que te hacen sentir bien y pequeños favoritos que se vuelven parte de ti.</p>
-        <a class="primary-link" id="hero-cta" href="#colecciones">Explorar colecciones <span aria-hidden="true">↗</span></a>
-        <div class="intro-note" id="hero-note"><span class="note-line" aria-hidden="true"></span> ESTILO PROPIO. TODOS LOS DÍAS.</div>
+        <p class="eyebrow" id="hero-eyebrow"><span aria-hidden="true"></span></p>
+        <h1 id="intro-title"></h1>
+        <p class="intro-copy" id="hero-description"></p>
+        <a class="primary-link" id="hero-cta" href="#colecciones"><span aria-hidden="true">↗</span></a>
+        <div class="intro-note" id="hero-note"><span class="note-line" aria-hidden="true"></span></div>
       </div>
       <div class="intro-visual" aria-label="Logo de Concept by Lily">
-        <div class="visual-frame visual-main"><img src="imagenes/cards/logo.jpeg" alt="Concept by Lily"></div>
+        <div class="visual-frame visual-main"><img data-home-hero-image alt="Imagen de portada de Concept by Lily" hidden></div>
         <div class="visual-stamp"><span>✦</span><strong>Tu estilo,<br>tu esencia.</strong></div>
         <span class="visual-caption">PIEZAS PARA EXPRESARTE</span>
       </div>
@@ -44,31 +44,31 @@
     <section class="collections" id="colecciones" aria-labelledby="collections-title" data-home-section="collections">
       <div class="section-heading">
         <div>
-          <p class="eyebrow" id="collections-eyebrow">ENCUENTRA TU PRÓXIMO FAVORITO</p>
-          <h2 id="collections-title">¿Qué estás buscando?</h2>
+          <p class="eyebrow" id="collections-eyebrow"></p>
+          <h2 id="collections-title"></h2>
         </div>
-        <p class="section-aside" id="collectionsAside">Tres espacios, muchas formas<br>de expresar quién eres.</p>
+        <p class="section-aside" id="collectionsAside"></p>
       </div>
 
       <div class="collection-grid">
         <a class="collection-card collection-woman" data-store-id="937fc539-9b4f-4f8f-a0d6-676408a5359a" href="acceso/index.html?tienda=mujer">
-          <span class="card-number">01 <i></i> MUJER</span>
+          <span class="card-number" data-card-number="01"><i></i></span>
           <span class="card-content">
-            <span class="card-title">Accesorios para mujer</span>
-            <span class="card-action">Explorar colección <span aria-hidden="true">↗</span></span>
+            <span class="card-title"></span>
+            <span class="card-action"><span aria-hidden="true">↗</span></span>
           </span>
         </a>
         <a class="collection-card collection-beauty" data-store-id="a6ebf309-4a7e-4a9a-9411-fa956e4d4349" href="acceso/index.html?tienda=cosmeticos">
-          <span class="card-number">02 <i></i> BELLEZA</span>
+          <span class="card-number" data-card-number="02"><i></i></span>
           <span class="card-content">
-            <span class="card-title">Cosméticos y maquillaje</span>
+            <span class="card-title"></span>
             <span class="card-action">Explorar colección <span aria-hidden="true">↗</span></span>
           </span>
         </a>
         <a class="collection-card collection-man" data-store-id="8c109c37-c8ed-4726-b950-24a453ba999b" href="acceso/index.html?tienda=hombre">
-          <span class="card-number">03 <i></i> HOMBRE</span>
+          <span class="card-number" data-card-number="03"><i></i></span>
           <span class="card-content">
-            <span class="card-title">Accesorios para hombre</span>
+            <span class="card-title"></span>
             <span class="card-action">Explorar colección <span aria-hidden="true">↗</span></span>
           </span>
         </a>
@@ -78,10 +78,10 @@
     <section class="new-arrivals" id="novedades" aria-labelledby="new-title" data-home-section="new_arrivals">
       <div class="section-heading">
         <div>
-          <p class="eyebrow" id="new-eyebrow">DESCUBRE LO NUEVO</p>
-          <h2 id="new-title">Recién llegados</h2>
+          <p class="eyebrow" id="new-eyebrow"></p>
+          <h2 id="new-title"></h2>
         </div>
-        <p class="section-aside" id="new-aside">Nuevos detalles para<br>encontrar tu favorito.</p>
+        <p class="section-aside" id="new-aside"></p>
       </div>
       <p id="newProductsMessage" class="new-products-message" role="status">Estamos buscando las últimas novedades…</p>
       <div id="newProducts" class="new-products-grid" aria-live="polite"></div>
@@ -90,14 +90,14 @@
 
     <section class="closing" id="contacto" data-home-section="closing">
       <span class="closing-symbol" aria-hidden="true">✧</span>
-      <p id="closing-text">Pequeños detalles. Grandes formas de expresar quién eres.</p>
-      <span class="closing-brand" id="closing-brand">CONCEPT BY LILY</span>
+      <p id="closing-text"></p>
+      <span class="closing-brand" id="closing-brand"></span>
     </section>
   </main>
 
   <footer class="site-footer" data-home-section="footer">
     <a class="footer-brand" href="./">Concept by Lily</a>
-    <p id="footer-description">Descubre accesorios, moda y belleza para expresar tu estilo.</p>
+    <p id="footer-description"></p>
     <nav class="social-links" aria-label="Redes sociales">
       <a href="https://www.facebook.com/profile.php?id=61596244497554" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H7.3V13h2.8v8z"/></svg><span>Facebook</span>

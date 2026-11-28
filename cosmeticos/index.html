@@ -4,32 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3e0e5">
-  <meta name="description" content="Cosméticos y maquillaje de Concept by Lily. Consulta productos, variantes y disponibilidad.">
-  <link rel="icon" type="image/png" href="../favicon.png">
-  <link rel="stylesheet" href="../css/catalogo.css">
+  <meta name="description" content="Cosméticos y maquillaje de Concept by Lily. Consulta productos, variantes y disponibilidad."><link rel="stylesheet" href="../css/catalogo.css?v=20261127-public-order-details-03">
   <title>Cosméticos y maquillaje | Concept by Lily</title>
   <style>
-    :root{--accent:#bd8292;--accent-dark:#92576a;--accent-soft:#f3e0e5;--page:#fff8fa;}
-    /* Fondo editorial con la imagen de colección, sin banner recortado */
-    body.cosmetics-wallpaper{background:transparent;position:relative;isolation:isolate;}
-    body.cosmetics-wallpaper::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,248,250,.78),rgba(255,248,250,.90)),url("../imagenes/cosmeticos-maquillaje.png");background-size:cover;background-position:center;background-repeat:no-repeat;}
-    body.cosmetics-wallpaper .site-header{background:transparent;min-height:0;}
-    body.cosmetics-wallpaper .site-header img{display:none;}
-    body.cosmetics-wallpaper .site-header .back-home{position:fixed;top:12px;left:16px;z-index:100;margin:0;box-shadow:0 5px 18px #60404a12;}
-    body.cosmetics-wallpaper .catalog-tools{position:relative;}
-    body.cosmetics-wallpaper .product-card,body.cosmetics-wallpaper .cart{background:#fff;}
-    @media(max-width:650px){body.cosmetics-wallpaper .site-header .back-home{top:10px;left:10px;}}
-
+    :root{--accent:#e58fb0;--accent-dark:#6b4a5a;--accent-soft:#ffb8d2;--page:#fffdf7;--ink:#6b4a5a;--muted:#896b78;--border:#f0d6e1;}
+    /* Igual que Beta: el botón de regreso permanece visible al desplazarse. */
+    .site-header .back-home{position:fixed!important;top:12px!important;left:16px!important;z-index:1000!important;margin:0!important;}
+    @media(max-width:650px){.site-header .back-home{top:10px!important;left:10px!important;}}
   </style>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>window.CATALOG_CONFIG={storeId:"a6ebf309-4a7e-4a9a-9411-fa956e4d4349"};</script>
-  <script type="module" src="../js/catalogo.js"></script>
+  <script type="module" src="../js/catalogo.js?v=20261127-public-order-details-05"></script>
 </head>
-<body class="cosmetics-wallpaper">
+<body>
   <header class="site-header">
     <a href="../" class="back-home"><span aria-hidden="true">←</span> Volver al inicio</a>
-    <img src="../imagenes/cards/concept-by-lily-cosmeticos.png" alt="Concept by Lily | Cosméticos y maquillaje">
+    <div class="catalog-banner-surface" aria-hidden="true"></div>
   </header>
+  <a class="customer-orders-shortcut" href="#orderTracking">Mis pedidos</a>
 
   <main>
     <section class="catalog-tools">
@@ -70,7 +62,7 @@
     </div>
   </div>
 
-<section class="order-tracking"><h2>Consultar mi pedido</h2><p>Revisa el estado de un pedido registrado.</p><form id="trackOrderForm"><input id="trackOrderNumber" type="number" min="1" placeholder="Número de pedido" required><input id="trackOrderPhone" type="tel" placeholder="Teléfono usado en el pedido" required><button type="submit">Consultar estado</button></form><div id="trackOrderResult" role="status"></div></section>
+<section class="order-tracking" id="orderTracking"><h2>Consultar pedido</h2><p>Consulta tus pedidos usando el número de pedido o el teléfono registrado. No se enviará ningún SMS.</p><div class="order-lookup-method" role="group" aria-label="Método de consulta"><button type="button" class="active" data-track-mode="phone">Número celular</button><button type="button" data-track-mode="number">Número de pedido</button></div><form id="trackOrderForm"><div id="trackOrderPhoneField"><input id="trackOrderPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Número telefónico (8 dígitos)" aria-label="Número telefónico usado en tus pedidos" required></div><div id="trackOrderNumberField" hidden><input id="trackOrderNumber" type="text" inputmode="numeric" autocomplete="off" placeholder="Número de pedido" aria-label="Número de pedido" maxlength="18"></div><button id="trackOrderSubmit" type="submit">Consultar</button></form><p class="order-lookup-note">Mostramos únicamente información del pedido y sus productos. No se muestran nombres, teléfonos, direcciones ni notas privadas.</p><div id="trackOrderResult" role="status" aria-live="polite"></div></section>
   <footer class="site-footer">© <span id="currentYear"></span> Concept by Lily</footer>
 </body>
 </html>

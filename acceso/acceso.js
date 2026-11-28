@@ -7,7 +7,7 @@
     const WHATSAPP_NUMBER = "50587984118";
 
     const PUBLIC_BASE_URL =
-        "https://bjwak.github.io/concept-by-lily-beta/";
+        "https://bjwak.github.io/concept-by-lily/";
 
     const CUSTOMER_KEY = "conceptByLilyReturningCustomer";
 

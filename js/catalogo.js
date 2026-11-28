@@ -1,8 +1,9 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const supabase=createClient("https://lljlmyshxijzuzyzafxa.supabase.co","sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK");
+const supabase=createClient("https://ftzfsxcnfcqdmwhpardt.supabase.co","sb_publishable_eRUu-PSs6VrdbtHMET1AvQ_pkZ_WHUv");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
 let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0,quickViewHistoryOpen=false;
-let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO",banner_path:null,background_path:null};
+
+let catalogSettings={brand_name:"Concept by Lily",whatsapp_number:"+505 8798 4118",show_prices:true,show_stock:true,show_out_of_stock:true,show_descriptions:true,accent_color:"",page_color:"",currency_code:"NIO",banner_path:null,banner_enabled:false,background_path:null,background_enabled:false,background_overlay:35};
 const cartStorageKey=()=> "concept-by-lily:cart:"+String(cfg.storeId||"default");
 function saveCartDraft(){
  try{
@@ -43,7 +44,7 @@ const norm=s=>String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=(n,c="NIO")=>{try{return new Intl.NumberFormat("es-NI",{style:"currency",currency:c||"NIO"}).format(Number(n||0))}catch{return `C$ ${Number(n||0).toFixed(2)}`}};
 const attrs=v=>v?.attributes&&typeof v.attributes==="object"?v.attributes:{};
-const url=p=>/^https?:/i.test(p||"")?p:supabase.storage.from("product-images").getPublicUrl(p||"").data?.publicUrl||"";
+const url=p=>{const value=String(p||"").trim();const prefix="https://ftzfsxcnfcqdmwhpardt.supabase.co/storage/v1/object/public/product-images/";if(value.startsWith(prefix))return value;if(!value||/^https?:/i.test(value))return "";return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl||"";};
 const isColorAttribute=k=>["color","colores"].includes(norm(k));
 // Unifica nombres equivalentes: Color, Colores y variantes con acentos/mayúsculas.
 const canonicalAttribute=k=>{
@@ -119,43 +120,33 @@ function currencyOf(p){return catalogSettings.currency_code||p.currency||"NIO"}
 function applyCatalogSettings(){
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.accent_color||""))document.documentElement.style.setProperty("--accent",catalogSettings.accent_color);
  if(/^#[0-9a-f]{6}$/i.test(catalogSettings.page_color||""))document.documentElement.style.setProperty("--page",catalogSettings.page_color);
- // El banner personalizado se configura por tienda desde Admin. Si no existe,
- // se conserva intacta la imagen estática definida en el HTML como respaldo.
- const banner=document.querySelector(".site-header img");
+ const header=document.querySelector(".site-header");
  const bannerPath=typeof catalogSettings.banner_path==="string"?catalogSettings.banner_path.trim():"";
- const wallpaperClass=[...document.body.classList].find(name=>name.endsWith("-wallpaper"));
- let bannerUrl="";
- if(banner){
-  if(!banner.dataset.defaultSrc)banner.dataset.defaultSrc=banner.getAttribute("src")||"";
-  if(bannerPath){
-   bannerUrl=supabase.storage.from("product-images").getPublicUrl(bannerPath).data?.publicUrl||"";
-   if(bannerUrl){banner.src=bannerUrl;banner.dataset.customBanner="true";document.body.classList.add("has-custom-catalog-banner");}
-  }else{
-   banner.src=banner.dataset.defaultSrc;
-   delete banner.dataset.customBanner;
-   document.body.classList.remove("has-custom-catalog-banner");
-  }
- }
- const bannerStyle=document.getElementById("customCatalogBannerStyle");
- if(banner&&bannerUrl&&wallpaperClass){
-  const style=bannerStyle||document.createElement("style");
-  style.id="customCatalogBannerStyle";
-  style.textContent=`body.${wallpaperClass}.has-custom-catalog-banner .site-header{height:auto!important;min-height:0!important;overflow:hidden!important;position:relative!important;}body.${wallpaperClass}.has-custom-catalog-banner .site-header img{display:block!important;width:100%!important;height:auto!important;max-height:280px!important;object-fit:cover!important;}body.${wallpaperClass}.has-custom-catalog-banner .site-header .back-home{position:absolute!important;top:12px!important;left:16px!important;z-index:100!important;}`;
-  if(!bannerStyle)document.head.appendChild(style);
- }else if(bannerStyle){bannerStyle.remove();}
+ const bannerUrl=bannerPath?url(bannerPath):"";
+ const bannerEnabled=typeof catalogSettings.banner_enabled==="boolean"?catalogSettings.banner_enabled:Boolean(bannerPath);
  const backgroundPath=typeof catalogSettings.background_path==="string"?catalogSettings.background_path.trim():"";
- const customBackgroundStyle=document.getElementById("customCatalogBackgroundStyle");
- if(backgroundPath&&wallpaperClass){
-  const backgroundUrl=supabase.storage.from("product-images").getPublicUrl(backgroundPath).data?.publicUrl;
-  if(backgroundUrl){
-   const overlays={"cosmetics-wallpaper":["rgba(255,248,250,.78)","rgba(255,248,250,.90)"],"mujer-wallpaper":["rgba(255,248,250,.70)","rgba(255,248,250,.84)"],"hombre-wallpaper":["rgba(250,248,247,.62)","rgba(250,248,247,.78)"]};
-   const overlay=overlays[wallpaperClass]||["rgba(255,248,250,.70)","rgba(255,248,250,.84)"];
-   const style=customBackgroundStyle||document.createElement("style");
-   style.id="customCatalogBackgroundStyle";
-   style.textContent=`body.${wallpaperClass}::before{background-image:linear-gradient(${overlay[0]},${overlay[1]}),url("${backgroundUrl.replace(/"/g,"%22")}")!important;}`;
-   if(!customBackgroundStyle)document.head.appendChild(style);
-  }
- }else if(customBackgroundStyle){customBackgroundStyle.remove();}
+ const backgroundUrl=backgroundPath?url(backgroundPath):"";
+ const backgroundEnabled=typeof catalogSettings.background_enabled==="boolean"?catalogSettings.background_enabled:Boolean(backgroundPath);
+ const overlay=Math.max(0,Math.min(0.85,Number(catalogSettings.background_overlay??35)/100));
+ if(header){
+  header.classList.toggle("has-banner",Boolean(bannerEnabled&&bannerUrl));
+  header.style.backgroundImage=bannerEnabled&&bannerUrl?'linear-gradient(0deg,rgba(40,20,30,.04),rgba(40,20,30,.04)),url("'+bannerUrl+'")':"none";
+  header.style.backgroundColor="var(--accent-soft)";
+  header.setAttribute("aria-label",bannerEnabled&&bannerUrl?"Portada de colección":"Navegación del catálogo");
+ }
+ if(backgroundEnabled&&backgroundUrl){
+  document.body.style.backgroundImage='linear-gradient(rgba(255,255,255,'+overlay+'),rgba(255,255,255,'+overlay+')),url("'+backgroundUrl+'")';
+  document.body.style.backgroundAttachment="fixed";
+  document.body.style.backgroundSize="cover";
+  document.body.style.backgroundPosition="center";
+  document.body.style.backgroundRepeat="no-repeat";
+  document.body.classList.add("has-catalog-background");
+ }else{
+  document.body.style.backgroundImage="none";
+  document.body.style.backgroundColor="var(--page)";
+  document.body.style.backgroundAttachment="";
+  document.body.classList.remove("has-catalog-background");
+ }
  renderContactElements();
 }
 function safeExternalUrl(value){
@@ -225,7 +216,7 @@ function ensureCartFeedback(){
  if(!$("floatingCart")){
   const button=document.createElement("button");button.id="floatingCart";button.className="floating-cart";button.type="button";button.setAttribute("aria-label","Ver carrito");
   button.innerHTML='<span class="floating-cart-icon" aria-hidden="true">🛒</span><span class="floating-cart-label">Carrito</span><span class="floating-cart-count" id="floatingCartCount">0</span>';
-  button.addEventListener("click",()=>{$("cartTitle")?.scrollIntoView({behavior:"smooth",block:"center"});$("cart")?.focus?.({preventScroll:true})});
+  button.addEventListener("click",()=>{if(quickViewProductId)closeQuickView();const goToCart=()=>{$("cartTitle")?.scrollIntoView({behavior:"smooth",block:"center"});$("cart")?.focus?.({preventScroll:true})};requestAnimationFrame(()=>requestAnimationFrame(goToCart))});
   document.body.appendChild(button);
  }
  if(!$("cartToast")){const toast=document.createElement("div");toast.id="cartToast";toast.className="cart-toast";toast.setAttribute("role","status");toast.setAttribute("aria-live","polite");document.body.appendChild(toast)}
@@ -293,40 +284,97 @@ async function registerOrder(e){
  registeredOrder={id:result.order_id,number:result.order_number};$("shareInvoice").hidden=false;$("shareInvoice").disabled=false;cart.clear();renderCart();activeOrderRequestId=null;
  }catch(err){console.error(err);message.textContent=err.message||"No fue posible registrar el pedido.";button.disabled=false;button.textContent="Reintentar registro"}
 }
-async function trackOrder(){
- const number=Number($("trackOrderNumber").value),phone=$("trackOrderPhone").value.trim(),box=$("trackOrderResult");
- box.textContent="Consultando…";
+function normalizeTrackingPhone(value){
+ let digits=String(value||"").replace(/\D/g,"");
+ if(digits.startsWith("00"))digits=digits.slice(2);
+ if(digits.length===8)digits="505"+digits;
+ return digits.length>=10&&digits.length<=15?"+"+digits:"";
+}
+let currentTrackedOrders=[];
+function formatOrderDate(value){const date=new Date(value);return Number.isNaN(date.getTime())?"":date.toLocaleString("es-NI");}
+function trackingMode(){
+ return document.querySelector('[data-track-mode].active')?.dataset.trackMode||"phone";
+}
+function setTrackingMode(mode){
+ document.querySelectorAll("[data-track-mode]").forEach(button=>button.classList.toggle("active",button.dataset.trackMode===mode));
+ const phoneField=$("trackOrderPhoneField"),numberField=$("trackOrderNumberField");
+ if(phoneField)phoneField.hidden=mode!=="phone";
+ if(numberField)numberField.hidden=mode!=="number";
+ $("trackOrderPhone").required=mode==="phone";
+ $("trackOrderNumber").required=mode==="number";
+ $("trackOrderResult").textContent="";
+}
+function renderCustomerOrders(rows){
+ currentTrackedOrders=rows||[];
+ const box=$("trackOrderResult");
+ if(!currentTrackedOrders.length){box.textContent="No encontramos pedidos asociados a este número telefónico.";return}
+ box.innerHTML='<div class="customer-orders-list">'+currentTrackedOrders.map(order=>{
+  const status=orderStatusLabels[order.status]||order.status;
+  return '<article class="customer-order-status"><div class="customer-order-status-head"><strong>Pedido #'+esc(order.order_number)+'</strong><span class="order-status '+esc(order.status)+'">'+esc(status)+'</span></div><p>'+esc(order.store_name||"Concept by Lily")+'</p><time>'+esc(formatOrderDate(order.created_at))+'</time><button type="button" class="customer-order-details" data-order-number="'+esc(order.order_number)+'">Ver detalle del pedido</button></article>';
+ }).join("")+'</div><button type="button" class="customer-order-whatsapp" id="trackAnotherPhone">Consultar otro número</button>';
+ box.querySelectorAll("[data-order-number]").forEach(button=>button.addEventListener("click",()=>showOrderDetails(button.dataset.orderNumber,true)));
+ $("trackAnotherPhone")?.addEventListener("click",()=>{
+  $("trackOrderPhone").value="";$("trackOrderResult").textContent="";$("trackOrderPhone").focus();
+ });
+}
+function renderOrderDetails(order){
+ const box=$("trackOrderResult"),status=orderStatusLabels[order.status]||order.status;
+ const paymentLabels={pending:"Pendiente",pending_payment:"Pendiente",paid:"Pagado",partially_paid:"Pago parcial",refunded:"Reembolsado",failed:"No procesado",cancelled:"Cancelado"};
+ const deliveryLabels={pickup:"Retiro en tienda",delivery:"Envío a domicilio",to_agree:"Entrega por coordinar"};
+ const items=Array.isArray(order.items)?order.items:[];
+ const history=Array.isArray(order.status_history)?order.status_history:[];
+ const itemMarkup=items.map(item=>{
+  const attributes=item.attributes&&typeof item.attributes==="object"?Object.entries(item.attributes).filter(([key])=>!String(key).startsWith("_")).map(([key,value])=>esc(key)+": "+esc(value)).join(" · "):"";
+  return '<article class="customer-order-item"><div><strong>'+esc(item.product_name||"Producto")+'</strong>'+(attributes?'<small>'+attributes+'</small>':'')+'<small>'+Number(item.quantity||0)+' × '+money(item.unit_price,item.currency||order.currency)+'</small></div><strong>'+money(item.line_total,item.currency||order.currency)+'</strong></article>';
+ }).join("");
+ const timeline=history.map(entry=>'<li><div><span>'+esc(orderStatusLabels[entry.status]||entry.status||"Actualización")+'</span></div><time>'+esc(formatOrderDate(entry.created_at))+'</time></li>').join("");
+ box.innerHTML='<button type="button" class="customer-order-whatsapp" id="backToCustomerOrders">← Volver a pedidos</button><article class="customer-order-status customer-order-detail"><div class="customer-order-status-head"><strong>Pedido #'+esc(order.order_number)+'</strong><span class="order-status '+esc(order.status)+'">'+esc(status)+'</span></div><p>'+esc(order.store_name||"Concept by Lily")+'</p><time>'+esc(formatOrderDate(order.created_at))+'</time><div class="customer-order-meta"><p><span>Entrega</span><strong>'+esc(deliveryLabels[order.delivery_method]||"Por coordinar")+'</strong></p><p><span>Pago</span><strong>'+esc(paymentLabels[order.payment_status]||"Estado pendiente de actualización")+'</strong></p></div><h3>Resumen de tu compra</h3><div class="customer-order-items">'+(itemMarkup||"<p>No hay artículos disponibles para mostrar.</p>")+'</div><div class="customer-order-totals"><p><span>Subtotal</span><strong>'+money(order.subtotal,order.currency)+'</strong></p>'+(Number(order.discount_total)>0?'<p><span>Descuento</span><strong>−'+money(order.discount_total,order.currency)+'</strong></p>':'')+'<p class="customer-order-grand-total"><span>Total</span><strong>'+money(order.total,order.currency)+'</strong></p></div></article>'+(timeline?'<section class="customer-order-history"><h3>Seguimiento</h3><ol class="customer-order-timeline">'+timeline+'</ol></section>':'');
+ $("backToCustomerOrders")?.addEventListener("click",()=>renderCustomerOrders(currentTrackedOrders));
+}
+async function showOrderDetails(orderNumber,fromPhone=false){
+ const box=$("trackOrderResult");
+ const number=String(orderNumber||"").replace(/\D/g,"");
+ if(!number||number.length>18){box.textContent="Ingresa un número de pedido válido.";return}
+ box.textContent="Cargando detalle del pedido…";
  try{
-  const {data,error}=await supabase.rpc("get_public_order_status",{p_order_number:number,p_customer_phone:phone});
+  const {data,error}=await supabase.rpc("get_public_order_details_by_number",{p_order_number:number});
   if(error)throw error;
-  if(!data?.order){box.textContent="No encontramos un pedido con esos datos.";return}
-  renderTrackedOrder(data.order,data.history||[],number,phone);
- }catch(err){console.error(err);box.textContent="No fue posible consultar el pedido."}
+  const order=Array.isArray(data)?data[0]:data;
+  if(!order){box.textContent="No encontramos un pedido con ese número.";return}
+  renderOrderDetails(order);
+ }catch(err){
+  console.error("No se pudo consultar el detalle del pedido:",err);
+  box.textContent=err?.message||"No fue posible consultar el pedido. Inténtalo nuevamente.";
+ }
+}
+async function trackOrder(){
+ const box=$("trackOrderResult"),button=$("trackOrderSubmit"),mode=trackingMode();
+ button.disabled=true;button.textContent="Consultando…";
+ try{
+  if(mode==="number"){
+   const number=String($("trackOrderNumber").value||"").replace(/\D/g,"");
+   if(!number||number.length>18){box.textContent="Ingresa un número de pedido válido.";return}
+   await showOrderDetails(number,false);
+   return;
+  }
+  const phone=normalizeTrackingPhone($("trackOrderPhone").value);
+  if(!phone){box.textContent="Ingresa un número válido. Para Nicaragua, puedes escribir los 8 dígitos locales.";return}
+  box.textContent="Buscando pedidos asociados al teléfono…";
+  const {data,error}=await supabase.rpc("get_customer_order_statuses_by_phone",{p_phone:phone});
+  if(error)throw error;
+  renderCustomerOrders(data||[]);
+ }catch(err){
+  console.error("No se pudieron consultar los pedidos:",err);
+  box.textContent=err?.message||"No fue posible consultar los pedidos. Inténtalo nuevamente.";
+ }finally{
+  button.disabled=false;button.textContent="Consultar";
+ }
 }
 const orderStatusLabels={pending_confirmation:"Pendiente de confirmación",confirmed:"Confirmado",preparing:"En preparación",ready_for_delivery:"Listo para entregar",in_transit:"En camino",delivered:"Entregado",cancelled_by_customer:"Cancelado por ti",cancelled_by_store:"Cancelado por la tienda",rejected:"Rechazado"};
-const customerCanCancel=status=>["pending_confirmation","confirmed","preparing","ready_for_delivery"].includes(status);
-function renderTrackedOrder(order,historyRows,number,phone){
- const box=$("trackOrderResult"),statusLabel=orderStatusLabels[order.status]||order.status;
- const timeline=[...historyRows].sort((x,y)=>new Date(x.created_at)-new Date(y.created_at)).map(h=>'<li><div><span>'+esc(orderStatusLabels[h.status]||h.status)+'</span>'+(h.note?'<small>'+esc(h.note)+'</small>':'')+'</div><time>'+new Date(h.created_at).toLocaleString("es-NI")+'</time></li>').join("");
- const phoneDigits=String(catalogSettings.whatsapp_number||"").replace(/\D/g,"");
- const whatsappMessage=encodeURIComponent("Hola, necesito ayuda con el pedido #"+order.order_number+". Quisiera consultar una posible cancelación.");
- const whatsappLink=phoneDigits?'<a class="customer-order-whatsapp" href="https://wa.me/'+phoneDigits+'?text='+whatsappMessage+'" target="_blank" rel="noopener noreferrer">Contactar por WhatsApp para solicitar una cancelación</a>':'<p class="customer-order-lock">Para solicitar una cancelación, contacta directamente con la tienda por WhatsApp.</p>';
- const cancelPanel='<div class="customer-order-cancel"><p>Las cancelaciones se gestionan directamente con la propietaria para revisar cada solicitud.</p>'+whatsappLink+'</div>';
- box.innerHTML='<div class="customer-order-status"><strong>Pedido #'+esc(order.order_number)+' · '+esc(statusLabel)+'</strong><p>Total: '+money(order.total,order.currency)+'</p>'+(order.cancellation_reason?'<p class="customer-order-reason">Motivo: '+esc(order.cancellation_reason)+'</p>':'')+'</div>'+(timeline?'<ol class="customer-order-timeline">'+timeline+'</ol>':'')+cancelPanel;
-
-}
 async function share(){try{if(!registeredOrder?.id||!$("invoiceArea").querySelector(".invoice-saved"))throw new Error("Primero registra el pedido para poder compartir su comprobante.");if(!window.html2canvas)throw Error("No se cargó html2canvas");const canvas=await html2canvas($("invoiceArea"),{backgroundColor:"#fff",scale:2}),blob=await new Promise(r=>canvas.toBlob(r,"image/png"));if(!blob)throw Error("No se generó la imagen");const file=new File([blob],"Pedido-Concept-by-Lily.png",{type:"image/png"});if(navigator.share&&navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:"Pedido Concept by Lily",text:"Hola, me gustaría realizar este pedido."});else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=file.name;a.click();URL.revokeObjectURL(u);alert("La proforma se descargó. Puedes adjuntarla en WhatsApp.")}}catch(e){if(!String(e.message).toLowerCase().includes("cancel")){console.error(e);alert("No fue posible compartir la proforma.")}}}
 async function load(){
  $("catalogMessage").textContent="Cargando catálogo…";
  try{
-  const storeStatus=await supabase.from("stores").select("name,is_active").eq("id",cfg.storeId).maybeSingle();
-  if(!storeStatus.error&&(!storeStatus.data||!storeStatus.data.is_active)){
-   const storeName=storeStatus.data?.name||"Esta tienda";
-   $("catalogMessage").textContent=storeName+" está temporalmente fuera de servicio.";
-   $("productsContainer").innerHTML='<div class="empty-state"><h2>Catálogo temporalmente oculto</h2><p>Esta colección no está disponible en este momento.</p></div>';
-   $("productCount").textContent="0 productos";
-   return;
-  }
   const settingsResult=await supabase.from("store_settings").select("settings").eq("store_id",cfg.storeId).maybeSingle();
   if(!settingsResult.error&&settingsResult.data?.settings)catalogSettings={...catalogSettings,...settingsResult.data.settings};
   else if(settingsResult.error)console.warn("Se utilizarán los ajustes predeterminados del catálogo:",settingsResult.error.message);
@@ -445,4 +493,4 @@ document.addEventListener("touchmove",e=>{
 const stopSparkleTouch=e=>{for(const touch of e.changedTouches)activeSparkleTouches.delete(touch.identifier)};
 document.addEventListener("touchend",stopSparkleTouch,{passive:true});
 document.addEventListener("touchcancel",stopSparkleTouch,{passive:true});
-$("whatsappBtn").onclick=invoice;$("trackOrderForm")?.addEventListener("submit",e=>{e.preventDefault();trackOrder()});$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
+$("whatsappBtn").onclick=invoice;$("trackOrderForm")?.addEventListener("submit",e=>{e.preventDefault();trackOrder()});document.querySelectorAll("[data-track-mode]").forEach(button=>button.addEventListener("click",()=>setTrackingMode(button.dataset.trackMode)));$("closeInvoice").onclick=()=>$("invoiceModal").classList.remove("open");$("shareInvoice").onclick=share;$("invoiceModal").onclick=e=>{if(e.target.id==="invoiceModal")$("invoiceModal").classList.remove("open")};$("productSearch").oninput=renderProducts;$("currentYear").textContent=new Date().getFullYear();load();
