@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const supabase=createClient("https://ftzfsxcnfcqdmwhpardt.supabase.co","sb_publishable_eRUu-PSs6VrdbtHMET1AvQ_pkZ_WHUv");
+const supabase=createClient("https://lljlmyshxijzuzyzafxa.supabase.co","sb_publishable_Tn9HC6_IA7wrlEmiFS7Beg_KHQd0alK");
 const cfg=window.CATALOG_CONFIG,$=id=>document.getElementById(id);
 let products=[],categories=[],activeCategory="all",cart=new Map(),selection=new Map(),quickViewProductId=null,quickViewImageIndex=0,quickViewHistoryOpen=false;
 
@@ -44,7 +44,7 @@ const norm=s=>String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=(n,c="NIO")=>{try{return new Intl.NumberFormat("es-NI",{style:"currency",currency:c||"NIO"}).format(Number(n||0))}catch{return `C$ ${Number(n||0).toFixed(2)}`}};
 const attrs=v=>v?.attributes&&typeof v.attributes==="object"?v.attributes:{};
-const url=p=>{const value=String(p||"").trim();const prefix="https://ftzfsxcnfcqdmwhpardt.supabase.co/storage/v1/object/public/product-images/";if(value.startsWith(prefix))return value;if(!value||/^https?:/i.test(value))return "";return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl||"";};
+const url=p=>{const value=String(p||"").trim();const prefix="https://lljlmyshxijzuzyzafxa.supabase.co/storage/v1/object/public/product-images/";if(value.startsWith(prefix))return value;if(!value||/^https?:/i.test(value))return "";return supabase.storage.from("product-images").getPublicUrl(value).data?.publicUrl||"";};
 const isColorAttribute=k=>["color","colores"].includes(norm(k));
 // Unifica nombres equivalentes: Color, Colores y variantes con acentos/mayúsculas.
 const canonicalAttribute=k=>{
